@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MPL-2.0
-// ConvergioMissionControl — Tab container
+// ConvergioApp — Tab container
 
 import SwiftUI
 
 /// Six-tab navigation for the mission control panel.
 /// Each tab maps to a daemon subsystem: Brain, Mesh, Plans, Agents, Chat, Terminal.
-/// Tab views use WebViewBridge to load embedded dashboard views from the daemon.
+/// Tab views use native SwiftUI + URLSession to the daemon REST API (localhost:8420).
 struct ContentView: View {
     @State private var selectedTab: Tab = .brain
     @State private var showCommandPalette: Bool = false

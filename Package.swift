@@ -4,13 +4,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "ConvergioMissionControl",
+    name: "ConvergioApp",
     platforms: [
         .macOS(.v14)
     ],
     targets: [
         .executableTarget(
-            name: "ConvergioMissionControl",
+            name: "ConvergioApp",
             path: "ConvergioMissionControl",
             exclude: ["Info.plist"]
         )

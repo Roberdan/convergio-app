@@ -1,17 +1,20 @@
 // SPDX-License-Identifier: MPL-2.0
-// ConvergioMissionControl — Terminal tab: xterm.js PTY via WebSocket
+// ConvergioApp — Terminal tab: native SwiftUI PTY placeholder
+// WHY: Replaced WKWebView/xterm.js with native SwiftUI shell for Plan 724 zero-webview mandate.
+//      Full PTY implementation via SwiftNIO planned in Plan 721.
 
 import SwiftUI
 
-/// Embedded terminal for daemon interaction via xterm.js PTY.
-/// Connects to daemon WS-PTY endpoint for a full shell experience.
+/// Native terminal view connecting to the daemon WS-PTY endpoint.
+/// Displays a PTY session placeholder; full implementation ships in Plan 721.
 struct TerminalTab: View {
     @State private var sessionActive = false
+    @State private var output: [String] = []
 
     var body: some View {
         VStack(spacing: 0) {
             header
-            webContent
+            terminalContent
         }
     }
 
@@ -33,21 +36,55 @@ struct TerminalTab: View {
         .padding(.vertical, 8)
     }
 
-    private var webContent: some View {
-        WebViewBridge(tab: "terminal") { message in
-            handleBridgeMessage(message)
+    private var terminalContent: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            VStack(alignment: .leading, spacing: 4) {
+                ForEach(output.indices, id: \.self) { idx in
+                    Text(output[idx])
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.green)
+                }
+                HStack {
+                    Text("$")
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.green)
+                    Text("_")
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.green)
+                        .opacity(sessionActive ? 1 : 0.3)
+                }
+                Spacer()
+                if !sessionActive {
+                    Text("PTY available via daemon WS — start daemon to connect")
+                        .font(.caption2)
+                        .foregroundStyle(.gray)
+                        .padding(.bottom, 8)
+                }
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .frame(minHeight: 300, maxHeight: .infinity)
+        .onAppear { connectPTY() }
     }
 
-    private func handleBridgeMessage(_ message: BridgeMessage) {
-        switch message.action {
-        case "pty_connected":
-            sessionActive = true
-        case "pty_disconnected":
-            sessionActive = false
-        default:
-            break
+    private func connectPTY() {
+        // WHY: Actual WS-PTY connects to ws://localhost:8420/ws-pty.
+        // Full SwiftNIO WebSocket implementation planned in Plan 721.
+        // For now we surface connection status without blocking daemon check.
+        Task {
+            do {
+                let (_, response) = try await URLSession.shared.data(
+                    from: URL(string: "http://localhost:8420/api/health")!
+                )
+                if let http = response as? HTTPURLResponse, http.statusCode == 200 {
+                    sessionActive = true
+                    output = ["Convergio daemon online. PTY available at ws://localhost:8420/ws-pty"]
+                }
+            } catch {
+                sessionActive = false
+            }
         }
     }
 }
