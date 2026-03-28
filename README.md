@@ -28,8 +28,30 @@ at `localhost:8420` using URLSession — zero WKWebView.
 | Chat | Multi-agent chat |
 | Terminal | PTY session (Plan 721) |
 
-## License
+## License & Mission
 
-Mozilla Public License 2.0 — see [LICENSE](LICENSE).
+> **Convergio is free. The code is open. We trust you.**
 
-Copyright (c) 2026 Roberto D'Angelo. Not affiliated with Microsoft.
+This project is released under the [Convergio Community License](./LICENSE).
+
+Use it to learn. Use it to build. Use it to grow your business.
+Fork it, modify it, redistribute it — the license travels with the code.
+
+If Convergio helps you, we ask one thing: **help someone who needs it** —
+consider a donation to [FightTheStroke Foundation](https://fightthestroke.org),
+a non-profit supporting children and families affected by pediatric stroke
+and cerebral palsy.
+
+**Always free, no questions asked, for:**
+- 🎓 Students
+- ♿ People with disabilities
+- 💚 Non-profit organizations
+
+**Want to go further?** We offer consulting, workshops, and speaking
+engagements — priced on the value we create together, not by the hour.
+→ [convergio.io](https://convergio.io)
+
+---
+
+*Built for solopreneurs who dare to build alone.*
+*If it helps you grow, help someone grow too.*
