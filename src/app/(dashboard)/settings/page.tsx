@@ -1,11 +1,15 @@
 "use client";
 
+import { useActionState } from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { updateProfile } from "@/lib/actions/profile";
+import type { ActionResult } from "@/lib/actions/profile";
 
 export default function SettingsPage() {
+  const [state, formAction, isPending] = useActionState(updateProfile, null);
   const [notifications, setNotifications] = useState(true);
   const [emailDigest, setEmailDigest] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -24,10 +28,12 @@ export default function SettingsPage() {
           <p className="text-micro mt-1">Your personal information.</p>
         </div>
         <div className="grid gap-4 max-w-lg">
+          <form action={formAction} className="grid gap-4">
           <div className="grid gap-1.5">
             <Label htmlFor="name">Display Name</Label>
             <input
               id="name"
+              name="name"
               defaultValue="Roberto D'Angelo"
               className="h-9 w-full rounded-md border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/30"
             />
@@ -36,14 +42,24 @@ export default function SettingsPage() {
             <Label htmlFor="email">Email</Label>
             <input
               id="email"
+              name="email"
               type="email"
               defaultValue="roberto@convergio.dev"
               className="h-9 w-full rounded-md border border-border bg-muted px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/30"
             />
           </div>
+          {state && !state.success && (
+            <p className="text-sm text-destructive">{state.error}</p>
+          )}
+          {state?.success && (
+            <p className="text-sm text-green-600">Profile saved.</p>
+          )}
           <div>
-            <Button size="sm">Save Changes</Button>
+            <Button size="sm" type="submit" disabled={isPending}>
+              {isPending ? "Saving…" : "Save Changes"}
+            </Button>
           </div>
+          </form>
         </div>
       </section>
 

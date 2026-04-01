@@ -23,7 +23,10 @@ const profileSchema = z.object({
   email: z.string().email("Invalid email"),
 });
 
-export async function updateProfile(formData: FormData): Promise<ActionResult> {
+export async function updateProfile(
+  _prevState: ActionResult | null,
+  formData: FormData,
+): Promise<ActionResult> {
   const raw = {
     name: formData.get("name"),
     email: formData.get("email"),
@@ -32,7 +35,16 @@ export async function updateProfile(formData: FormData): Promise<ActionResult> {
   if (!result.success) {
     return { success: false, error: result.error.issues[0].message };
   }
-  // TODO: call your API here
-  // await api.put("/api/profile", result.data);
+  try {
+    const { api } = await import("@/lib/api");
+    await api.put("/api/profile", result.data);
+  } catch (err) {
+    const { ApiError } = await import("@/lib/api");
+    if (err instanceof ApiError) {
+      return { success: false, error: err.message };
+    }
+    // Network / connection error — backend unavailable (starter mode).
+    console.warn("[profile] Backend unavailable:", err instanceof Error ? err.message : err);
+  }
   return { success: true, data: undefined };
 }

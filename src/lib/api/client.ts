@@ -1,3 +1,5 @@
+import { env } from "@/lib/env";
+
 type RequestOptions = RequestInit & {
   params?: Record<string, string>;
 };
@@ -71,6 +73,5 @@ export function createApiClient(baseUrl: string): ApiClient {
   return new ApiClient(baseUrl);
 }
 
-export const api = createApiClient(
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8420"
-);
+/** Singleton for server-side use (server actions, route handlers). */
+export const api = createApiClient(env.API_URL);
