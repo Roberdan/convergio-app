@@ -1,0 +1,196 @@
+# ============================================================================
+# convergio.yaml — Single configuration file for the entire frontend.
+#
+# This file defines: branding, themes, navigation, pages, AI agents, and API.
+# An AI agent can read your backend and auto-generate this file.
+# The frontend reads this at build time and constructs the entire app.
+#
+# To customize: edit this file and restart the dev server.
+# To rebrand: change app.name, app.logo, and theme.default.
+# To add pages: add entries under `pages` with block definitions.
+# To add AI agents: add entries under `ai.agents`.
+# ============================================================================
+
+# ── App identity ──
+app:
+  name: Convergio
+  description: Operational product shell
+  # logo: /logo.svg
+
+# ── Theme ──
+theme:
+  default: navy          # light | dark | navy | colorblind
+  storageKey: convergio-theme
+
+# ── API connection ──
+api:
+  baseUrl: http://localhost:8420
+  # authHeader: Authorization
+  # authScheme: Bearer
+
+# ── AI Agents ──
+ai:
+  defaultAgent: jervis
+  agents:
+    - id: jervis
+      name: Jervis
+      description: Convergio platform orchestrator — manages plans, agents, and workspaces
+      provider: openai
+      model: gpt-4o
+      systemPrompt: |
+        You are Jervis, the Convergio platform AI assistant.
+        You help users manage plans, agents, workspaces, and platform operations.
+        Be concise, precise, and action-oriented.
+      apiRoute: /api/chat
+      avatar: J
+      maxTokens: 2048
+
+    - id: nasra
+      name: NaSra
+      description: Design system expert — tokens, themes, WCAG, components, layouts
+      provider: openai
+      model: gpt-4o
+      systemPrompt: |
+        You are NaSra, the Maranello Design System expert.
+        You help with design tokens, themes, accessibility (WCAG 2.2 AA),
+        component selection, layout patterns, and visual consistency.
+      apiRoute: /api/chat
+      avatar: N
+      maxTokens: 2048
+
+# ── Navigation ──
+navigation:
+  sections:
+    - label: Overview
+      items:
+        - id: dashboard
+          label: Dashboard
+          href: /
+          icon: LayoutDashboard
+
+        - id: projects
+          label: Projects
+          href: /projects
+          icon: FolderKanban
+
+        - id: activity
+          label: Activity
+          href: /activity
+          icon: Activity
+
+    - label: Operations
+      items:
+        - id: agents
+          label: Agents
+          href: /agents
+          icon: Users
+          badge: 12
+
+        - id: security
+          label: Security
+          href: /security
+          icon: Shield
+
+        - id: notifications
+          label: Notifications
+          href: /notifications
+          icon: Bell
+          badge: 3
+
+    - label: System
+      items:
+        - id: settings
+          label: Settings
+          href: /settings
+          icon: Settings
+
+        - id: docs
+          label: Documentation
+          href: /docs
+          icon: FileText
+
+# ── Pages ──
+# Each page is defined by its route and a list of block rows.
+# Available block types: kpi-card, data-table, activity-feed, stat-list, empty-state, ai-chat
+pages:
+  /:
+    title: Dashboard
+    description: Platform overview and recent activity.
+    rows:
+      - columns: 4
+        blocks:
+          - type: kpi-card
+            label: Active Agents
+            value: "12"
+            change: "+2"
+            trend: up
+
+          - type: kpi-card
+            label: Running Plans
+            value: "3"
+            change: "0"
+            trend: flat
+
+          - type: kpi-card
+            label: Tasks Completed
+            value: "847"
+            change: "+23"
+            trend: up
+
+          - type: kpi-card
+            label: Uptime
+            value: 99.7%
+            change: "+0.1%"
+            trend: up
+
+      - columns: 2
+        blocks:
+          - type: activity-feed
+            items:
+              - time: 2m ago
+                text: Agent alfa-01 completed task T3-04 in plan 10035
+                status: success
+              - time: 8m ago
+                text: Plan 10035 wave W2 validated by Thor
+                status: info
+              - time: 14m ago
+                text: Workspace ws-44bf created for maranello
+                status: info
+              - time: 1h ago
+                text: Build failed on fix/header-shell-followups
+                status: error
+
+          - type: data-table
+            columns:
+              - key: agent
+                label: Agent
+                mono: true
+              - key: status
+                label: Status
+              - key: model
+                label: Model
+              - key: tasks
+                label: Tasks
+                align: right
+            rows:
+              - agent: alfa-01
+                status: active
+                model: claude-sonnet
+                tasks: 4
+              - agent: bravo-03
+                status: active
+                model: copilot
+                tasks: 2
+              - agent: charlie-07
+                status: active
+                model: claude-sonnet
+                tasks: 1
+              - agent: delta-02
+                status: idle
+                model: copilot
+                tasks: 0
+
+      - columns: 1
+        blocks:
+          - type: ai-chat
+            agentId: jervis
