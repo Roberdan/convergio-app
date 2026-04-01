@@ -35,3 +35,9 @@
 - Decision: README is the primary starter guide — rewritten from scratch rather than patched
 - Pattern: each major feature gets its own section with quick-start instructions
 - Kept Tauri but positioned as clearly optional with separate install step
+
+## TF: Closure
+
+- Issue: auth boundary broke theme and zero-errors E2E tests → Fix: added beforeEach cookie injection
+- Lesson: when adding auth middleware, ALL E2E spec files need the session cookie, not just shell.spec.ts
+- Pattern: use Playwright context.addCookies in beforeEach for auth bypass in tests

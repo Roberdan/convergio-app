@@ -45,3 +45,10 @@
 - Fixed: Next.js version 15 → 16 in docs
 - Added: convergio.yaml, server-first data, auth boundary, AI routing sections to README
 - Kept: Tauri section clearly marked as optional
+
+### TF: Closure
+
+- Fixed: E2E tests now include auth cookie in all spec files (themes, zero-errors)
+- Validated: 38/38 E2E pass, typecheck clean, build clean
+- Added: MPL-2.0 license file
+- Pushed: repo live at https://github.com/Roberdan/convergio-frontend
