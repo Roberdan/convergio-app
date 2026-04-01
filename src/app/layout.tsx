@@ -3,7 +3,6 @@ import { Inter, Outfit, Barlow_Condensed } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeScript } from "@/components/theme/theme-script";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ShellWrapper } from "@/components/shell/shell-wrapper";
 import "./globals.css";
 
 const inter = Inter({
@@ -26,7 +25,7 @@ const barlowCondensed = Barlow_Condensed({
 
 export const metadata: Metadata = {
   title: "Convergio",
-  description: "Convergio Frontend — operational product shell",
+  description: "Convergio Frontend",
 };
 
 export default function RootLayout({
@@ -46,7 +45,7 @@ export default function RootLayout({
       <body className="min-h-full">
         <ThemeProvider defaultTheme="navy">
           <TooltipProvider>
-            <ShellWrapper>{children}</ShellWrapper>
+            {children}
           </TooltipProvider>
         </ThemeProvider>
       </body>
