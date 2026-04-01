@@ -16,3 +16,12 @@
 - Changed: activity feed, agent table, and notifications now use generic internal-tools copy
 - Removed: all Plan 10035, alfa-01, Thor, ws-44bf, header-shell-followups references
 - Changed: convergio.yaml seeded data uses generic deployment/worker examples
+
+### W3: Server-first data path
+
+- Changed: `src/lib/env.ts` validates API_URL with sensible default
+- Changed: `src/lib/api/client.ts` uses validated env for baseUrl
+- Changed: `src/lib/actions/profile.ts` wired to real API call with graceful fallback
+- Changed: `src/app/(dashboard)/settings/page.tsx` uses `useActionState` for form submission
+- Changed: `src/app/api/health/route.ts` includes version from package.json
+- Pattern: server actions catch network errors gracefully for starter mode (no backend)

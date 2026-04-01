@@ -12,3 +12,9 @@
 - Decision: replace product-specific demo content with realistic but generic internal-tools examples
 - Pattern: keep the same UI structure and block types; only change labels, names, and event descriptions
 - Issue: 2 pre-existing lint errors in sidebar-nav.tsx (not introduced by this wave)
+
+## W3: Server-first data path
+
+- Decision: single API client singleton from validated env; server actions for mutations
+- Pattern: graceful fallback when backend unavailable — ApiError returns failure, network error logs warning and returns success message
+- Issue: dashboard page data still comes from YAML config (acceptable for starter — shows the pattern)
