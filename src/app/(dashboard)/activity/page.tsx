@@ -2,14 +2,14 @@ import { Badge } from "@/components/ui/badge";
 import { Activity as ActivityIcon } from "lucide-react";
 
 const EVENTS = [
-  { time: "2m ago", agent: "alfa-01", action: "completed task T3-04 in plan 10035", type: "success" },
-  { time: "8m ago", agent: "system", action: "wave W2 validated by Thor", type: "info" },
-  { time: "14m ago", agent: "bravo-03", action: "workspace ws-44bf created", type: "info" },
-  { time: "22m ago", agent: "charlie-07", action: "started task T4-01", type: "default" },
-  { time: "35m ago", agent: "delta-02", action: "escalated task T2-03 to claude", type: "warning" },
-  { time: "1h ago", agent: "system", action: "build failed on fix/header-shell", type: "error" },
-  { time: "1h ago", agent: "alfa-01", action: "submitted PR #31 for review", type: "success" },
-  { time: "2h ago", agent: "echo-05", action: "mesh peer convergio-web joined", type: "info" },
+  { time: "2m ago", agent: "worker-01", action: "completed task T3-04 in deployment pipeline", type: "success" },
+  { time: "8m ago", agent: "system", action: "batch job sync-reports validated and queued", type: "info" },
+  { time: "14m ago", agent: "worker-02", action: "workspace env-staging provisioned", type: "info" },
+  { time: "22m ago", agent: "worker-03", action: "started task T4-01 in data-export job", type: "default" },
+  { time: "35m ago", agent: "worker-04", action: "escalated task T2-03 to senior model", type: "warning" },
+  { time: "1h ago", agent: "system", action: "build failed on feature/api-gateway-patch", type: "error" },
+  { time: "1h ago", agent: "worker-01", action: "submitted PR #14 for review", type: "success" },
+  { time: "2h ago", agent: "worker-05", action: "integration peer reporting-service joined", type: "info" },
 ];
 
 export default function ActivityPage() {

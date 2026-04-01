@@ -2,12 +2,12 @@ import { Badge } from "@/components/ui/badge";
 import { Bell } from "lucide-react";
 
 const NOTIFICATIONS = [
-  { title: "Plan 10035 wave W2 completed", time: "8m ago", read: false },
-  { title: "Agent foxtrot-01 entered error state", time: "12m ago", read: false },
-  { title: "PR #30 CI passed on ConvergioPlatform", time: "1h ago", read: false },
+  { title: "Deployment pipeline batch-07 completed", time: "8m ago", read: false },
+  { title: "Agent worker-06 entered error state", time: "12m ago", read: false },
+  { title: "PR #14 CI passed on internal-tools", time: "1h ago", read: false },
   { title: "Budget threshold reached (80%)", time: "2h ago", read: true },
-  { title: "Workspace ws-44bf created successfully", time: "3h ago", read: true },
-  { title: "Mesh peer convergio-web disconnected", time: "5h ago", read: true },
+  { title: "Workspace env-staging provisioned successfully", time: "3h ago", read: true },
+  { title: "Integration peer reporting-service disconnected", time: "5h ago", read: true },
 ];
 
 export default function NotificationsPage() {

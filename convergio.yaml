@@ -148,16 +148,16 @@ pages:
           - type: activity-feed
             items:
               - time: 2m ago
-                text: Agent alfa-01 completed task T3-04 in plan 10035
+                text: Agent worker-01 completed task T3-04 in deployment pipeline
                 status: success
               - time: 8m ago
-                text: Plan 10035 wave W2 validated by Thor
+                text: Batch job sync-reports validated and queued
                 status: info
               - time: 14m ago
-                text: Workspace ws-44bf created for maranello
+                text: Workspace env-staging provisioned successfully
                 status: info
               - time: 1h ago
-                text: Build failed on fix/header-shell-followups
+                text: Build failed on feature/api-gateway-patch
                 status: error
 
           - type: data-table
@@ -173,19 +173,19 @@ pages:
                 label: Tasks
                 align: right
             rows:
-              - agent: alfa-01
+              - agent: worker-01
                 status: active
                 model: claude-sonnet
                 tasks: 4
-              - agent: bravo-03
+              - agent: worker-02
                 status: active
                 model: copilot
                 tasks: 2
-              - agent: charlie-07
+              - agent: worker-03
                 status: active
                 model: claude-sonnet
                 tasks: 1
-              - agent: delta-02
+              - agent: worker-04
                 status: idle
                 model: copilot
                 tasks: 0

@@ -2,14 +2,14 @@ import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
 
 const AGENTS = [
-  { id: "alfa-01", status: "active", model: "claude-sonnet-4-6", tasks: 4, uptime: "2h 14m" },
-  { id: "bravo-03", status: "active", model: "copilot", tasks: 2, uptime: "1h 48m" },
-  { id: "charlie-07", status: "active", model: "claude-sonnet-4-6", tasks: 1, uptime: "45m" },
-  { id: "delta-02", status: "idle", model: "copilot", tasks: 0, uptime: "3h 02m" },
-  { id: "echo-05", status: "active", model: "claude-haiku-4-5", tasks: 3, uptime: "58m" },
-  { id: "foxtrot-01", status: "error", model: "copilot", tasks: 0, uptime: "12m" },
-  { id: "golf-09", status: "idle", model: "claude-sonnet-4-6", tasks: 0, uptime: "4h 30m" },
-  { id: "hotel-04", status: "active", model: "copilot", tasks: 5, uptime: "2h 01m" },
+  { id: "worker-01", status: "active", model: "claude-sonnet-4-6", tasks: 4, uptime: "2h 14m" },
+  { id: "worker-02", status: "active", model: "copilot", tasks: 2, uptime: "1h 48m" },
+  { id: "worker-03", status: "active", model: "claude-sonnet-4-6", tasks: 1, uptime: "45m" },
+  { id: "worker-04", status: "idle", model: "copilot", tasks: 0, uptime: "3h 02m" },
+  { id: "worker-05", status: "active", model: "claude-haiku-4-5", tasks: 3, uptime: "58m" },
+  { id: "worker-06", status: "error", model: "copilot", tasks: 0, uptime: "12m" },
+  { id: "worker-07", status: "idle", model: "claude-sonnet-4-6", tasks: 0, uptime: "4h 30m" },
+  { id: "worker-08", status: "active", model: "copilot", tasks: 5, uptime: "2h 01m" },
 ];
 
 const STATUS_COLOR: Record<string, string> = {
