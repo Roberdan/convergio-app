@@ -18,3 +18,14 @@
 - Decision: single API client singleton from validated env; server actions for mutations
 - Pattern: graceful fallback when backend unavailable — ApiError returns failure, network error logs warning and returns success message
 - Issue: dashboard page data still comes from YAML config (acceptable for starter — shows the pattern)
+
+## W4: AI routing hardening
+
+- Decision: provider routing via exhaustive switch, not dynamic import — keeps bundle predictable
+- Pattern: unsupported providers return 501 with clear install instructions rather than silently failing
+
+## W5: Auth boundary wiring
+
+- Decision: simple cookie-based auth for starter; clearly marked as demo-only
+- Issue: E2E tests need auth bypass → solved with `context.addCookies` in beforeEach
+- Pattern: server actions for both login and logout; no client-side auth state

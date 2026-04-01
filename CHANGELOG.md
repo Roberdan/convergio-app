@@ -25,3 +25,16 @@
 - Changed: `src/app/(dashboard)/settings/page.tsx` uses `useActionState` for form submission
 - Changed: `src/app/api/health/route.ts` includes version from package.json
 - Pattern: server actions catch network errors gracefully for starter mode (no backend)
+
+### W4: AI routing hardening
+
+- Changed: `src/app/api/chat/route.ts` uses `resolveModel()` with provider switching (openai/anthropic/custom)
+- Added: exhaustive compile-time provider check prevents silent fallback
+- Added: anthropic and custom providers return 501 with setup guidance
+
+### W5: Auth boundary wiring
+
+- Changed: `src/proxy.ts` now enforces session cookie check on protected routes
+- Changed: `src/app/(auth)/login/page.tsx` wired with server action (demo: admin/admin)
+- Added: logout server action + sign-out button in dashboard layout
+- Changed: `e2e/shell.spec.ts` injects session cookie for test bypass
