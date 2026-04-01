@@ -10,3 +10,9 @@
 - Changed: `NavItem.icon` type from `LucideIcon` to `iconName: string` (resolved client-side)
 - Added: `vitest.config.ts` for kernel gate compatibility
 - Learnings: kernel evidence gate runs `npx vitest run` — projects without Vitest need a config with `passWithNoTests: true`
+
+### W2: Starter baseline neutralization
+
+- Changed: activity feed, agent table, and notifications now use generic internal-tools copy
+- Removed: all Plan 10035, alfa-01, Thor, ws-44bf, header-shell-followups references
+- Changed: convergio.yaml seeded data uses generic deployment/worker examples
