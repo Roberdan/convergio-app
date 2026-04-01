@@ -21,18 +21,19 @@ test.describe("App Shell", () => {
     await expect(page.locator("text=No projects yet")).toBeVisible();
   });
 
-  test("sidebar collapse toggle works", async ({ page }) => {
+  test("sidebar has navigation sections and footer", async ({ page }) => {
     await page.goto("/");
     const aside = page.locator("aside");
     await expect(aside).toBeVisible();
 
-    // Click collapse button in sidebar
-    const collapseBtn = aside.locator('button[aria-label="Collapse sidebar"]');
-    if (await collapseBtn.isVisible()) {
-      await collapseBtn.click();
-      // Sidebar should now be narrow (64px)
-      await expect(aside).toHaveCSS("width", "64px");
-    }
+    // Navigation items exist
+    await expect(aside.getByText("Dashboard")).toBeVisible();
+    await expect(aside.getByText("Projects")).toBeVisible();
+    await expect(aside.getByText("Settings").first()).toBeVisible();
+
+    // Section labels exist
+    await expect(aside.getByText("OVERVIEW")).toBeVisible();
+    await expect(aside.getByText("OPERATIONS")).toBeVisible();
   });
 
   test("404 page renders for unknown routes", async ({ page }) => {

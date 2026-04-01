@@ -175,7 +175,7 @@ export function Sidebar({
       <aside
         className={cn(
           "hidden md:flex flex-col",
-          "h-screen sticky top-0 overflow-hidden",
+          "h-[calc(100vh-52px)] sticky top-[52px] overflow-hidden",
           "bg-sidebar text-sidebar-foreground",
           "border-r border-sidebar-border",
           "transition-[width] duration-200 ease-in-out",

@@ -29,19 +29,18 @@ export function AppShell({ children, sections, brandName }: AppShellProps) {
         onSearchClick={openCommand}
         breadcrumb={breadcrumb}
       />
-      <Sidebar
-        sections={sections}
-        collapsed={collapsed}
-        onToggle={toggleSidebar}
-        brandName={brandName}
-      />
+      <div className="flex pt-[52px]">
+        <Sidebar
+          sections={sections}
+          collapsed={collapsed}
+          onToggle={toggleSidebar}
+          brandName={brandName}
+        />
+        <main className="flex-1 min-h-[calc(100vh-52px)] overflow-auto">
+          <div className="mx-auto max-w-7xl p-6">{children}</div>
+        </main>
+      </div>
       <CommandMenu open={commandOpen} onOpenChange={setCommandOpen} />
-      <main
-        className="pt-[52px] transition-[margin-left] duration-200 ease-out"
-        style={{ marginLeft: collapsed ? 64 : 256 }}
-      >
-        <div className="p-6">{children}</div>
-      </main>
     </>
   );
 }

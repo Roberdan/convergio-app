@@ -40,7 +40,7 @@ export function ThemeProvider({ children, defaultTheme = "navy" }: {
 }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window === "undefined") return defaultTheme;
-    return getStoredTheme() ?? getSystemTheme();
+    return getStoredTheme() ?? defaultTheme;
   });
 
   useEffect(() => {
