@@ -36,26 +36,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="navy"
-      className={`${inter.variable} ${outfit.variable} ${barlowCondensed.variable} h-full antialiased dark`}
+      className={`${inter.variable} ${outfit.variable} ${barlowCondensed.variable} h-full antialiased`}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: `
-          (function(){
-            try {
-              var t = localStorage.getItem('convergio-theme');
-              if (t && ['light','dark','navy','colorblind'].indexOf(t) !== -1) {
-                document.documentElement.setAttribute('data-theme', t);
-                if (t === 'light') {
-                  document.documentElement.classList.remove('dark');
-                } else {
-                  document.documentElement.classList.add('dark');
-                }
-              }
-            } catch(e) {}
-          })();
-        `}} />
-      </head>
       <body className="min-h-full">
         <ThemeProvider defaultTheme="navy">
           <TooltipProvider>

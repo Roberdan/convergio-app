@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
+import { ThemeProvider as NextThemesProvider, useTheme as useNextTheme } from "next-themes";
 
 const THEMES = ["light", "dark", "navy", "colorblind"] as const;
 export type Theme = (typeof THEMES)[number];
@@ -13,49 +14,46 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-function getSystemTheme(): Theme {
-  if (typeof window === "undefined") return "navy";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
-function getStoredTheme(): Theme | null {
-  if (typeof window === "undefined") return null;
-  const stored = localStorage.getItem("convergio-theme");
-  if (stored && THEMES.includes(stored as Theme)) return stored as Theme;
-  return null;
-}
-
-function applyTheme(theme: Theme) {
+function applyDarkClass(theme: string | undefined) {
+  if (typeof document === "undefined") return;
   const html = document.documentElement;
-  html.setAttribute("data-theme", theme);
-  html.classList.remove("dark");
   if (theme === "dark" || theme === "navy" || theme === "colorblind") {
     html.classList.add("dark");
+  } else {
+    html.classList.remove("dark");
   }
+}
+
+function ThemeBridge({ children }: { children: React.ReactNode }) {
+  const { theme: rawTheme, setTheme: setNextTheme } = useNextTheme();
+  const theme = (THEMES.includes(rawTheme as Theme) ? rawTheme : "navy") as Theme;
+
+  const setTheme = useCallback((next: Theme) => {
+    setNextTheme(next);
+    applyDarkClass(next);
+  }, [setNextTheme]);
+
+  const value = useMemo(() => ({ theme, setTheme, themes: THEMES }), [theme, setTheme]);
+
+  return <ThemeContext value={value}>{children}</ThemeContext>;
 }
 
 export function ThemeProvider({ children, defaultTheme = "navy" }: {
   children: React.ReactNode;
   defaultTheme?: Theme;
 }) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === "undefined") return defaultTheme;
-    return getStoredTheme() ?? defaultTheme;
-  });
-
-  useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
-
-  const setTheme = useCallback((next: Theme) => {
-    setThemeState(next);
-    applyTheme(next);
-    localStorage.setItem("convergio-theme", next);
-  }, []);
-
-  const value = useMemo(() => ({ theme, setTheme, themes: THEMES }), [theme, setTheme]);
-
-  return <ThemeContext value={value}>{children}</ThemeContext>;
+  return (
+    <NextThemesProvider
+      attribute="data-theme"
+      defaultTheme={defaultTheme}
+      themes={[...THEMES]}
+      disableTransitionOnChange={false}
+      enableSystem={false}
+      storageKey="convergio-theme"
+    >
+      <ThemeBridge>{children}</ThemeBridge>
+    </NextThemesProvider>
+  );
 }
 
 export function useTheme() {
