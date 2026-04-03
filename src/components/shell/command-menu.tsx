@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import {
   BarChart3,
@@ -14,7 +14,6 @@ import {
   Moon,
   Navigation,
   Network,
-  Palette,
   Settings,
   Shield,
   Sun,
@@ -23,7 +22,7 @@ import {
 } from "lucide-react"
 
 import {
-  CommandDialog,
+  Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
@@ -64,27 +63,40 @@ const THEME_ITEMS = [
   { label: "Colorblind", value: "colorblind" as const, icon: Shield },
 ] as const
 
-const ACTION_ITEMS = [] as const
-
 export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
   const router = useRouter()
   const { setTheme } = useTheme()
   const [query, setQuery] = useState("")
+  const panelRef = useRef<HTMLDivElement>(null)
   const results = query.length >= 2 ? searchCatalog(query).slice(0, 8) : []
 
-  // Global Cmd-K / Ctrl-K shortcut
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
         onOpenChange(!open)
       }
+      if (e.key === "Escape" && open) {
+        e.preventDefault()
+        onOpenChange(false)
+      }
     }
     document.addEventListener("keydown", onKeyDown)
     return () => document.removeEventListener("keydown", onKeyDown)
   }, [open, onOpenChange])
 
-  const close = useCallback(() => onOpenChange(false), [onOpenChange])
+  useEffect(() => {
+    if (open) {
+      requestAnimationFrame(() => {
+        panelRef.current?.querySelector<HTMLInputElement>("input")?.focus()
+      })
+    }
+  }, [open])
+
+  const close = useCallback(() => {
+    onOpenChange(false)
+    setQuery("")
+  }, [onOpenChange])
 
   const handleNav = useCallback(
     (href: string) => {
@@ -102,64 +114,78 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
     [setTheme, close],
   )
 
+  if (!open) return null
+
   return (
-    <CommandDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      title="Command Palette"
-      description="Search for a command to run..."
-      className="sm:max-w-lg backdrop-blur-sm"
-      shouldFilter={false}
-    >
-      <CommandInput placeholder="Type a command or search..." value={query} onValueChange={setQuery} />
-      <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 z-50 bg-black/20 supports-backdrop-filter:backdrop-blur-xs"
+        onClick={close}
+        aria-hidden="true"
+      />
+      {/* Dropdown anchored below header, aligned to search bar */}
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-label="Command Palette"
+        className="fixed top-[52px] left-1/2 z-50 w-full max-w-md -translate-x-1/2 p-2"
+      >
+        <Command
+          shouldFilter={false}
+          className="rounded-xl border border-[var(--mn-border)] bg-popover text-popover-foreground shadow-lg ring-1 ring-foreground/10"
+        >
+          <CommandInput placeholder="Type a command or search..." value={query} onValueChange={setQuery} />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
 
-        {results.length > 0 ? (
-          <CommandGroup heading="Components">
-            {results.map((entry) => (
-              <CommandItem key={entry.slug} onSelect={() => handleNav(`/showcase/${entry.category}#${entry.slug}`)}>
-                <span className="text-xs font-mono text-muted-foreground w-4">Mn</span>
-                <span>{entry.name}</span>
-                <span className="ml-auto text-xs text-muted-foreground truncate max-w-[200px]">{entry.description}</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        ) : (
-          <>
-            <CommandGroup heading="Navigation">
-              {NAV_ITEMS.map((item) => (
-                <CommandItem key={item.href} onSelect={() => handleNav(item.href)}>
-                  <item.icon className="size-4 text-muted-foreground" />
-                  <span>{item.label}</span>
-                </CommandItem>
-              ))}
-            </CommandGroup>
+            {results.length > 0 ? (
+              <CommandGroup heading="Components">
+                {results.map((entry) => (
+                  <CommandItem key={entry.slug} onSelect={() => handleNav(`/showcase/${entry.category}#${entry.slug}`)}>
+                    <span className="text-xs font-mono text-muted-foreground w-4">Mn</span>
+                    <span>{entry.name}</span>
+                    <span className="ml-auto text-xs text-muted-foreground truncate max-w-[200px]">{entry.description}</span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ) : (
+              <>
+                <CommandGroup heading="Navigation">
+                  {NAV_ITEMS.map((item) => (
+                    <CommandItem key={item.href} onSelect={() => handleNav(item.href)}>
+                      <item.icon className="size-4 text-muted-foreground" />
+                      <span>{item.label}</span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
 
-            <CommandSeparator />
+                <CommandSeparator />
 
-            <CommandGroup heading="Categories">
-              {CATEGORY_ITEMS.map((item) => (
-                <CommandItem key={item.href} onSelect={() => handleNav(item.href)}>
-                  <item.icon className="size-4 text-muted-foreground" />
-                  <span>{item.label}</span>
-                </CommandItem>
-              ))}
-            </CommandGroup>
+                <CommandGroup heading="Categories">
+                  {CATEGORY_ITEMS.map((item) => (
+                    <CommandItem key={item.href} onSelect={() => handleNav(item.href)}>
+                      <item.icon className="size-4 text-muted-foreground" />
+                      <span>{item.label}</span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
 
-            <CommandSeparator />
+                <CommandSeparator />
 
-            <CommandGroup heading="Theme">
-              {THEME_ITEMS.map((item) => (
-                <CommandItem key={item.value} onSelect={() => handleTheme(item.value)}>
-                  <item.icon className="size-4 text-muted-foreground" />
-                  <span>{item.label}</span>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </>
-        )}
-      </CommandList>
-    </CommandDialog>
+                <CommandGroup heading="Theme">
+                  {THEME_ITEMS.map((item) => (
+                    <CommandItem key={item.value} onSelect={() => handleTheme(item.value)}>
+                      <item.icon className="size-4 text-muted-foreground" />
+                      <span>{item.label}</span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </>
+            )}
+          </CommandList>
+        </Command>
+      </div>
+    </>
   )
 }

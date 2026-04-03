@@ -17,7 +17,7 @@ export default function ShowcasePage() {
   return (
     <div className="space-y-12 pb-12">
       {/* Hero */}
-      <header className="text-center space-y-4 py-8">
+      <section className="text-center space-y-4 py-8">
         <h1 className="text-4xl font-bold tracking-tight">
           Maranello <span className="text-primary">Design System</span>
         </h1>
@@ -25,7 +25,7 @@ export default function ShowcasePage() {
           A comprehensive React component library for building agentic AI platforms.
           Explore {TOTAL_COMPONENTS}+ production-ready components across {TOTAL_CATEGORIES} categories.
         </p>
-      </header>
+      </section>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto">
