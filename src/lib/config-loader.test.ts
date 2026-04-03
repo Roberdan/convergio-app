@@ -8,12 +8,14 @@ import YAML from "yaml";
  * content and verify config transformation logic.
  */
 
-function mockFs(yamlContent: string) {
+function mockFs(yamlContent: string, fileExists = true) {
   const readFileSync = () => yamlContent;
+  const existsSync = () => fileExists;
   const watch = () => ({ close: () => {} });
   vi.doMock("fs", () => ({
-    default: { readFileSync, watch },
+    default: { readFileSync, existsSync, watch },
     readFileSync,
+    existsSync,
     watch,
   }));
 }
@@ -23,13 +25,27 @@ describe("config-loader functions", () => {
     vi.resetModules();
   });
 
+  it("loadAppConfig returns defaults when no config file exists", async () => {
+    mockFs("", false);
+
+    const { loadAppConfig, loadNavSections, loadAIConfig, loadPageRoutes } =
+      await import("./config-loader");
+    const config = loadAppConfig();
+
+    expect(config.name).toBe("Maranello");
+    expect(config.defaultTheme).toBe("navy");
+    expect(loadNavSections()).toEqual([]);
+    expect(loadAIConfig().agents).toEqual([]);
+    expect(loadPageRoutes()).toEqual([]);
+  });
+
   it("loadAppConfig returns defaults when app section is missing", async () => {
     mockFs(YAML.stringify({}));
 
     const { loadAppConfig } = await import("./config-loader");
     const config = loadAppConfig();
 
-    expect(config.name).toBe("App");
+    expect(config.name).toBe("Maranello");
     expect(config.defaultTheme).toBe("navy");
   });
 
@@ -144,6 +160,6 @@ describe("config-loader functions", () => {
     mockFs(YAML.stringify({ app: { name: "" } }));
 
     const { loadAppConfig } = await import("./config-loader");
-    expect(() => loadAppConfig()).toThrow("Invalid convergio.yaml");
+    expect(() => loadAppConfig()).toThrow("Invalid config");
   });
 });

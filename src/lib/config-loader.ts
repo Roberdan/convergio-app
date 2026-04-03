@@ -1,4 +1,4 @@
-import { readFileSync, watch } from "fs";
+import { existsSync, readFileSync, watch } from "fs";
 import { join } from "path";
 import YAML from "yaml";
 import type { AppConfig, NavSection, PageConfig, PageRow } from "@/types";
@@ -8,7 +8,7 @@ import { rawConfigSchema, type ValidatedConfig } from "./config-schema";
 /**
  * Unified configuration loader.
  *
- * Reads `convergio.yaml` from the project root and returns typed config
+ * Reads the YAML config from the project root and returns typed config
  * objects for app, navigation, pages, and AI agents.
  *
  * Used at build time (server components / generateStaticParams) and at
@@ -17,29 +17,39 @@ import { rawConfigSchema, type ValidatedConfig } from "./config-schema";
  * Config is validated against a Zod schema at load time.
  * In dev mode, a file watcher invalidates the cache on changes.
  *
- * To override the config path: set CONVERGIO_CONFIG_PATH env var.
+ * Config path resolution (first match wins):
+ *   1. MARANELLO_CONFIG_PATH env var
+ *   2. CONVERGIO_CONFIG_PATH env var (backward compat)
+ *   3. convergio.yaml in project root
+ *
+ * If no config file is found the loader returns sensible defaults
+ * (app name "Maranello", navy theme, empty navigation/pages/AI).
  *
  * NOTE: `api.baseUrl` and `theme.storageKey` in the YAML are validated
  * but not consumed by the runtime — API URL comes from env.ts (API_URL),
  * and the theme storage key is hardcoded in theme-script.tsx.
  */
 
+const DEFAULTS: ValidatedConfig = Object.freeze({});
+
 let cached: ValidatedConfig | null = null;
 let watcherInitialized = false;
 
 function getConfigPath(): string {
   return (
+    process.env.MARANELLO_CONFIG_PATH ??
     process.env.CONVERGIO_CONFIG_PATH ??
     join(/* turbopackIgnore: true */ process.cwd(), "convergio.yaml")
   );
 }
 
-/** In dev mode, watch convergio.yaml and invalidate cache on change. */
+/** In dev mode, watch the config file and invalidate cache on change. */
 function initDevWatcher(): void {
   if (watcherInitialized || process.env.NODE_ENV !== "development") return;
   watcherInitialized = true;
   try {
     const configPath = getConfigPath();
+    if (!existsSync(configPath)) return;
     watch(configPath, { persistent: false }, (eventType) => {
       if (eventType === "change") {
         cached = null;
@@ -54,6 +64,12 @@ function loadRaw(): ValidatedConfig {
   initDevWatcher();
   if (cached) return cached;
   const configPath = getConfigPath();
+
+  if (!existsSync(configPath)) {
+    cached = DEFAULTS;
+    return cached;
+  }
+
   const content = readFileSync(configPath, "utf-8");
   const parsed: unknown = YAML.parse(content);
   const result = rawConfigSchema.safeParse(parsed);
@@ -61,24 +77,24 @@ function loadRaw(): ValidatedConfig {
     const issues = result.error.issues
       .map((i) => `  ${i.path.join(".")}: ${i.message}`)
       .join("\n");
-    throw new Error(`Invalid convergio.yaml:\n${issues}`);
+    throw new Error(`Invalid config:\n${issues}`);
   }
   cached = result.data;
   return cached;
 }
 
-/** Load app config from convergio.yaml */
+/** Load app config from the config file. */
 export function loadAppConfig(): AppConfig {
   const raw = loadRaw();
   return {
-    name: raw.app?.name ?? "App",
+    name: raw.app?.name ?? "Maranello",
     description: raw.app?.description,
     logo: raw.app?.logo,
     defaultTheme: (raw.theme?.default as AppConfig["defaultTheme"]) ?? "navy",
   };
 }
 
-/** Load navigation sections from convergio.yaml */
+/** Load navigation sections from the config file. */
 export function loadNavSections(): NavSection[] {
   const raw = loadRaw();
   return (raw.navigation?.sections ?? []).map((s) => ({
@@ -93,7 +109,7 @@ export function loadNavSections(): NavSection[] {
   }));
 }
 
-/** Load a page config by route path from convergio.yaml */
+/** Load a page config by route path from the config file. */
 export function loadPageConfig(route: string): PageConfig | null {
   const raw = loadRaw();
   const pages = raw.pages;
@@ -112,7 +128,7 @@ export function loadPageConfig(route: string): PageConfig | null {
   };
 }
 
-/** Load AI config from convergio.yaml */
+/** Load AI config from the config file. */
 export function loadAIConfig(): AIConfig {
   const raw = loadRaw();
   return {
@@ -131,7 +147,7 @@ export function loadAIConfig(): AIConfig {
   };
 }
 
-/** Load all route paths defined in convergio.yaml pages */
+/** Load all route paths defined in config pages. */
 export function loadPageRoutes(): string[] {
   const raw = loadRaw();
   return Object.keys(raw.pages ?? {});
