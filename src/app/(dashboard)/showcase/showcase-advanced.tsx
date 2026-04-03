@@ -13,6 +13,8 @@ import {
   MnSettingsPanel,
   MnVoiceInput,
 } from '@/components/maranello';
+import { ShowcaseAdvancedLayoutNav } from './showcase-advanced-layout-nav';
+import { ShowcaseAdvancedOps } from './showcase-advanced-ops';
 
 export function ShowcaseAdvanced() {
   const [shellCollapsed, setShellCollapsed] = useState(false);
@@ -161,6 +163,9 @@ export function ShowcaseAdvanced() {
             </MnAdminShell>
           </div>
         </div>
+
+        <ShowcaseAdvancedLayoutNav />
+        <ShowcaseAdvancedOps />
       </div>
     </section>
   );

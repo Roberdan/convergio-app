@@ -2,6 +2,7 @@
 
 import { ShowcaseInteractiveAgents } from './showcase-interactive-agents';
 import { ShowcaseInteractiveControls } from './showcase-interactive-controls';
+import { ShowcaseInteractiveTheme } from './showcase-interactive-theme';
 
 /** Section: Interactive, Admin & Layout components. */
 export function ShowcaseInteractive() {
@@ -13,6 +14,7 @@ export function ShowcaseInteractive() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ShowcaseInteractiveAgents />
         <ShowcaseInteractiveControls />
+        <ShowcaseInteractiveTheme />
       </div>
     </section>
   );

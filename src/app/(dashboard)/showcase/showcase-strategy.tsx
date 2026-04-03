@@ -9,7 +9,11 @@ import {
   MnBusinessModelCanvas,
   MnNineBoxMatrix,
   MnRiskMatrix,
+  MnCustomerJourney,
+  MnOkr,
 } from '@/components/maranello';
+import type { Objective } from '@/components/maranello';
+import type { JourneyPhase } from '@/components/maranello/strategy/mn-customer-journey';
 import {
   strategyCanvasSegments,
   swotData,
@@ -20,6 +24,47 @@ import {
   nineBoxItems,
   riskItems,
 } from './showcase-strategy-data';
+
+const customerPhases: JourneyPhase[] = [
+  {
+    id: 'discover', label: 'Discovery',
+    engagements: [
+      { id: 'e1', title: 'Inbound demo request', status: 'completed', type: 'opportunity', assignee: 'Sarah Chen', date: '2025-06-01' },
+      { id: 'e2', title: 'Technical deep-dive call', status: 'completed', type: 'meeting', assignee: 'Marco Silva', date: '2025-06-05' },
+    ],
+  },
+  {
+    id: 'evaluate', label: 'Evaluation',
+    engagements: [
+      { id: 'e3', title: 'POC environment setup', status: 'active', type: 'task', assignee: 'Arjun Patel', date: '2025-06-12' },
+      { id: 'e4', title: 'Security review', status: 'pending', type: 'ticket', date: '2025-06-18' },
+    ],
+  },
+  {
+    id: 'close', label: 'Close',
+    engagements: [
+      { id: 'e5', title: 'Enterprise contract negotiation', status: 'pending', type: 'contract', assignee: 'Elena Vasquez', date: '2025-07-01' },
+    ],
+  },
+];
+
+const okrObjectives: Objective[] = [
+  {
+    id: 'o1', title: 'Scale mesh network to 50 nodes', status: 'on-track',
+    keyResults: [
+      { id: 'kr1', title: 'Deploy nodes in 3 new regions', current: 2, target: 3 },
+      { id: 'kr2', title: 'Achieve 99.95% uptime SLA', current: 99.92, target: 99.95, unit: '%' },
+      { id: 'kr3', title: 'Reduce inter-node latency to <50ms', current: 62, target: 50, unit: 'ms' },
+    ],
+  },
+  {
+    id: 'o2', title: 'Improve agent task completion rate',
+    keyResults: [
+      { id: 'kr4', title: 'Increase success rate', current: 94, target: 98, unit: '%' },
+      { id: 'kr5', title: 'Reduce average resolution time', current: 45, target: 30, unit: 's' },
+    ],
+  },
+];
 
 /** Section: W5 Strategy & Business Frameworks. */
 export function ShowcaseStrategy() {
@@ -85,6 +130,18 @@ export function ShowcaseStrategy() {
         <div className="rounded-lg border border-border bg-card p-4 space-y-3 md:col-span-2">
           <h3 className="text-sm font-medium text-muted-foreground">MnBusinessModelCanvas</h3>
           <MnBusinessModelCanvas blocks={bmcBlocks} editable={false} />
+        </div>
+
+        {/* Customer Journey */}
+        <div className="rounded-lg border border-border bg-card p-4 space-y-3 md:col-span-2">
+          <h3 className="text-sm font-medium text-muted-foreground">MnCustomerJourney</h3>
+          <MnCustomerJourney phases={customerPhases} orientation="horizontal" />
+        </div>
+
+        {/* OKR Dashboard */}
+        <div className="rounded-lg border border-border bg-card p-4 space-y-3 md:col-span-2">
+          <h3 className="text-sm font-medium text-muted-foreground">MnOkr</h3>
+          <MnOkr objectives={okrObjectives} title="Q3 2025 Objectives" period="Q3 2025" />
         </div>
       </div>
     </section>
