@@ -28,7 +28,7 @@ export function ShowcaseNetwork() {
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Mesh Network */}
-        <div className="rounded-lg border p-4 space-y-3">
+        <div className="rounded-lg border p-4 space-y-3 md:col-span-2">
           <h3 className="text-sm font-medium text-muted-foreground">MnMeshNetwork</h3>
           <MnMeshNetwork nodes={meshNodes} edges={meshEdges} ariaLabel="Convergio mesh topology" />
         </div>

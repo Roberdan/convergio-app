@@ -91,20 +91,36 @@ export const activityItems: ActivityItem[] = [
 /* ── Network ── */
 
 export const meshNodes: MeshNode[] = [
-  { id: 'm5max', label: 'M5 Max', status: 'online', type: 'coordinator' },
-  { id: 'm1pro', label: 'M1 Pro', status: 'online', type: 'kernel' },
-  { id: 'omarchy', label: 'Omarchy', status: 'offline', type: 'worker' },
-  { id: 'relay-eu', label: 'Relay EU', status: 'degraded', type: 'relay' },
+  {
+    id: 'm3max', label: 'M3-MAX', status: 'online', type: 'coordinator',
+    location: 'local', agents: ['CLAUDE', 'COPILOT'], cpu: 42, ram: 61,
+    activeTasks: 5, delegatedTasks: 2, syncPercent: 98, latencyMs: 1,
+  },
+  {
+    id: 'm1mario', label: 'M1-MARIO', status: 'online', type: 'worker',
+    location: 'local', agents: ['OLLAMA'], cpu: 78, ram: 85,
+    activeTasks: 3, driftPercent: 0.2, latencyMs: 2,
+  },
+  {
+    id: 'omarchy', label: 'OMARCHY', status: 'offline', type: 'worker',
+    location: 'remote', agents: ['COPILOT'], cpu: 0, ram: 12,
+    activeTasks: 0, coldStandby: true,
+  },
+  {
+    id: 'relay-eu', label: 'RELAY-EU', status: 'degraded', type: 'relay',
+    location: 'remote', agents: ['CLAUDE'], cpu: 55, ram: 44,
+    activeTasks: 1, syncPercent: 87, driftPercent: 1.4, latencyMs: 45,
+  },
 ];
 
 export const meshEdges: MeshEdge[] = [
-  { from: 'm5max', to: 'm1pro', latency: 2 },
-  { from: 'm5max', to: 'relay-eu', latency: 45 },
-  { from: 'm1pro', to: 'omarchy', latency: 0 },
+  { from: 'm3max', to: 'm1mario', latency: 2 },
+  { from: 'm3max', to: 'relay-eu', latency: 45 },
+  { from: 'm1mario', to: 'omarchy', latency: 0 },
   { from: 'relay-eu', to: 'omarchy', latency: 0 },
 ];
 
-export const hubSpokeHub: HubSpokeHub = { label: 'M5 Max Coordinator', status: 'online' };
+export const hubSpokeHub: HubSpokeHub = { label: 'M3 Max Coordinator', status: 'online' };
 
 export const hubSpokeSpokes: HubSpokeSpoke[] = [
   { label: 'Kernel (M1 Pro)', status: 'online', connected: true },
@@ -114,8 +130,8 @@ export const hubSpokeSpokes: HubSpokeSpoke[] = [
 ];
 
 export const deployments: Deployment[] = [
-  { node: 'm5max', version: '20.8.0', status: 'deployed', timestamp: '2026-04-01T09:00:00Z', hash: 'a3b7c92' },
-  { node: 'm1pro', version: '20.8.0', status: 'deployed', timestamp: '2026-04-01T09:05:00Z', hash: 'a3b7c92' },
+  { node: 'm3max', version: '20.8.0', status: 'deployed', timestamp: '2026-04-01T09:00:00Z', hash: 'a3b7c92' },
+  { node: 'm1mario', version: '20.8.0', status: 'deployed', timestamp: '2026-04-01T09:05:00Z', hash: 'a3b7c92' },
   { node: 'omarchy', version: '20.7.1', status: 'failed', timestamp: '2026-03-31T22:00:00Z', hash: 'f1e8d04' },
   { node: 'relay-eu', version: '20.8.0', status: 'rolling', timestamp: '2026-04-01T10:00:00Z', hash: 'a3b7c92' },
 ];

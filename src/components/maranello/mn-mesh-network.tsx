@@ -1,19 +1,12 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
-import {
-  type EdgeAnim,
-  type NodePos,
-  type Particle,
-  circleLayout,
-  drawFrame,
-  maybeSpawnParticle,
-  readPalette,
-  setupCanvas,
-} from "./mn-mesh-network.helpers"
+import { MnMeshNetworkToolbar, type MeshAction } from "./mn-mesh-network-toolbar"
+import { MnMeshNetworkCard } from "./mn-mesh-network-card"
+import { MnMeshNetworkCanvas } from "./mn-mesh-network-canvas"
 
 /* ── CVA wrapper ───────────────────────────────────────────── */
 const meshNetworkWrap = cva("relative overflow-hidden rounded-lg border bg-card", {
@@ -28,6 +21,16 @@ export interface MeshNode {
   label: string
   status: "online" | "offline" | "degraded"
   type: "coordinator" | "worker" | "kernel" | "relay"
+  location?: "local" | "remote"
+  agents?: string[]
+  cpu?: number
+  ram?: number
+  activeTasks?: number
+  delegatedTasks?: number
+  syncPercent?: number
+  driftPercent?: number
+  latencyMs?: number
+  coldStandby?: boolean
 }
 
 export interface MeshEdge {
@@ -42,9 +45,16 @@ export interface MnMeshNetworkProps
   nodes: MeshNode[]
   edges: MeshEdge[]
   onNodeSelect?: (node: MeshNode) => void
+  onAction?: (action: MeshAction) => void
+  onNodeAction?: (node: MeshNode, action: string) => void
   ariaLabel?: string
-  /** Maximum simultaneous data-flow particles. */
+  /** Maximum simultaneous data-flow particles (canvas mode). */
   maxParticles?: number
+}
+
+/** Nodes with extended fields render as HTML cards instead of canvas. */
+function hasExtendedData(nodes: MeshNode[]): boolean {
+  return nodes.some((n) => n.cpu != null || n.ram != null || (n.agents && n.agents.length > 0))
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -53,31 +63,22 @@ const STATUS_LABELS: Record<string, string> = {
   degraded: "Degraded",
 }
 
-const TYPE_RADIUS: Record<string, number> = {
-  coordinator: 18, worker: 13, kernel: 15, relay: 11,
-}
-
 /**
- * Canvas-based mesh network topology with animated data-flow
- * particles, node pulse/glow, and connection establishment.
+ * Mesh network topology — renders as HTML card grid when nodes
+ * have extended data (cpu/ram/agents), falls back to canvas animation.
  */
 export function MnMeshNetwork({
   nodes,
   edges,
   onNodeSelect,
+  onAction,
+  onNodeAction,
   ariaLabel = "Mesh network topology",
   maxParticles = 12,
   size = "fluid",
   className,
   ...rest
 }: MnMeshNetworkProps) {
-  const cvs = useRef<HTMLCanvasElement>(null)
-  const wrap = useRef<HTMLDivElement>(null)
-  const raf = useRef(0)
-  const lastTs = useRef(0)
-  const particlesRef = useRef<Particle[]>([])
-  const edgeAnimsRef = useRef<EdgeAnim[]>([])
-  const posRef = useRef(new Map<string, NodePos>())
   const [selected, setSelected] = useState<string | null>(null)
 
   const handleSelect = useCallback(
@@ -88,102 +89,8 @@ export function MnMeshNetwork({
     [onNodeSelect],
   )
 
-  // Build positions based on actual element size
-  const buildPositions = useCallback((w: number, h: number) => {
-    if (!nodes?.length) return;
-    const dim = Math.min(w, h);
-    const pts = circleLayout(nodes.length, w / 2, h / 2, dim * 0.35);
-    const map = new Map<string, NodePos>();
-    nodes.forEach((n, i) => {
-      map.set(n.id, { ...pts[i], pulsePhase: Math.random() * Math.PI * 2, established: 0 });
-    });
-    posRef.current = map;
-  }, [nodes]);
-
-  // Reset edge animations when edges change
-  useEffect(() => {
-    edgeAnimsRef.current = edges.map(() => ({ established: 0 }))
-    particlesRef.current = []
-  }, [edges])
-
-  // Animation loop
-  useEffect(() => {
-    const canvas = cvs.current
-    const host = wrap.current
-    if (!canvas || !host || !nodes?.length) return
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
-
-    const resize = () => {
-      const w = Math.max(200, canvas.clientWidth || host.clientWidth || 400)
-      const h = Math.max(200, canvas.clientHeight || host.clientHeight || 400)
-      setupCanvas(canvas, w, h)
-      buildPositions(w, h)
-    }
-
-    const palette = readPalette(host)
-
-    // Initial build with a short delay for layout to settle
-    resize()
-
-    const loop = (now: number) => {
-      const dt = Math.min(48, lastTs.current ? now - lastTs.current : 16)
-      lastTs.current = now
-      const w = canvas.clientWidth || 1
-      const h = canvas.clientHeight || 1
-
-      // Rebuild positions if they haven't been set yet
-      if (posRef.current.size === 0 && nodes.length > 0) {
-        buildPositions(w, h)
-      }
-
-      maybeSpawnParticle(particlesRef.current, edges, nodes, maxParticles)
-      drawFrame(
-        ctx, w, h, dt, now,
-        nodes, edges, posRef.current,
-        particlesRef.current, edgeAnimsRef.current,
-        selected, palette,
-      )
-      raf.current = requestAnimationFrame(loop)
-    }
-
-    resize()
-    raf.current = requestAnimationFrame(loop)
-    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => resize()) : null
-    ro?.observe(canvas)
-    return () => { cancelAnimationFrame(raf.current); ro?.disconnect() }
-  }, [nodes, edges, selected, maxParticles, buildPositions])
-
-  const handleCanvasClick = useCallback(
-    (e: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!cvs.current || !nodes?.length) return
-      const rect = cvs.current.getBoundingClientRect()
-      const mx = e.clientX - rect.left
-      const my = e.clientY - rect.top
-      for (const node of nodes) {
-        const pos = posRef.current.get(node.id)
-        if (!pos) continue
-        const r = TYPE_RADIUS[node.type] ?? 13
-        if (Math.hypot(mx - pos.x, my - pos.y) <= r + 4) {
-          handleSelect(node)
-          return
-        }
-      }
-    },
-    [nodes, handleSelect],
-  )
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if ((e.key === "Enter" || e.key === " ") && nodes?.length) {
-        e.preventDefault()
-        const idx = selected ? nodes.findIndex((n) => n.id === selected) : -1
-        const next = nodes[(idx + 1) % nodes.length]
-        if (next) handleSelect(next)
-      }
-    },
-    [nodes, selected, handleSelect],
-  )
+  const useCards = useMemo(() => hasExtendedData(nodes ?? []), [nodes])
+  const onlineCount = useMemo(() => (nodes ?? []).filter((n) => n.status === "online").length, [nodes])
 
   if (!nodes?.length) {
     return (
@@ -193,32 +100,53 @@ export function MnMeshNetwork({
     )
   }
 
-  return (
-    <div
-      ref={wrap}
-      role="img"
-      aria-label={ariaLabel}
-      className={cn(meshNetworkWrap({ size: size as WrapSize }), "p-4", className)}
-      {...rest}
-    >
-      <canvas
-        ref={cvs}
-        className="block w-full aspect-square"
-        onClick={handleCanvasClick}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-        aria-hidden="true"
-      />
+  if (useCards) {
+    return (
+      <div
+        role="region"
+        aria-label={ariaLabel}
+        className={cn(meshNetworkWrap({ size: size as WrapSize }), className)}
+        {...rest}
+      >
+        <MnMeshNetworkToolbar
+          onlineCount={onlineCount}
+          totalCount={nodes.length}
+          onAction={onAction}
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 p-4">
+          {nodes.map((node) => (
+            <MnMeshNetworkCard
+              key={node.id}
+              node={node}
+              selected={selected === node.id}
+              onSelect={handleSelect}
+              onAction={onNodeAction}
+            />
+          ))}
+        </div>
+        <ul className="sr-only" aria-label="Mesh nodes">
+          {nodes.map((n) => (
+            <li key={n.id}>
+              {n.label}: {STATUS_LABELS[n.status] ?? n.status} ({n.type})
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
 
-      {/* Screen-reader accessible list */}
-      <ul className="sr-only" aria-label="Mesh nodes">
-        {nodes.map((n) => (
-          <li key={n.id}>
-            {n.label}: {STATUS_LABELS[n.status] ?? n.status} ({n.type})
-          </li>
-        ))}
-      </ul>
-    </div>
+  return (
+    <MnMeshNetworkCanvas
+      nodes={nodes}
+      edges={edges}
+      selected={selected}
+      onNodeClick={handleSelect}
+      ariaLabel={ariaLabel}
+      maxParticles={maxParticles}
+      size={size}
+      className={className}
+      {...rest}
+    />
   )
 }
 
