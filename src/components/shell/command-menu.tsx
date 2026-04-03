@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import {
   BarChart3,
@@ -32,6 +32,7 @@ import {
   CommandSeparator,
 } from "@/components/ui/command"
 import { useTheme } from "@/components/theme/theme-provider"
+import { searchCatalog } from "@/lib/component-catalog"
 
 interface CommandMenuProps {
   open: boolean
@@ -70,6 +71,8 @@ const ACTION_ITEMS = [] as const
 export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
   const router = useRouter()
   const { setTheme } = useTheme()
+  const [query, setQuery] = useState("")
+  const results = query.length >= 2 ? searchCatalog(query).slice(0, 8) : []
 
   // Global Cmd-K / Ctrl-K shortcut
   useEffect(() => {
@@ -108,10 +111,26 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
       title="Command Palette"
       description="Search for a command to run..."
       className="sm:max-w-lg backdrop-blur-sm"
+      shouldFilter={false}
     >
-      <CommandInput placeholder="Type a command or search..." />
+      <CommandInput placeholder="Type a command or search..." value={query} onValueChange={setQuery} />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
+
+        {results.length > 0 && (
+          <>
+            <CommandGroup heading="Components">
+              {results.map((entry) => (
+                <CommandItem key={entry.slug} onSelect={() => handleNav(`/showcase/${entry.category}#${entry.slug}`)}>
+                  <span className="text-xs font-mono text-muted-foreground w-4">Mn</span>
+                  <span>{entry.name}</span>
+                  <span className="ml-auto text-xs text-muted-foreground truncate max-w-[200px]">{entry.description}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+            <CommandSeparator />
+          </>
+        )}
 
         <CommandGroup heading="Navigation">
           {NAV_ITEMS.map((item) => (
