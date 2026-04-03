@@ -41,8 +41,6 @@ interface CommandMenuProps {
 
 const NAV_ITEMS = [
   { label: "Home", href: "/", icon: Home },
-  { label: "Showcase", href: "/showcase", icon: Layout },
-  { label: "Theme Playground", href: "/showcase/themes", icon: Palette },
 ] as const
 
 const CATEGORY_ITEMS = [

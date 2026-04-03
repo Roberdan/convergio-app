@@ -63,7 +63,8 @@ export function render(
   unit?: string, lbl?: string, ab?: ArcBar, subs?: SubDial[],
   ir?: InnerRing, od?: Odometer, led?: StatusLed, tr?: Trend,
 ) {
-  const ctx = cvs.getContext("2d")!
+  const ctx = cvs.getContext("2d")
+  if (!ctx) return
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1
   if (px < 40) return
   cvs.width = px * dpr; cvs.height = px * dpr

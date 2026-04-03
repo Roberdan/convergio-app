@@ -29,8 +29,8 @@ function MnManettino({ positions = ["WET", "COMFORT", "SPORT", "RACE", "ESC OFF"
           const r = 70
           return (
             <button key={i} onClick={() => go(i)}
-              className={cn("absolute whitespace-nowrap text-[0.55rem] uppercase tracking-[.04em] -translate-x-1/2 -translate-y-1/2 transition-colors duration-150",
-                i === idx ? "font-bold text-[var(--mn-text)]" : "text-[var(--mn-text-muted)] hover:text-[var(--mn-text-secondary)]")}
+              className={cn("absolute whitespace-nowrap text-[0.65rem] uppercase tracking-[.04em] -translate-x-1/2 -translate-y-1/2 transition-colors duration-150",
+                i === idx ? "font-bold text-[var(--mn-text)]" : "font-medium text-[var(--mn-text-secondary)] hover:text-[var(--mn-text)]")}
               style={{ left: 80 + Math.cos(rad) * r, top: 80 + Math.sin(rad) * r }}>
               {p}
             </button>

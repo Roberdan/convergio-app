@@ -4,15 +4,13 @@ import type { NavSection } from "@/types";
 
 const sections: NavSection[] = [
   {
-    label: "Overview",
+    label: "Design System",
     items: [
       { id: "home", label: "Home", href: "/", iconName: "Home" },
-      { id: "showcase", label: "Showcase", href: "/showcase", iconName: "Layout" },
-      { id: "themes", label: "Themes", href: "/showcase/themes", iconName: "Palette" },
     ],
   },
   {
-    label: "Categories",
+    label: "Components",
     items: [
       { id: "agentic", label: "Agentic AI", href: "/showcase/agentic", iconName: "Brain" },
       { id: "data-display", label: "Data Display", href: "/showcase/data-display", iconName: "Table" },
@@ -25,7 +23,7 @@ const sections: NavSection[] = [
       { id: "network", label: "Network", href: "/showcase/network", iconName: "Network" },
       { id: "ops", label: "Operations", href: "/showcase/ops", iconName: "Settings" },
       { id: "strategy", label: "Strategy", href: "/showcase/strategy", iconName: "Target" },
-      { id: "theme-ctrl", label: "Theme Controls", href: "/showcase/theme", iconName: "Palette" },
+      { id: "theme-ctrl", label: "Theme & A11y", href: "/showcase/theme", iconName: "Palette" },
     ],
   },
 ];

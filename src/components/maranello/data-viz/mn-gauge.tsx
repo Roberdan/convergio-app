@@ -45,7 +45,7 @@ function MnGauge({
     const s = px(); if (!cvs.current || !wrap.current) return
     const pal = readPalette(wrap.current)
     const effectiveColor = color ?? pal.accent
-    const go = (p: number) => render(cvs.current!, pal, s, p, value, min, max, startAngle, endAngle, ticks, subticks, numbers, effectiveColor, unit, label, arcBar, subDials, innerRing, odometer, statusLed, trend)
+    const go = (p: number) => { if (!cvs.current) return; render(cvs.current, pal, s, p, value, min, max, startAngle, endAngle, ticks, subticks, numbers, effectiveColor, unit, label, arcBar, subDials, innerRing, odometer, statusLed, trend) }
     if (!animate) { go(1); return }
     const dur = 1400, t0 = performance.now()
     const tick = (now: number) => { const p = Math.min(1, (now - t0) / dur); go(ease(p)); if (p < 1) raf.current = requestAnimationFrame(tick) }
