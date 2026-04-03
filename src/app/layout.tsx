@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Outfit, Barlow_Condensed } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeScript } from "@/components/theme/theme-script";
+import { CanvasSafeArc } from "@/lib/canvas-safe-arc";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { loadAppConfig } from "@/lib/config-loader";
 import "./globals.css";
@@ -54,6 +55,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <ThemeProvider defaultTheme={appConfig.defaultTheme}>
+          <CanvasSafeArc />
           <TooltipProvider>
             {children}
           </TooltipProvider>

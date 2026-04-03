@@ -100,6 +100,7 @@ function render(
 
   const ctx = cvs.getContext("2d")
   if (!ctx || n === 0) return
+  if (w < 40 || logicalH < 40) return
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
   ctx.clearRect(0, 0, w, logicalH)
 

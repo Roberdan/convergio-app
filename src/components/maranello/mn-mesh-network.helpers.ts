@@ -42,7 +42,7 @@ const STATUS_KEY: Record<string, "ok" | "warning" | "danger"> = {
 const TYPE_RADIUS: Record<string, number> = { coordinator: 18, worker: 13, kernel: 15, relay: 11 }
 
 function disc(ctx: CanvasRenderingContext2D, x: number, y: number, r: number): void {
-  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2)
+  ctx.beginPath(); ctx.arc(x, y, Math.max(0, r), 0, Math.PI * 2)
 }
 
 /* ── Layout ────────────────────────────────────────────────── */

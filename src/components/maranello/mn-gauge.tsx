@@ -62,6 +62,7 @@ function render(
 ) {
   const ctx = cvs.getContext("2d")!
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1
+  if (px < 40) return
   cvs.width = px * dpr; cvs.height = px * dpr
   cvs.style.width = `${px}px`; cvs.style.height = `${px}px`
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0)

@@ -72,7 +72,7 @@ export function drawFrame(
     ctx.shadowColor = wv.color
     ctx.shadowBlur = 10
     ctx.beginPath()
-    ctx.arc(wv.x, wv.y, wv.radius, 0, Math.PI * 2)
+    ctx.arc(wv.x, wv.y, Math.max(0, wv.radius), 0, Math.PI * 2)
     ctx.stroke()
     ctx.restore()
   }
@@ -81,11 +81,12 @@ export function drawFrame(
   for (let i = 0; i < s.nodes.length; i++) {
     const n = s.nodes[i]
     const sz = n.size * 8
-    const pulse =
+    const pulse = Math.max(0,
       sz * 0.3 +
       Math.sin(now * 0.002 * s.pulseSpeed + n.phase) * 1.4 +
       n.energy * 3.2 +
       (s.hovered === i ? 2 : 0)
+    )
     ctx.save()
     ctx.fillStyle = toAlpha(n.color, 0.2)
     ctx.shadowColor = n.color

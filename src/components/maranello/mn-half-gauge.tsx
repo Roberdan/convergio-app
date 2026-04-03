@@ -73,6 +73,7 @@ function render(
 
   const cx = w / 2, cy = h - 10
   const radius = Math.max(0, Math.min(w / 2, h) - 16), lineW = radius * thickness
+  if (radius < 1) return
   const startA = Math.PI, range = max - min || 1
   const pct = Math.max(0, Math.min(1, (value - min) / range)) * prog
 

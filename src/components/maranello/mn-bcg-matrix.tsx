@@ -76,6 +76,7 @@ function render(
   const el = cvs.parentElement ?? cvs
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1
   const w = Math.max(cvs.getBoundingClientRect().width, 200), h = cvs.height / dpr
+  if (w < 40 || h < 40) return
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h)
 
   const tm = cssv(el, "--mn-text-muted", "#888"), bd = cssv(el, "--mn-border", "#3a3a3a")

@@ -94,6 +94,7 @@ function drawFrame(
   ctx: CanvasRenderingContext2D, w: number, h: number, positions: NodePos[],
   connections: BrainConnection[], hovId: string | null, pulse: number, el: Element,
 ): void {
+  if (w < 40 || h < 40) return;
   ctx.clearRect(0, 0, w, h)
   const posMap = new Map(positions.map((p) => [p.node.id, p]))
   const rc = (t: string, fb: string) => resolveColor(el, t, fb)

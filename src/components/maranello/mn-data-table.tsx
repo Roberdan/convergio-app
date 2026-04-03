@@ -48,7 +48,7 @@ function ProgressBarCell({ value }: { value: unknown }) {
 }
 
 function SparklineCell({ value }: { value: unknown }) {
-  const data = Array.isArray(value) ? (value as number[]) : []
+  const data = Array.isArray(value) ? (value as number[]).filter(v => typeof v === 'number' && !Number.isNaN(v)) : []
   if (data.length < 2) return <span className="text-[var(--mn-text-muted)]">{"\u2014"}</span>
   const lo = Math.min(...data), hi = Math.max(...data), range = hi - lo || 1, h = 20, w = 60
   const pts = data.map((v, i) => `${(i / (data.length - 1)) * w},${h - ((v - lo) / range) * h}`).join(" ")

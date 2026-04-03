@@ -41,7 +41,7 @@ function drawParticle(
 ): void {
   ctx.save()
   if (glow) { ctx.shadowColor = color; ctx.shadowBlur = r * 3 }
-  ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill()
+  ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, Math.max(0, r), 0, Math.PI * 2); ctx.fill()
   if (label) {
     ctx.shadowBlur = 0; ctx.fillStyle = "#05070c"
     ctx.font = `600 ${Math.max(9, r * 2.1)}px Inter,sans-serif`
@@ -97,7 +97,7 @@ export function drawFrame(
     ctx.strokeStyle = colorAlpha(fl.color, fl.life * 0.75)
     ctx.lineWidth = 1.5 + fl.life * 2
     if (o.glow) { ctx.shadowColor = fl.color; ctx.shadowBlur = 10 * fl.life }
-    ctx.beginPath(); ctx.arc(fl.x, fl.y, fl.radius, 0, Math.PI * 2); ctx.stroke()
+    ctx.beginPath(); ctx.arc(fl.x, fl.y, Math.max(0, fl.radius), 0, Math.PI * 2); ctx.stroke()
     ctx.restore()
   }
 
