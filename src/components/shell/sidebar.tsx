@@ -58,14 +58,11 @@ function useIsMobile(breakpoint = 768) {
   return mobile;
 }
 
-/* ── Footer section ── */
+/* ── Footer section (empty — available for downstream apps) ── */
 
 const footerSection: NavSection = {
   label: "Support",
-  items: [
-    { id: "settings", label: "Settings", href: "/settings", iconName: "Settings" },
-    { id: "help", label: "Help", href: "/help", iconName: "HelpCircle" },
-  ],
+  items: [],
 };
 
 /* ── Shared sidebar content (brand + nav + footer) ── */

@@ -1,11 +1,22 @@
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/shell/app-shell";
-import { loadAppConfig, loadNavSections } from "@/lib/config-loader";
+import { loadAppConfig } from "@/lib/config-loader";
 import { deleteSessionCookie } from "@/lib/session";
+import type { NavSection } from "@/types";
+
+const sections: NavSection[] = [
+  {
+    label: "Navigation",
+    items: [
+      { id: "home", label: "Home", href: "/", iconName: "Home" },
+      { id: "showcase", label: "Showcase", href: "/showcase", iconName: "Layout" },
+      { id: "preview", label: "Preview", href: "/preview", iconName: "Eye" },
+    ],
+  },
+];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const appConfig = loadAppConfig();
-  const sections = loadNavSections();
 
   async function handleLogout() {
     "use server";

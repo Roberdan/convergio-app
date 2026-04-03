@@ -6,26 +6,9 @@ test.beforeEach(async ({ context }) => {
 });
 
 const ALL_PAGES = [
-  { path: "/", name: "Dashboard" },
-  { path: "/dashboard", name: "Dashboard API" },
-  { path: "/agents", name: "Agents" },
-  { path: "/activity", name: "Activity" },
-  { path: "/plans", name: "Plans" },
-  { path: "/orgs", name: "Orgs" },
-  { path: "/mesh", name: "Mesh" },
-  { path: "/operations", name: "Operations" },
-  { path: "/ideas", name: "Ideas" },
-  { path: "/security", name: "Security" },
-  { path: "/notifications", name: "Notifications" },
-  { path: "/projects", name: "Projects" },
-  { path: "/strategy", name: "Strategy" },
-  { path: "/chat", name: "Chat" },
+  { path: "/", name: "Home" },
   { path: "/showcase", name: "Showcase" },
   { path: "/preview", name: "Preview" },
-  { path: "/components", name: "Components" },
-  { path: "/settings", name: "Settings" },
-  { path: "/docs", name: "Docs" },
-  { path: "/help", name: "Help" },
 ];
 
 function isInfraError(msg: string): boolean {

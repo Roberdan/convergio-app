@@ -2,14 +2,6 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useApiQuery } from "./use-api-query";
 
-vi.mock("@/lib/api", () => ({
-  ApiError: class extends Error {
-    status: number;
-    body: string;
-    constructor(s: number, b: string) { super(`API ${s}`); this.status = s; this.body = b; }
-  },
-}));
-
 afterEach(() => vi.restoreAllMocks());
 
 describe("useApiQuery", () => {

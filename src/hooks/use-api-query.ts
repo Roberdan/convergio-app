@@ -1,7 +1,17 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { ApiError } from "@/lib/api";
+
+/** Lightweight API error with status code and response body. */
+export class ApiError extends Error {
+  constructor(
+    public readonly status: number,
+    public readonly body: string,
+  ) {
+    super(`API ${status}`);
+    this.name = "ApiError";
+  }
+}
 
 interface UseApiQueryResult<T> {
   data: T | null;

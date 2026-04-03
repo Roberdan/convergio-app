@@ -28,8 +28,8 @@ const barlowCondensed = Barlow_Condensed({
 const appConfig = loadAppConfig();
 
 export const metadata: Metadata = {
-  title: appConfig.name,
-  description: appConfig.description ?? `${appConfig.name} Frontend`,
+  title: "Maranello Design System",
+  description: appConfig.description ?? "Maranello Design System",
 };
 
 export default function RootLayout({
