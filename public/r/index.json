@@ -30,9 +30,31 @@
     ]
   },
   {
+    "name": "mn-a11y",
+    "type": "registry:ui",
+    "description": "mn-a11y component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "theme/mn-a11y.tsx"
+    ]
+  },
+  {
+    "name": "mn-a11y-fab",
+    "type": "registry:ui",
+    "description": "mn-a11y-fab component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "theme/mn-a11y-fab.tsx"
+    ]
+  },
+  {
     "name": "mn-active-missions",
     "type": "registry:ui",
-    "description": "Active plan/mission tracker with progress bars and agent avatars.",
+    "description": "mn-active-missions component",
     "dependencies": [],
     "registryDependencies": [],
     "files": [
@@ -40,9 +62,45 @@
     ]
   },
   {
+    "name": "mn-activity-feed",
+    "type": "registry:ui",
+    "description": "mn-activity-feed component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "feedback/mn-activity-feed.tsx"
+    ]
+  },
+  {
+    "name": "mn-admin-shell",
+    "type": "registry:ui",
+    "description": "mn-admin-shell component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-admin-shell.tsx"
+    ]
+  },
+  {
+    "name": "mn-agent-cost-breakdown",
+    "type": "registry:ui",
+    "description": "mn-agent-cost-breakdown component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "financial/mn-agent-cost-breakdown.tsx"
+    ]
+  },
+  {
     "name": "mn-agent-trace",
     "type": "registry:ui",
-    "description": "Visualizes AI agent execution traces.",
+    "description": "mn-agent-trace component",
     "dependencies": [
       "class-variance-authority"
     ],
@@ -65,6 +123,28 @@
     ]
   },
   {
+    "name": "mn-async-select",
+    "type": "registry:ui",
+    "description": "mn-async-select component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-async-select.tsx"
+    ]
+  },
+  {
+    "name": "mn-audit-log",
+    "type": "registry:ui",
+    "description": "mn-audit-log component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "ops/mn-audit-log.tsx"
+    ]
+  },
+  {
     "name": "mn-augmented-brain",
     "type": "registry:ui",
     "description": "mn-augmented-brain component",
@@ -74,44 +154,6 @@
     "registryDependencies": [],
     "files": [
       "agentic/mn-augmented-brain.tsx"
-    ]
-  },
-  {
-    "name": "mn-chat",
-    "type": "registry:ui",
-    "description": "mn-chat component",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "agentic/mn-chat.tsx"
-    ]
-  },
-  {
-    "name": "mn-hub-spoke",
-    "type": "registry:ui",
-    "description": "Hub-and-spoke network diagram.",
-    "dependencies": [],
-    "registryDependencies": [],
-    "files": [
-      "agentic/mn-hub-spoke.tsx"
-    ]
-  },
-  {
-    "name": "mn-neural-nodes",
-    "type": "registry:ui",
-    "description": "mn-neural-nodes component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "agentic/mn-neural-nodes.tsx",
-      "agentic/mn-neural-nodes-draw.ts",
-      "agentic/mn-neural-nodes-force.ts",
-      "agentic/mn-neural-nodes-types.ts"
     ]
   },
   {
@@ -129,7 +171,7 @@
   {
     "name": "mn-badge",
     "type": "registry:ui",
-    "description": "`MnBadge` renders a small status label.",
+    "description": "mn-badge component",
     "dependencies": [
       "class-variance-authority"
     ],
@@ -139,128 +181,43 @@
     ]
   },
   {
-    "name": "mn-data-table",
+    "name": "mn-bcg-matrix",
     "type": "registry:ui",
-    "description": "mn-data-table component",
+    "description": "mn-bcg-matrix component",
     "dependencies": [
       "class-variance-authority"
     ],
     "registryDependencies": [],
     "files": [
-      "data-display/mn-data-table.tsx"
+      "strategy/mn-bcg-matrix.tsx"
     ]
   },
   {
-    "name": "mn-detail-panel",
+    "name": "mn-binnacle",
     "type": "registry:ui",
-    "description": "mn-detail-panel component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "data-display/mn-detail-panel.tsx"
-    ]
-  },
-  {
-    "name": "mn-flip-counter",
-    "type": "registry:ui",
-    "description": "Animated flip counter display.",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "data-display/mn-flip-counter.tsx"
-    ]
-  },
-  {
-    "name": "mn-icon",
-    "type": "registry:ui",
-    "description": "`MnIcon` renders a 24×24 stroke-based SVG icon from the Maranello catalog.",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "data-display/mn-icon.tsx",
-      "data-display/mn-icon-catalog.ts"
-    ]
-  },
-  {
-    "name": "mn-kpi-scorecard",
-    "type": "registry:ui",
-    "description": "mn-kpi-scorecard component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "data-display/mn-kpi-scorecard.tsx"
-    ]
-  },
-  {
-    "name": "mn-progress-ring",
-    "type": "registry:ui",
-    "description": "mn-progress-ring component",
+    "description": "mn-binnacle component",
     "dependencies": [],
     "registryDependencies": [],
     "files": [
-      "data-display/mn-progress-ring.tsx"
+      "ops/mn-binnacle.tsx"
     ]
   },
   {
-    "name": "mn-source-cards",
+    "name": "mn-breadcrumb",
     "type": "registry:ui",
-    "description": "Renders a list or grid of source citation cards.",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "data-display/mn-source-cards.tsx"
-    ]
-  },
-  {
-    "name": "mn-spinner",
-    "type": "registry:ui",
-    "description": "mn-spinner component",
-    "dependencies": [],
-    "registryDependencies": [],
-    "files": [
-      "data-display/mn-spinner.tsx"
-    ]
-  },
-  {
-    "name": "mn-token-meter",
-    "type": "registry:ui",
-    "description": "mn-token-meter component",
+    "description": "mn-breadcrumb component",
     "dependencies": [
       "class-variance-authority"
     ],
     "registryDependencies": [],
     "files": [
-      "data-display/mn-token-meter.tsx"
-    ]
-  },
-  {
-    "name": "mn-user-table",
-    "type": "registry:ui",
-    "description": "mn-user-table component",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "data-display/mn-user-table.tsx"
+      "navigation/mn-breadcrumb.tsx"
     ]
   },
   {
     "name": "mn-budget-treemap",
     "type": "registry:ui",
-    "description": "Squarified treemap layout (simplified strip algorithm).",
+    "description": "mn-budget-treemap component",
     "dependencies": [],
     "registryDependencies": [],
     "files": [
@@ -280,6 +237,29 @@
     ]
   },
   {
+    "name": "mn-business-model-canvas",
+    "type": "registry:ui",
+    "description": "mn-business-model-canvas component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-business-model-canvas.tsx"
+    ]
+  },
+  {
+    "name": "mn-calendar-range",
+    "type": "registry:ui",
+    "description": "mn-calendar-range component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-calendar-range.tsx"
+    ]
+  },
+  {
     "name": "mn-chart",
     "type": "registry:ui",
     "description": "mn-chart component",
@@ -292,17 +272,41 @@
     ]
   },
   {
+    "name": "mn-chat",
+    "type": "registry:ui",
+    "description": "mn-chat component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "agentic/mn-chat.tsx"
+    ]
+  },
+  {
     "name": "mn-cohort-grid",
     "type": "registry:ui",
     "description": "mn-cohort-grid component",
     "dependencies": [
       "class-variance-authority"
     ],
-    "registryDependencies": [
-      "mn-format"
-    ],
+    "registryDependencies": [],
     "files": [
       "data-viz/mn-cohort-grid.tsx"
+    ]
+  },
+  {
+    "name": "mn-command-palette",
+    "type": "registry:ui",
+    "description": "mn-command-palette component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "navigation/mn-command-palette.tsx",
+      "navigation/mn-command-palette.helpers.ts"
     ]
   },
   {
@@ -314,7 +318,8 @@
     ],
     "registryDependencies": [],
     "files": [
-      "data-viz/mn-confidence-chart.tsx"
+      "data-viz/mn-confidence-chart.tsx",
+      "data-viz/mn-confidence-chart.helpers.ts"
     ]
   },
   {
@@ -330,6 +335,230 @@
     ]
   },
   {
+    "name": "mn-customer-journey",
+    "type": "registry:ui",
+    "description": "mn-customer-journey component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-customer-journey.tsx"
+    ]
+  },
+  {
+    "name": "mn-customer-journey-map",
+    "type": "registry:ui",
+    "description": "mn-customer-journey-map component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-customer-journey-map.tsx"
+    ]
+  },
+  {
+    "name": "mn-dashboard",
+    "type": "registry:ui",
+    "description": "mn-dashboard component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-dashboard.tsx"
+    ]
+  },
+  {
+    "name": "mn-dashboard-renderer",
+    "type": "registry:ui",
+    "description": "mn-dashboard-renderer component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-dashboard-renderer.tsx"
+    ]
+  },
+  {
+    "name": "mn-dashboard-strip",
+    "type": "registry:ui",
+    "description": "mn-dashboard-strip component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-dashboard-strip.tsx"
+    ]
+  },
+  {
+    "name": "mn-data-table",
+    "type": "registry:ui",
+    "description": "mn-data-table component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-data-table.tsx",
+      "data-display/mn-data-table.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-date-picker",
+    "type": "registry:ui",
+    "description": "mn-date-picker component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-date-picker.tsx"
+    ]
+  },
+  {
+    "name": "mn-date-range-picker",
+    "type": "registry:ui",
+    "description": "mn-date-range-picker component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-date-range-picker.tsx",
+      "forms/mn-date-range-picker.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-decision-matrix",
+    "type": "registry:ui",
+    "description": "mn-decision-matrix component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-decision-matrix.tsx"
+    ]
+  },
+  {
+    "name": "mn-deployment-table",
+    "type": "registry:ui",
+    "description": "mn-deployment-table component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-deployment-table.tsx"
+    ]
+  },
+  {
+    "name": "mn-detail-panel",
+    "type": "registry:ui",
+    "description": "mn-detail-panel component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-detail-panel.tsx"
+    ]
+  },
+  {
+    "name": "mn-dropdown-menu",
+    "type": "registry:ui",
+    "description": "mn-dropdown-menu component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "theme/mn-dropdown-menu.tsx"
+    ]
+  },
+  {
+    "name": "mn-entity-workbench",
+    "type": "registry:ui",
+    "description": "mn-entity-workbench component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "ops/mn-entity-workbench.tsx"
+    ]
+  },
+  {
+    "name": "mn-facet-workbench",
+    "type": "registry:ui",
+    "description": "mn-facet-workbench component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "ops/mn-facet-workbench.tsx"
+    ]
+  },
+  {
+    "name": "mn-ferrari-control",
+    "type": "registry:ui",
+    "description": "mn-ferrari-control component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "theme/mn-ferrari-control.tsx",
+      "theme/mn-ferrari-control.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-filter-panel",
+    "type": "registry:ui",
+    "description": "mn-filter-panel component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-filter-panel.tsx"
+    ]
+  },
+  {
+    "name": "mn-finops",
+    "type": "registry:ui",
+    "description": "mn-finops component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "financial/mn-finops.tsx"
+    ]
+  },
+  {
+    "name": "mn-flip-counter",
+    "type": "registry:ui",
+    "description": "mn-flip-counter component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-flip-counter.tsx"
+    ]
+  },
+  {
+    "name": "mn-form-field",
+    "type": "registry:ui",
+    "description": "mn-form-field component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-form-field.tsx"
+    ]
+  },
+  {
     "name": "mn-funnel",
     "type": "registry:ui",
     "description": "mn-funnel component",
@@ -342,6 +571,19 @@
     ]
   },
   {
+    "name": "mn-gantt",
+    "type": "registry:ui",
+    "description": "mn-gantt component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "ops/mn-gantt.tsx",
+      "ops/mn-gantt.helpers.ts"
+    ]
+  },
+  {
     "name": "mn-gauge",
     "type": "registry:ui",
     "description": "mn-gauge component",
@@ -350,7 +592,20 @@
     ],
     "registryDependencies": [],
     "files": [
-      "data-viz/mn-gauge.tsx"
+      "data-viz/mn-gauge.tsx",
+      "data-viz/mn-gauge.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-grid-layout",
+    "type": "registry:ui",
+    "description": "mn-grid-layout component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-grid-layout.tsx"
     ]
   },
   {
@@ -378,9 +633,21 @@
     ]
   },
   {
+    "name": "mn-header-shell",
+    "type": "registry:ui",
+    "description": "mn-header-shell component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-header-shell.tsx"
+    ]
+  },
+  {
     "name": "mn-heatmap",
     "type": "registry:ui",
-    "description": "Blends between scale colors in the oklch perceptual color space.",
+    "description": "mn-heatmap component",
     "dependencies": [
       "class-variance-authority"
     ],
@@ -390,213 +657,61 @@
     ]
   },
   {
-    "name": "mn-pipeline-ranking",
+    "name": "mn-hub-spoke",
     "type": "registry:ui",
-    "description": "Pipeline/funnel visualization with conversion rates.",
-    "dependencies": [],
-    "registryDependencies": [
-      "mn-format"
-    ],
-    "files": [
-      "data-viz/mn-pipeline-ranking.tsx"
-    ]
-  },
-  {
-    "name": "mn-speedometer",
-    "type": "registry:ui",
-    "description": "mn-speedometer component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "data-viz/mn-speedometer.tsx"
-    ]
-  },
-  {
-    "name": "mn-waterfall",
-    "type": "registry:ui",
-    "description": "Waterfall chart for financial/flow analysis.",
+    "description": "mn-hub-spoke component",
     "dependencies": [],
     "registryDependencies": [],
     "files": [
-      "data-viz/mn-waterfall.tsx"
+      "agentic/mn-hub-spoke.tsx"
     ]
   },
   {
-    "name": "mn-activity-feed",
+    "name": "mn-icon",
     "type": "registry:ui",
-    "description": "Enhanced activity feed with time grouping and priority badges.",
-    "dependencies": [],
-    "registryDependencies": [
-      "mn-format"
-    ],
-    "files": [
-      "feedback/mn-activity-feed.tsx"
-    ]
-  },
-  {
-    "name": "mn-modal",
-    "type": "registry:ui",
-    "description": "mn-modal component",
+    "description": "mn-icon component",
     "dependencies": [
       "class-variance-authority"
     ],
     "registryDependencies": [],
     "files": [
-      "feedback/mn-modal.tsx"
+      "data-display/mn-icon.tsx",
+      "data-display/mn-icon-catalog.ts"
     ]
   },
   {
-    "name": "mn-notification-center",
+    "name": "mn-instrument-binnacle",
     "type": "registry:ui",
-    "description": "mn-notification-center component",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "feedback/mn-notification-center.tsx"
-    ]
-  },
-  {
-    "name": "mn-state-scaffold",
-    "type": "registry:ui",
-    "description": "`MnStateScaffold` manages five visual states for an async data region:",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "feedback/mn-state-scaffold.tsx"
-    ]
-  },
-  {
-    "name": "mn-streaming-text",
-    "type": "registry:ui",
-    "description": "Parse raw text into React nodes, converting **bold**, `code`,",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "feedback/mn-streaming-text.tsx"
-    ]
-  },
-  {
-    "name": "mn-toast",
-    "type": "registry:ui",
-    "description": "mn-toast component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "feedback/mn-toast.tsx"
-    ]
-  },
-  {
-    "name": "mn-agent-cost-breakdown",
-    "type": "registry:ui",
-    "description": "mn-agent-cost-breakdown component",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [
-      "mn-format"
-    ],
-    "files": [
-      "financial/mn-agent-cost-breakdown.tsx"
-    ]
-  },
-  {
-    "name": "mn-finops",
-    "type": "registry:ui",
-    "description": "Financial operations dashboard with budget vs actual bars.",
-    "dependencies": [],
-    "registryDependencies": [
-      "mn-format"
-    ],
-    "files": [
-      "financial/mn-finops.tsx"
-    ]
-  },
-  {
-    "name": "mn-async-select",
-    "type": "registry:ui",
-    "description": "mn-async-select component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "forms/mn-async-select.tsx"
-    ]
-  },
-  {
-    "name": "mn-calendar-range",
-    "type": "registry:ui",
-    "description": "Date range picker using native date inputs for reliability.",
+    "description": "mn-instrument-binnacle component",
     "dependencies": [],
     "registryDependencies": [],
     "files": [
-      "forms/mn-calendar-range.tsx"
+      "ops/mn-instrument-binnacle.tsx"
     ]
   },
   {
-    "name": "mn-date-picker",
+    "name": "mn-kanban-board",
     "type": "registry:ui",
-    "description": "mn-date-picker component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [
-      "mn-format"
-    ],
-    "files": [
-      "forms/mn-date-picker.tsx"
-    ]
-  },
-  {
-    "name": "mn-date-range-picker",
-    "type": "registry:ui",
-    "description": "mn-date-range-picker component",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [
-      "mn-format"
-    ],
-    "files": [
-      "forms/mn-date-range-picker.tsx"
-    ]
-  },
-  {
-    "name": "mn-filter-panel",
-    "type": "registry:ui",
-    "description": "mn-filter-panel component",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "forms/mn-filter-panel.tsx"
-    ]
-  },
-  {
-    "name": "mn-form-field",
-    "type": "registry:ui",
-    "description": "mn-form-field component",
+    "description": "mn-kanban-board component",
     "dependencies": [
       "class-variance-authority"
     ],
     "registryDependencies": [],
     "files": [
-      "forms/mn-form-field.tsx"
+      "ops/mn-kanban-board.tsx"
+    ]
+  },
+  {
+    "name": "mn-kpi-scorecard",
+    "type": "registry:ui",
+    "description": "mn-kpi-scorecard component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-kpi-scorecard.tsx",
+      "data-display/mn-kpi-scorecard.helpers.ts"
     ]
   },
   {
@@ -613,231 +728,26 @@
     ]
   },
   {
-    "name": "mn-profile",
-    "type": "registry:ui",
-    "description": "mn-profile component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "forms/mn-profile.tsx"
-    ]
-  },
-  {
-    "name": "mn-search-drawer",
-    "type": "registry:ui",
-    "description": "mn-search-drawer component",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "forms/mn-search-drawer.tsx"
-    ]
-  },
-  {
-    "name": "mn-toggle-switch",
-    "type": "registry:ui",
-    "description": "Accessible toggle switch with role=\"switch\" and aria-checked.",
-    "dependencies": [],
-    "registryDependencies": [],
-    "files": [
-      "forms/mn-toggle-switch.tsx"
-    ]
-  },
-  {
-    "name": "mn-voice-input",
-    "type": "registry:ui",
-    "description": "mn-voice-input component",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "forms/mn-voice-input.tsx"
-    ]
-  },
-  {
-    "name": "mn-admin-shell",
-    "type": "registry:ui",
-    "description": "mn-admin-shell component",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "layout/mn-admin-shell.tsx"
-    ]
-  },
-  {
-    "name": "mn-dashboard-renderer",
-    "type": "registry:ui",
-    "description": "Config-driven dashboard renderer. Takes a `RendererSchema` and renders",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "layout/mn-dashboard-renderer.tsx"
-    ]
-  },
-  {
-    "name": "mn-dashboard-strip",
-    "type": "registry:ui",
-    "description": "mn-dashboard-strip component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "layout/mn-dashboard-strip.tsx"
-    ]
-  },
-  {
-    "name": "mn-dashboard",
-    "type": "registry:ui",
-    "description": "Render function for individual widget cells.",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "layout/mn-dashboard.tsx"
-    ]
-  },
-  {
-    "name": "mn-grid-layout",
-    "type": "registry:ui",
-    "description": "Responsive CSS Grid layout with configurable columns, gap, and breakpoints.",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "layout/mn-grid-layout.tsx"
-    ]
-  },
-  {
-    "name": "mn-header-shell",
-    "type": "registry:ui",
-    "description": "`MnHeaderShell` — responsive application header bar.",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "layout/mn-header-shell.tsx"
-    ]
-  },
-  {
-    "name": "mn-section-card",
-    "type": "registry:ui",
-    "description": "mn-section-card component",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "layout/mn-section-card.tsx"
-    ]
-  },
-  {
-    "name": "mn-settings-panel",
-    "type": "registry:ui",
-    "description": "mn-settings-panel component",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "layout/mn-settings-panel.tsx"
-    ]
-  },
-  {
-    "name": "mn-breadcrumb",
-    "type": "registry:ui",
-    "description": "mn-breadcrumb component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "navigation/mn-breadcrumb.tsx"
-    ]
-  },
-  {
-    "name": "mn-command-palette",
-    "type": "registry:ui",
-    "description": "mn-command-palette component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "navigation/mn-command-palette.tsx"
-    ]
-  },
-  {
-    "name": "mn-section-nav",
-    "type": "registry:ui",
-    "description": "`MnSectionNav` provides prev/next navigation between ordered page sections.",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "navigation/mn-section-nav.tsx"
-    ]
-  },
-  {
-    "name": "mn-stepper",
-    "type": "registry:ui",
-    "description": "mn-stepper component",
-    "dependencies": [],
-    "registryDependencies": [],
-    "files": [
-      "navigation/mn-stepper.tsx"
-    ]
-  },
-  {
-    "name": "mn-tabs",
-    "type": "registry:ui",
-    "description": "mn-tabs component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "navigation/mn-tabs.tsx"
-    ]
-  },
-  {
-    "name": "mn-deployment-table",
-    "type": "registry:ui",
-    "description": "Sortable deployment table with status badges.",
-    "dependencies": [],
-    "registryDependencies": [
-      "mn-format"
-    ],
-    "files": [
-      "network/mn-deployment-table.tsx"
-    ]
-  },
-  {
     "name": "mn-map",
     "type": "registry:ui",
-    "description": "`MnMap` — canvas-based world map with markers, tooltips, zoom/pan.",
+    "description": "mn-map component",
     "dependencies": [],
     "registryDependencies": [],
     "files": [
       "network/mn-map.tsx"
+    ]
+  },
+  {
+    "name": "mn-mesh-network",
+    "type": "registry:ui",
+    "description": "mn-mesh-network component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-mesh-network.tsx",
+      "network/mn-mesh-network.helpers.ts"
     ]
   },
   {
@@ -875,16 +785,15 @@
     ]
   },
   {
-    "name": "mn-mesh-network",
+    "name": "mn-modal",
     "type": "registry:ui",
-    "description": "Mesh network topology — renders as HTML card grid when nodes",
+    "description": "mn-modal component",
     "dependencies": [
       "class-variance-authority"
     ],
     "registryDependencies": [],
     "files": [
-      "network/mn-mesh-network.tsx",
-      "network/mn-mesh-network.helpers.ts"
+      "feedback/mn-modal.tsx"
     ]
   },
   {
@@ -901,190 +810,28 @@
     ]
   },
   {
-    "name": "mn-org-chart",
+    "name": "mn-neural-nodes",
     "type": "registry:ui",
-    "description": "Interactive hierarchical org chart with drill-down.",
-    "dependencies": [],
-    "registryDependencies": [],
-    "files": [
-      "network/mn-org-chart.tsx"
-    ]
-  },
-  {
-    "name": "mn-social-graph",
-    "type": "registry:ui",
-    "description": "mn-social-graph component",
+    "description": "mn-neural-nodes component",
     "dependencies": [
       "class-variance-authority"
     ],
     "registryDependencies": [],
     "files": [
-      "network/mn-social-graph.tsx"
-    ]
-  },
-  {
-    "name": "mn-system-status",
-    "type": "registry:ui",
-    "description": "mn-system-status component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "network/mn-system-status.tsx"
-    ]
-  },
-  {
-    "name": "mn-audit-log",
-    "type": "registry:ui",
-    "description": "Chronological audit log with filtering.",
-    "dependencies": [],
-    "registryDependencies": [
-      "mn-format"
-    ],
-    "files": [
-      "ops/mn-audit-log.tsx"
-    ]
-  },
-  {
-    "name": "mn-binnacle",
-    "type": "registry:ui",
-    "description": "Ship's log / event recorder.",
-    "dependencies": [],
-    "registryDependencies": [
-      "mn-format"
-    ],
-    "files": [
-      "ops/mn-binnacle.tsx"
-    ]
-  },
-  {
-    "name": "mn-entity-workbench",
-    "type": "registry:ui",
-    "description": "mn-entity-workbench component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "ops/mn-entity-workbench.tsx"
-    ]
-  },
-  {
-    "name": "mn-facet-workbench",
-    "type": "registry:ui",
-    "description": "mn-facet-workbench component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "ops/mn-facet-workbench.tsx"
-    ]
-  },
-  {
-    "name": "mn-gantt",
-    "type": "registry:ui",
-    "description": "mn-gantt component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "ops/mn-gantt.tsx"
-    ]
-  },
-  {
-    "name": "mn-instrument-binnacle",
-    "type": "registry:ui",
-    "description": "Combined instrument panel: metrics strip + event log.",
-    "dependencies": [],
-    "registryDependencies": [
-      "mn-dashboard-strip"
-    ],
-    "files": [
-      "ops/mn-instrument-binnacle.tsx"
-    ]
-  },
-  {
-    "name": "mn-kanban-board",
-    "type": "registry:ui",
-    "description": "mn-kanban-board component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "ops/mn-kanban-board.tsx"
+      "agentic/mn-neural-nodes.tsx",
+      "agentic/mn-neural-nodes-draw.ts",
+      "agentic/mn-neural-nodes-force.ts",
+      "agentic/mn-neural-nodes-types.ts"
     ]
   },
   {
     "name": "mn-night-jobs",
     "type": "registry:ui",
-    "description": "Night/scheduled job monitor.",
+    "description": "mn-night-jobs component",
     "dependencies": [],
-    "registryDependencies": [
-      "mn-format"
-    ],
+    "registryDependencies": [],
     "files": [
       "ops/mn-night-jobs.tsx"
-    ]
-  },
-  {
-    "name": "mn-bcg-matrix",
-    "type": "registry:ui",
-    "description": "mn-bcg-matrix component",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "strategy/mn-bcg-matrix.tsx"
-    ]
-  },
-  {
-    "name": "mn-business-model-canvas",
-    "type": "registry:ui",
-    "description": "mn-business-model-canvas component",
-    "dependencies": [
-      "class-variance-authority",
-      "lucide-react"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "strategy/mn-business-model-canvas.tsx"
-    ]
-  },
-  {
-    "name": "mn-customer-journey-map",
-    "type": "registry:ui",
-    "description": "Customer journey map visualization.",
-    "dependencies": [],
-    "registryDependencies": [],
-    "files": [
-      "strategy/mn-customer-journey-map.tsx"
-    ]
-  },
-  {
-    "name": "mn-customer-journey",
-    "type": "registry:ui",
-    "description": "`MnCustomerJourney` renders a horizontal or vertical swimlane visualization",
-    "dependencies": [
-      "class-variance-authority"
-    ],
-    "registryDependencies": [],
-    "files": [
-      "strategy/mn-customer-journey.tsx"
-    ]
-  },
-  {
-    "name": "mn-decision-matrix",
-    "type": "registry:ui",
-    "description": "Weighted criteria decision matrix.",
-    "dependencies": [],
-    "registryDependencies": [],
-    "files": [
-      "strategy/mn-decision-matrix.tsx"
     ]
   },
   {
@@ -1100,6 +847,19 @@
     ]
   },
   {
+    "name": "mn-notification-center",
+    "type": "registry:ui",
+    "description": "mn-notification-center component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "feedback/mn-notification-center.tsx"
+    ]
+  },
+  {
     "name": "mn-okr",
     "type": "registry:ui",
     "description": "mn-okr component",
@@ -1112,13 +872,55 @@
     ]
   },
   {
+    "name": "mn-org-chart",
+    "type": "registry:ui",
+    "description": "mn-org-chart component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-org-chart.tsx"
+    ]
+  },
+  {
+    "name": "mn-pipeline-ranking",
+    "type": "registry:ui",
+    "description": "mn-pipeline-ranking component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-pipeline-ranking.tsx"
+    ]
+  },
+  {
     "name": "mn-porter-five-forces",
     "type": "registry:ui",
-    "description": "Porter's Five Forces diagram.",
+    "description": "mn-porter-five-forces component",
     "dependencies": [],
     "registryDependencies": [],
     "files": [
       "strategy/mn-porter-five-forces.tsx"
+    ]
+  },
+  {
+    "name": "mn-profile",
+    "type": "registry:ui",
+    "description": "mn-profile component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-profile.tsx"
+    ]
+  },
+  {
+    "name": "mn-progress-ring",
+    "type": "registry:ui",
+    "description": "mn-progress-ring component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-progress-ring.tsx"
     ]
   },
   {
@@ -1134,13 +936,147 @@
     ]
   },
   {
+    "name": "mn-search-drawer",
+    "type": "registry:ui",
+    "description": "mn-search-drawer component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-search-drawer.tsx",
+      "forms/mn-search-drawer.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-section-card",
+    "type": "registry:ui",
+    "description": "mn-section-card component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-section-card.tsx"
+    ]
+  },
+  {
+    "name": "mn-section-nav",
+    "type": "registry:ui",
+    "description": "mn-section-nav component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "navigation/mn-section-nav.tsx"
+    ]
+  },
+  {
+    "name": "mn-settings-panel",
+    "type": "registry:ui",
+    "description": "mn-settings-panel component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-settings-panel.tsx"
+    ]
+  },
+  {
+    "name": "mn-social-graph",
+    "type": "registry:ui",
+    "description": "mn-social-graph component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-social-graph.tsx"
+    ]
+  },
+  {
+    "name": "mn-source-cards",
+    "type": "registry:ui",
+    "description": "mn-source-cards component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-source-cards.tsx",
+      "data-display/mn-source-cards.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-speedometer",
+    "type": "registry:ui",
+    "description": "mn-speedometer component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-speedometer.tsx"
+    ]
+  },
+  {
+    "name": "mn-spinner",
+    "type": "registry:ui",
+    "description": "mn-spinner component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-spinner.tsx"
+    ]
+  },
+  {
+    "name": "mn-state-scaffold",
+    "type": "registry:ui",
+    "description": "mn-state-scaffold component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "feedback/mn-state-scaffold.tsx"
+    ]
+  },
+  {
+    "name": "mn-stepper",
+    "type": "registry:ui",
+    "description": "mn-stepper component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "navigation/mn-stepper.tsx"
+    ]
+  },
+  {
     "name": "mn-strategy-canvas",
     "type": "registry:ui",
-    "description": "Business Model Canvas / Strategy Canvas.",
+    "description": "mn-strategy-canvas component",
     "dependencies": [],
     "registryDependencies": [],
     "files": [
       "strategy/mn-strategy-canvas.tsx"
+    ]
+  },
+  {
+    "name": "mn-streaming-text",
+    "type": "registry:ui",
+    "description": "mn-streaming-text component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "feedback/mn-streaming-text.tsx"
     ]
   },
   {
@@ -1156,53 +1092,33 @@
     ]
   },
   {
-    "name": "mn-a11y-fab",
+    "name": "mn-system-status",
     "type": "registry:ui",
-    "description": "mn-a11y-fab component",
-    "dependencies": [],
-    "registryDependencies": [],
-    "files": [
-      "theme/mn-a11y-fab.tsx"
-    ]
-  },
-  {
-    "name": "mn-a11y",
-    "type": "registry:ui",
-    "description": "mn-a11y component",
+    "description": "mn-system-status component",
     "dependencies": [
       "class-variance-authority"
     ],
     "registryDependencies": [],
     "files": [
-      "theme/mn-a11y.tsx"
+      "network/mn-system-status.tsx"
     ]
   },
   {
-    "name": "mn-dropdown-menu",
+    "name": "mn-tabs",
     "type": "registry:ui",
-    "description": "Maranello-styled dropdown menu.",
-    "dependencies": [],
-    "registryDependencies": [],
-    "files": [
-      "theme/mn-dropdown-menu.tsx"
-    ]
-  },
-  {
-    "name": "mn-ferrari-control",
-    "type": "registry:ui",
-    "description": "mn-ferrari-control component",
+    "description": "mn-tabs component",
     "dependencies": [
       "class-variance-authority"
     ],
     "registryDependencies": [],
     "files": [
-      "theme/mn-ferrari-control.tsx"
+      "navigation/mn-tabs.tsx"
     ]
   },
   {
     "name": "mn-theme-rotary",
     "type": "registry:ui",
-    "description": "`MnThemeRotary` is a rotary-dial theme selector showing all four themes",
+    "description": "mn-theme-rotary component",
     "dependencies": [
       "class-variance-authority"
     ],
@@ -1214,13 +1130,84 @@
   {
     "name": "mn-theme-toggle",
     "type": "registry:ui",
-    "description": "`MnThemeToggle` cycles through the available themes on each click.",
+    "description": "mn-theme-toggle component",
     "dependencies": [
       "class-variance-authority"
     ],
     "registryDependencies": [],
     "files": [
       "theme/mn-theme-toggle.tsx"
+    ]
+  },
+  {
+    "name": "mn-toast",
+    "type": "registry:ui",
+    "description": "mn-toast component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "feedback/mn-toast.tsx"
+    ]
+  },
+  {
+    "name": "mn-toggle-switch",
+    "type": "registry:ui",
+    "description": "mn-toggle-switch component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-toggle-switch.tsx"
+    ]
+  },
+  {
+    "name": "mn-token-meter",
+    "type": "registry:ui",
+    "description": "mn-token-meter component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-token-meter.tsx"
+    ]
+  },
+  {
+    "name": "mn-user-table",
+    "type": "registry:ui",
+    "description": "mn-user-table component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-user-table.tsx"
+    ]
+  },
+  {
+    "name": "mn-voice-input",
+    "type": "registry:ui",
+    "description": "mn-voice-input component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-voice-input.tsx",
+      "forms/mn-voice-input.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-waterfall",
+    "type": "registry:ui",
+    "description": "mn-waterfall component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-waterfall.tsx"
     ]
   }
 ]

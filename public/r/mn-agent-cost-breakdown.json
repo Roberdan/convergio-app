@@ -12,7 +12,5 @@
     "class-variance-authority",
     "lucide-react"
   ],
-  "registryDependencies": [
-    "mn-format"
-  ]
+  "registryDependencies": []
 }

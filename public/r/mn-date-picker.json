@@ -11,7 +11,5 @@
   "dependencies": [
     "class-variance-authority"
   ],
-  "registryDependencies": [
-    "mn-format"
-  ]
+  "registryDependencies": []
 }
