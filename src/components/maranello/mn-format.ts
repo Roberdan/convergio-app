@@ -1,23 +1,22 @@
 /**
  * Hydration-safe date/time formatting utilities.
  *
- * Uses fixed 'en-GB' locale to prevent server/client mismatch
- * from differing default locales (Node vs browser).
+ * Uses manual formatting to prevent server/client mismatch
+ * from differing Intl implementations (Node vs Safari vs Chrome).
  */
 
-const LOCALE = 'en-GB' as const;
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function pad2(n: number): string {
+  return n < 10 ? `0${n}` : `${n}`;
+}
 
 /** Format timestamp as "1 Apr 2025, 14:30" */
 export function formatDateTime(ts: string): string {
   try {
-    return new Date(ts).toLocaleString(LOCALE, {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
+    const d = new Date(ts);
+    if (Number.isNaN(d.getTime())) return ts;
+    return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}, ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
   } catch {
     return ts;
   }
@@ -26,17 +25,10 @@ export function formatDateTime(ts: string): string {
 /** Format timestamp as "14:30" */
 export function formatTime(ts: string): string {
   try {
-    return new Date(ts).toLocaleTimeString(LOCALE, {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
+    const d = new Date(ts);
+    if (Number.isNaN(d.getTime())) return ts;
+    return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
   } catch {
     return ts;
   }
-}
-
-/** Format number with thousands separator */
-export function formatNumber(n: number): string {
-  return n.toLocaleString(LOCALE);
 }

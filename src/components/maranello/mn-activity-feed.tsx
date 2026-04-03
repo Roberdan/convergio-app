@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { formatTime } from './mn-format';
 
 export interface ActivityItem {
   agent: string;
@@ -59,17 +60,7 @@ function groupByDay(items: ActivityItem[]): Map<string, ActivityItem[]> {
   return groups;
 }
 
-function formatTime(ts: string): string {
-  try {
-    return new Date(ts).toLocaleTimeString('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
-  } catch {
-    return ts;
-  }
-}
+// formatTime imported from mn-format.ts
 
 /**
  * Enhanced activity feed with time grouping and priority badges.
