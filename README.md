@@ -1,6 +1,6 @@
-# Convergio Frontend
+# Maranello Design System
 
-Operational shell and component showcase powered by the **Maranello Design System** — 100+ React components, 4 themes, config-driven architecture. Built on Next.js 16 App Router, shadcn/ui, Tailwind CSS v4.
+100 React components, 4 themes, config-driven architecture, shadcn-compatible registry. Built on Next.js 16 App Router, Tailwind CSS v4, CVA.
 
 ## Quick Start
 
@@ -14,7 +14,17 @@ pnpm test         # unit tests (Vitest)
 pnpm test:e2e     # Playwright E2E
 ```
 
-Web dev works standalone — no backend required. If a ConvergioPlatform daemon is running on `:8420`, pages will show live data; otherwise they render gracefully with static/demo data.
+## Install components in your project
+
+Maranello components are available via a shadcn-compatible registry. Add individual components to any Next.js / React project:
+
+```bash
+npx shadcn add mn-badge --registry https://your-host/r
+npx shadcn add mn-gauge --registry https://your-host/r
+npx shadcn add mn-data-table --registry https://your-host/r
+```
+
+Or browse the full registry at `/r/index.json`.
 
 ## Stack
 
@@ -26,86 +36,107 @@ Web dev works standalone — no backend required. If a ConvergioPlatform daemon 
 | Typography | Outfit (headings), Inter (body), Barlow Condensed (mono/data) |
 | Themes | 4: Navy, Dark, Light, Colorblind (WCAG 2.2 AA) |
 | Icons | Lucide (no emoji — CONSTITUTION P2) |
-| AI | Vercel AI SDK v6 (`ai@^6`, `@ai-sdk/react@^3`) — OpenAI provider |
+| AI | Vercel AI SDK v6 (optional — not required for design system) |
 | Desktop | Tauri (optional, `src-tauri/`) |
 
-## convergio.yaml — config-driven architecture
+## Config-driven architecture
 
-The app reads `convergio.yaml` at startup for branding, navigation, pages, and AI agents. Edit this file and restart the dev server to customize without touching source code.
+The app reads `maranello.yaml` (or `convergio.yaml`) at startup for branding, navigation, pages, and AI agents. Edit this file and restart the dev server to customize without touching source code.
 
 ```yaml
 app:
-  name: Convergio
-  description: Operational product shell
+  name: Maranello Design System
+  description: Component showcase and design system explorer
 
 theme:
   default: navy            # light | dark | navy | colorblind
 
-ai:
-  defaultAgent: jervis
-  agents:
-    - id: jervis
-      provider: openai     # only openai is wired; anthropic/custom return 501
-      model: gpt-4o
-      apiRoute: /api/chat
-
 navigation:
   sections:
-    - label: Overview
+    - label: Design System
       items:
-        - id: dashboard
-          label: Dashboard
-          href: /dashboard
-          icon: LayoutDashboard
+        - id: showcase
+          label: Component Showcase
+          href: /showcase
+          icon: Palette
 ```
 
-**What the config drives:** `app` (branding), `theme` (default theme), `ai` (chat agents), `navigation` (sidebar), `pages` (dashboard block layout).
-
-**What the config does NOT drive:** API base URL (use `API_URL` env var), theme storage key (hardcoded in `theme-script.tsx`).
-
-`src/lib/config-loader.ts` reads the YAML, validates with Zod, and caches. Override path with `CONVERGIO_CONFIG_PATH` env var.
+`src/lib/config-loader.ts` reads the YAML, validates with Zod, and caches. Override path with `MARANELLO_CONFIG_PATH` env var.
 
 ## Architecture
 
 ```
-convergio.yaml              # config: branding, nav, pages, AI agents
+maranello.yaml              # config: branding, nav, pages
+public/r/                   # shadcn-compatible component registry
 src/
   app/
     (auth)/login/           # auth boundary (demo: admin / admin)
-    (dashboard)/            # protected shell — layout checks session cookie
-      dashboard/            # main dashboard (block grid from convergio.yaml)
-      showcase/             # component showcase (all Maranello components)
-      agents/ mesh/ …       # feature pages wired to ConvergioPlatform APIs
+    (dashboard)/            # shell — layout with sidebar + header
+      showcase/             # component showcase landing
+        [category]/         # per-category live demo pages
+        themes/             # theme playground
+      preview/              # quick preview page
     api/
-      chat/route.ts         # AI streaming (Vercel AI SDK v6)
+      chat/route.ts         # AI streaming (optional)
       health/route.ts       # liveness probe
     layout.tsx              # root: fonts, theme script, CanvasSafeArc
   components/
-    a2ui/                   # A2UI protocol: SSE block renderer
+    maranello/              # Maranello Design System — 100 components
+      agentic/              #   7 AI/agent components
+      data-display/         #  12 data display components
+      data-viz/             #  14 data visualization components
+      feedback/             #   6 feedback components
+      financial/            #   2 financial components
+      forms/                #  11 form/input components
+      layout/               #   8 layout components
+      navigation/           #   5 navigation components
+      network/              #  10 network/system components
+      ops/                  #   8 operations components
+      strategy/             #  11 strategy components
+      theme/                #   6 theme control components
+      shared/               #   shared utilities + tests
+      index.ts              #   barrel re-export
     blocks/                 # page blocks: kpi-card, data-table, ai-chat-panel
-    maranello/              # Maranello Design System — 100 components (see below)
-    page-renderer.tsx       # renders convergio.yaml pages → block grid
+    page-renderer.tsx       # renders config pages → block grid
     shell/                  # sidebar, header, command-menu
     theme/                  # theme-provider, theme-switcher, theme-script
     ui/                     # shadcn/ui source components
   hooks/
-    useApiQuery.ts          # generic SWR-like API poller
-    useEventSource.ts       # SSE event stream hook
+    use-api-query.ts        # generic SWR-like API poller
+    use-event-source.ts     # SSE event stream hook
   lib/
-    api/                    # typed API clients for ConvergioPlatform daemon
     config-loader.ts        # YAML parser + Zod validation (cached)
-    canvas-safe-arc.tsx     # global arc radius clamp (prevents canvas crashes)
-    env.ts                  # typed env vars (API_URL, SESSION_SECRET)
-    session.ts              # HMAC-signed session cookie utilities
+    config-schema.ts        # Zod schema for config file
+    utils.ts                # cn() helper (clsx + tailwind-merge)
   types/                    # shared TypeScript interfaces
 src-tauri/                  # optional Tauri desktop scaffold
 ```
 
-## Auth
+## Showcase
 
-The login page uses demo credentials (`admin` / `admin` unless `ADMIN_USERNAME` / `ADMIN_PASSWORD` env vars are set). On success, an HMAC-signed `httpOnly` session cookie is set. All `(dashboard)` routes check this cookie.
+The built-in showcase app demonstrates all 100 components with live demos:
 
-To integrate real auth: swap the credential check, replace the cookie logic with your IdP, and protect API routes.
+- **Landing** (`/showcase`) — category cards with component counts
+- **Category pages** (`/showcase/[category]`) — live demos per category
+- **Theme playground** (`/showcase/themes`) — side-by-side theme comparison
+- **Preview** (`/preview`) — quick component preview
+
+## Component Registry
+
+The `public/r/` directory contains a shadcn-compatible component registry:
+
+```
+public/r/
+  index.json              # full catalog with metadata
+  mn-badge.json           # individual component (source + deps)
+  mn-gauge.json
+  ...
+```
+
+Each component JSON includes:
+- Source code (ready to copy into your project)
+- npm dependencies (e.g., `recharts`, `lucide-react`)
+- Internal registry dependencies (shared utilities)
 
 ## Themes
 
@@ -120,41 +151,26 @@ Switch via header dropdown, command palette (Cmd-K), or the rotary dial.
 
 All themes use `--mn-*` CSS custom properties defined in `globals.css`. All pass WCAG 2.2 AA. See `docs/guides/adding-a-theme.md` for adding a 5th theme.
 
-## Maranello Design System
-
-100 React components in `src/components/maranello/`, all following the `Mn` prefix convention. Built with CVA (class-variance-authority) + Tailwind CSS v4 + `--mn-*` theme tokens. All support 4 themes and WCAG 2.2 AA accessibility.
+## Component Catalog (100 components)
 
 ```tsx
 import { MnBadge, MnChart, MnDataTable, MnGauge } from "@/components/maranello"
 ```
 
-Browse the live showcase at `/showcase`.
-
-### Component catalog (100 components)
-
-**Data Visualization** — chart, gauge, half-gauge, heatmap, funnel, waterfall, speedometer, confidence-chart, bullet-chart, hbar, pipeline-ranking, cost-timeline, cohort-grid, budget-treemap
-
-**Data Display** — data-table, user-table, kpi-scorecard, flip-counter, progress-ring, token-meter, source-cards, detail-panel, badge, avatar, icon, spinner
-
-**Navigation** — breadcrumb, tabs, stepper, section-nav, command-palette
-
-**Forms & Input** — form-field, async-select, search-drawer, date-picker, date-range-picker, calendar-range, filter-panel, toggle-switch, voice-input, login, profile
-
-**Feedback** — toast, state-scaffold, modal, notification-center, streaming-text, activity-feed
-
-**Layout** — grid-layout, section-card, admin-shell, settings-panel, dashboard, dashboard-strip, dashboard-renderer, header-shell
-
-**Strategy** — bcg-matrix, nine-box-matrix, risk-matrix, decision-matrix, swot, porter-five-forces, business-model-canvas, strategy-canvas, okr, customer-journey, customer-journey-map
-
-**Financial** — finops, agent-cost-breakdown
-
-**Agentic / AI** — agent-trace, approval-chain, neural-nodes, augmented-brain, hub-spoke, active-missions, chat
-
-**Network & System** — mesh-network, mesh-network-card, mesh-network-canvas, mesh-network-toolbar, network-messages, system-status, deployment-table, social-graph, org-chart, map
-
-**Operations** — binnacle, instrument-binnacle, night-jobs, audit-log, gantt, kanban-board, entity-workbench, facet-workbench
-
-**Theme Controls** — theme-toggle, theme-rotary, ferrari-control, a11y, a11y-fab, dropdown-menu
+| Category | Count | Components |
+|---|---|---|
+| Data Visualization | 14 | chart, gauge, half-gauge, heatmap, funnel, waterfall, speedometer, confidence-chart, bullet-chart, hbar, pipeline-ranking, cost-timeline, cohort-grid, budget-treemap |
+| Data Display | 12 | data-table, user-table, kpi-scorecard, flip-counter, progress-ring, token-meter, source-cards, detail-panel, badge, avatar, icon, spinner |
+| Forms & Input | 11 | form-field, async-select, search-drawer, date-picker, date-range-picker, calendar-range, filter-panel, toggle-switch, voice-input, login, profile |
+| Strategy | 11 | bcg-matrix, nine-box-matrix, risk-matrix, decision-matrix, swot, porter-five-forces, business-model-canvas, strategy-canvas, okr, customer-journey, customer-journey-map |
+| Network & System | 10 | mesh-network, mesh-network-card, mesh-network-canvas, mesh-network-toolbar, network-messages, system-status, deployment-table, social-graph, org-chart, map |
+| Operations | 8 | binnacle, instrument-binnacle, night-jobs, audit-log, gantt, kanban-board, entity-workbench, facet-workbench |
+| Layout | 8 | grid-layout, section-card, admin-shell, settings-panel, dashboard, dashboard-strip, dashboard-renderer, header-shell |
+| Agentic / AI | 7 | agent-trace, approval-chain, neural-nodes, augmented-brain, hub-spoke, active-missions, chat |
+| Feedback | 6 | toast, state-scaffold, modal, notification-center, streaming-text, activity-feed |
+| Theme Controls | 6 | theme-toggle, theme-rotary, ferrari-control, a11y, a11y-fab, dropdown-menu |
+| Navigation | 5 | breadcrumb, tabs, stepper, section-nav, command-palette |
+| Financial | 2 | finops, agent-cost-breakdown |
 
 ### Key patterns
 
@@ -170,11 +186,10 @@ Browse the live showcase at `/showcase`.
 
 | Variable | Default | Description |
 |---|---|---|
-| `API_URL` | `http://localhost:8420` | Backend API URL (server-side) |
-| `NEXT_PUBLIC_API_URL` | — | Client-side API URL (optional, falls back to `API_URL`) |
+| `API_URL` | `http://localhost:8420` | Backend API URL (server-side, optional) |
+| `NEXT_PUBLIC_API_URL` | — | Client-side API URL (optional) |
 | `SESSION_SECRET` | `convergio-dev-secret` | HMAC signing secret for session cookies |
-| `CONVERGIO_CONFIG_PATH` | `./convergio.yaml` | Override config file path |
-| `NEXT_PUBLIC_APP_NAME` | `Convergio` | App display name in branding |
+| `MARANELLO_CONFIG_PATH` | `./maranello.yaml` | Override config file path |
 
 ## Scripts
 
@@ -186,14 +201,6 @@ Browse the live showcase at `/showcase`.
 | `pnpm typecheck` | TypeScript strict check |
 | `pnpm test` | Run unit tests (Vitest) |
 | `pnpm test:e2e` | Run E2E tests (Playwright) |
-| `pnpm tauri:dev` | Desktop dev (requires Rust + Tauri) |
-| `pnpm tauri:build` | Desktop build (requires Rust + Tauri) |
-
-## Tauri (optional)
-
-Desktop packaging via Tauri. Config in `src-tauri/tauri.conf.json`. Web dev does **not** require Rust or Tauri.
-
-**Note:** The current Tauri config expects a static export (`../out`) but the Next.js build produces a server-rendered app. To use Tauri, either switch to `output: 'export'` in `next.config.ts` (losing server actions and API routes) or adopt Tauri's server-side rendering mode.
 
 ## Design Principles (CONSTITUTION.md)
 
