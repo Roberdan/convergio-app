@@ -1,41 +1,70 @@
 ---
 title: MnChart
 category: data-viz
-description: "General-purpose chart wrapper supporting line, bar, area, and pie chart types"
-keywords: ["chart", "grafico", "line", "bar", "area", "pie", "torta", "linea", "barra"]
+description: "General-purpose chart wrapper supporting sparkline, donut, area, bar, radar, and bubble chart types"
+keywords: ["chart", "grafico", "sparkline", "donut", "area", "bar", "radar", "bubble", "torta", "linea", "barra"]
 ---
 
 # MnChart
 
-General-purpose chart wrapper supporting line, bar, area, and pie chart types.
+General-purpose chart wrapper built on Recharts. Supports 6 chart types with consistent theming and animation.
 
 ## When to use
 
-Use as the base chart component for standard data visualizations.
+Use as the base chart component for standard data visualizations. Pick the `type` that best fits your data shape: `sparkline` for trends, `donut` for proportions, `area`/`bar` for time series, `radar` for multi-dimensional comparison, `bubble` for 3D scatter.
 
 ## Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `type` | `ChartType` | **required** | — |
-| `series` | `ChartSeries[]` | — | — |
-| `segments` | `DonutSegment[]` | — | — |
-| `points` | `BubblePoint[]` | — | — |
-| `radarData` | `RadarPoint[]` | — | — |
-| `labels` | `string[]` | — | — |
-| `showLegend` | `boolean` | — | — |
-| `animate` | `boolean` | — | — |
+| `type` | `"sparkline" \| "donut" \| "area" \| "bar" \| "radar" \| "bubble"` | **required** | Chart visualization type |
+| `series` | `ChartSeries[]` | `[]` | Data series for area/bar/sparkline — `{ label, data, color? }` |
+| `segments` | `DonutSegment[]` | `[]` | Segments for donut — `{ label, value, color? }` |
+| `points` | `BubblePoint[]` | `[]` | Points for bubble — `{ x, y, z, label? }` |
+| `radarData` | `RadarPoint[]` | `[]` | Points for radar — `{ axis, value }` |
+| `labels` | `string[]` | `[]` | X-axis labels for area/bar/sparkline |
+| `showLegend` | `boolean` | `false` | Show chart legend |
+| `animate` | `boolean` | `true` | Enable entry animation |
+| `size` | `"sm" \| "md" \| "lg" \| "fluid"` | `"md"` | Chart container size |
+| `className` | `string` | — | Additional CSS classes |
 
 ## Example
 
 ```tsx
 import { MnChart } from "@/components/maranello"
 
-<MnChart />
+{/* Bar chart */}
+<MnChart
+  type="bar"
+  labels={["Mon", "Tue", "Wed", "Thu", "Fri"]}
+  series={[
+    { label: "Visits", data: [120, 200, 150, 280, 190] },
+    { label: "Conversions", data: [30, 50, 40, 80, 60] },
+  ]}
+  showLegend
+/>
+
+{/* Donut chart */}
+<MnChart
+  type="donut"
+  segments={[
+    { label: "Desktop", value: 60 },
+    { label: "Mobile", value: 30 },
+    { label: "Tablet", value: 10 },
+  ]}
+/>
+
+{/* Sparkline */}
+<MnChart
+  type="sparkline"
+  series={[{ label: "Trend", data: [10, 25, 18, 30, 22] }]}
+  size="sm"
+/>
 ```
 
 ## Accessibility
 
-- Uses semantic HTML elements for proper document structure
 - Charts include `aria-label` describing the data trend
-- Color is supplemented with patterns or labels for color-blind users
+- Legend items are keyboard-focusable
+- Color is supplemented with labels for color-blind users
+- Uses `--chart-1` through `--chart-5` CSS variables for theme-safe palette

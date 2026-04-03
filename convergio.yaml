@@ -126,13 +126,8 @@ navigation:
 
     - label: Design System
       items:
-        - id: preview
-          label: Component Showcase
-          href: /preview
-          icon: Palette
-
         - id: showcase
-          label: Phase 2 Showcase
+          label: Component Showcase
           href: /showcase
           icon: Palette
 

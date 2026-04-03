@@ -1,39 +1,74 @@
 ---
 title: MnDashboard
 category: layout
-description: "Pre-composed dashboard layout with configurable widget slots"
+description: "Pre-composed dashboard layout with configurable widget slots and responsive grid"
 keywords: ["dashboard", "cruscotto", "layout", "grid", "griglia", "widget", "panel", "pannello"]
 ---
 
 # MnDashboard
 
-Pre-composed dashboard layout with configurable widget slots.
+Pre-composed dashboard layout with a schema-driven grid of widgets. Define your dashboard structure as data, and the component renders the layout with responsive columns.
 
 ## When to use
 
-Use to build standard dashboards with a header, sidebar, and grid area.
+Use to build standard dashboards where layout and widgets are defined as configuration. Pairs well with the YAML config-driven architecture.
 
 ## Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `schema` | `DashboardSchema` | **required** | — |
-| `data` | `Record&lt;string, unknown&gt;` | — | — |
-| `onWidgetClick` | `(dataKey: string, data: unknown) =&gt; void` | — | — |
-| `renderWidget` | `(` | — | — |
-| `widget` | `DashboardWidget,` | **required** | — |
-| `data` | `unknown,` | **required** | — |
+| `schema` | `DashboardSchema` | **required** | Dashboard layout definition — `{ title, rows: [{ columns, widgets }] }` |
+| `data` | `Record<string, unknown>` | `{}` | Data map keyed by widget `dataKey` |
+| `onWidgetClick` | `(dataKey: string, data: unknown) => void` | — | Callback when a widget is clicked |
+| `renderWidget` | `(widget: DashboardWidget, data: unknown, index: number) => ReactNode` | — | Custom render function for widgets |
+| `gap` | `number` | `4` | Grid gap in Tailwind spacing units |
+| `className` | `string` | — | Additional CSS classes |
+
+## Schema Shape
+
+```ts
+interface DashboardSchema {
+  title?: string
+  rows: {
+    columns: number        // 1-12
+    widgets: {
+      type: string         // widget type identifier
+      dataKey: string      // key into `data` prop
+      title?: string
+      span?: number        // column span
+    }[]
+  }[]
+}
+```
 
 ## Example
 
 ```tsx
 import { MnDashboard } from "@/components/maranello"
 
-<MnDashboard data={sampleData} />
+const schema = {
+  title: "Operations",
+  rows: [
+    {
+      columns: 3,
+      widgets: [
+        { type: "kpi", dataKey: "users", title: "Active Users" },
+        { type: "kpi", dataKey: "revenue", title: "Revenue" },
+        { type: "kpi", dataKey: "uptime", title: "Uptime" },
+      ],
+    },
+  ],
+}
+
+<MnDashboard
+  schema={schema}
+  data={{ users: 1234, revenue: "$45K", uptime: "99.9%" }}
+/>
 ```
 
 ## Accessibility
 
-- Uses semantic HTML elements for proper document structure
-- Landmarks (`<main>`, `<nav>`, `<aside>`) structure the layout
+- Uses `<section>` landmarks for each row
+- Widget titles render as headings for screen reader navigation
+- Grid is responsive: collapses to single column on mobile
 - Skip-to-content link is supported

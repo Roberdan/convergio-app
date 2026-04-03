@@ -136,7 +136,7 @@ if(t&&["light","dark","navy","colorblind","mytheme"].indexOf(t)!==-1){
 
 ### theme-toggle.tsx
 
-File: `src/components/maranello/mn-theme-toggle.tsx`
+File: `src/components/maranello/theme/mn-theme-toggle.tsx`
 
 Add an entry to `THEME_META`:
 
@@ -152,7 +152,7 @@ const THEME_META: Record<Theme, { icon: string; label: string }> = {
 
 ### theme-rotary.tsx
 
-File: `src/components/maranello/mn-theme-rotary.tsx`
+File: `src/components/maranello/theme/mn-theme-rotary.tsx`
 
 Add a position entry to `POSITIONS`. Distribute angles evenly across 360 degrees
 for 5 items (72 degrees apart):
@@ -177,6 +177,19 @@ theme:
   storageKey: convergio-theme
 ```
 
+## Step 6: Add to command palette (Cmd-K)
+
+File: `src/components/shell/command-menu.tsx`
+
+Add an entry to the `THEME_ITEMS` array so users can switch to your theme via Cmd-K:
+
+```ts
+const THEME_ITEMS = [
+  // ... existing items
+  { label: "My Theme", value: "mytheme" as Theme },
+]
+```
+
 ## Checklist
 
 - [ ] Theme name added to `THEMES` tuple in theme-provider.tsx
@@ -186,6 +199,7 @@ theme:
 - [ ] All shadcn bridge tokens defined
 - [ ] WCAG 2.2 AA contrast ratios verified (4.5:1 text, 3:1 UI)
 - [ ] theme-script.tsx allowlist updated
-- [ ] THEME_META entry added in mn-theme-toggle.tsx
-- [ ] POSITIONS entry added in mn-theme-rotary.tsx
+- [ ] THEME_META entry added in `theme/mn-theme-toggle.tsx`
+- [ ] POSITIONS entry added in `theme/mn-theme-rotary.tsx`
+- [ ] THEME_ITEMS entry added in `shell/command-menu.tsx`
 - [ ] Manual test: toggle through all themes, verify no flash on reload

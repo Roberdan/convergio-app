@@ -1,10 +1,34 @@
+# ============================================================================
+# maranello.yaml — Maranello Design System configuration
+#
+# This file defines branding, theme, navigation, and dashboard pages.
+# Edit this file and restart `pnpm dev` to customize the app.
+#
+# Schema reference: src/lib/config-schema.ts + src/lib/config-block-schemas.ts
+# Loader: src/lib/config-loader.ts (Zod validated, cached)
+# Override path: MARANELLO_CONFIG_PATH or CONVERGIO_CONFIG_PATH env var
+# ============================================================================
+
+# ── App Identity ──
 app:
   name: Maranello Design System
   description: Component showcase and design system explorer
+  # logo: /logo.svg
 
+# ── Theme ──
+# Available themes: light | dark | navy | colorblind
+# All themes pass WCAG 2.2 AA contrast ratios.
+# Tokens defined in src/app/globals.css as --mn-* CSS custom properties.
 theme:
   default: navy
 
+# ── Navigation ──
+# Sidebar navigation sections. Each item needs:
+#   id    — unique identifier
+#   label — display text
+#   href  — route path
+#   icon  — Lucide icon name (must exist in src/lib/icon-map.ts)
+#   badge — optional numeric badge
 navigation:
   sections:
     - label: Design System
@@ -13,12 +37,59 @@ navigation:
           label: Home
           href: /
           icon: Home
-        - id: showcase
-          label: Component Showcase
-          href: /showcase
-          icon: Palette
-        - id: themes
-          label: Theme Playground
-          href: /showcase/themes
+        - id: icons
+          label: Icons
+          href: /showcase/icons
+          icon: Shapes
+
+    - label: Components
+      items:
+        - id: agentic
+          label: Agentic AI
+          href: /showcase/agentic
+          icon: Brain
+        - id: data-display
+          label: Data Display
+          href: /showcase/data-display
+          icon: Table
+        - id: data-viz
+          label: Data Viz
+          href: /showcase/data-viz
+          icon: BarChart3
+        - id: feedback
+          label: Feedback
+          href: /showcase/feedback
+          icon: Bell
+        - id: financial
+          label: Financial
+          href: /showcase/financial
+          icon: DollarSign
+        - id: forms
+          label: Forms
+          href: /showcase/forms
+          icon: TextCursorInput
+        - id: layout
+          label: Layout
+          href: /showcase/layout
+          icon: LayoutGrid
+        - id: navigation
+          label: Navigation
+          href: /showcase/navigation
+          icon: Compass
+        - id: network
+          label: Network
+          href: /showcase/network
+          icon: Network
+        - id: ops
+          label: Operations
+          href: /showcase/ops
+          icon: Activity
+        - id: strategy
+          label: Strategy
+          href: /showcase/strategy
+          icon: Target
+        - id: theme
+          label: Theme & A11y
+          href: /showcase/theme
           icon: Palette
 
