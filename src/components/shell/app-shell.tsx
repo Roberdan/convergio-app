@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Sidebar, type NavSection } from "./sidebar";
 import { Header } from "./header";
 import { CommandMenu } from "./command-menu";
+import { MnA11yFab } from "@/components/maranello";
 
 export interface AppShellProps {
   children: React.ReactNode;
@@ -25,6 +26,12 @@ export function AppShell({ children, sections, brandName, brandLogo }: AppShellP
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground"
+      >
+        Skip to main content
+      </a>
       <Header
         onMenuToggle={toggleSidebar}
         onSearchClick={openCommand}
@@ -45,6 +52,7 @@ export function AppShell({ children, sections, brandName, brandLogo }: AppShellP
         </main>
       </div>
       <CommandMenu open={commandOpen} onOpenChange={setCommandOpen} />
+      <MnA11yFab />
     </>
   );
 }

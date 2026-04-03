@@ -134,7 +134,7 @@ function FilterSectionBlock({ section, value, onUpdate, onClear }: SectionBlockP
           })()}
           {hasActive && (
             <button type="button" onClick={() => onClear(section.id)}
-              className="mt-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors self-start">
+              className="mt-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md px-1">
               Clear
             </button>
           )}
@@ -203,7 +203,7 @@ export function MnFilterPanel({
         </span>
         {chips.length > 0 && (
           <button type="button" onClick={clearAll}
-            className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
+            className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md px-1">
             {clearAllLabel}
           </button>
         )}
@@ -217,7 +217,7 @@ export function MnFilterPanel({
               {chip.label}
               <button type="button" aria-label={`Remove ${chip.label}`}
                 onClick={() => removeChip(chip.sectionId, chip.optionId)}
-                className="rounded-full p-0.5 hover:bg-muted-foreground/20 transition-colors cursor-pointer">
+                className="rounded-full p-0.5 hover:bg-muted-foreground/20 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <X className="size-3" aria-hidden="true" />
               </button>
             </span>

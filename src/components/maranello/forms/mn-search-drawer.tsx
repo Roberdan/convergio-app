@@ -185,7 +185,7 @@ function MnSearchDrawer({
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             aria-label={placeholder}
-            className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+            className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
             data-slot="mn-search-drawer-input"
           />
           {loading && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-muted-foreground" />}

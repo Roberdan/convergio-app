@@ -132,6 +132,7 @@ function DashboardCell({
         ? {
             role: "button",
             tabIndex: 0,
+            "aria-label": widget.dataKey,
             onClick: handleClick,
             onKeyDown: handleKeyDown,
           }
