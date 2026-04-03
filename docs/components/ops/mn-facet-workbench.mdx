@@ -1,0 +1,37 @@
+---
+title: MnFacetWorkbench
+category: ops
+description: "Multi-facet workbench for exploring data across configurable dimensions"
+keywords: ["facet", "workbench", "sfaccettatura", "banco di lavoro", "dimension", "dimensione"]
+---
+
+# MnFacetWorkbench
+
+Multi-facet workbench for exploring data across configurable dimensions.
+
+## When to use
+
+Use to let analysts slice data by multiple facets simultaneously.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `groups` | `FacetGroup[]` | **required** | — |
+| `filters` | `FacetFilters` | — | — |
+| `onFilterChange` | `(filters: FacetFilters) =&gt; void` | — | — |
+| `clearAllLabel` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnFacetWorkbench } from "@/components/maranello"
+
+<MnFacetWorkbench />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Data tables include proper `<th>` scope attributes
+- Drag-and-drop has keyboard alternatives

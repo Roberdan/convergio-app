@@ -1,0 +1,41 @@
+---
+title: MnChat
+category: agentic
+description: "Real-time chat interface with message threading and AI assistant support"
+keywords: ["chat", "message", "conversation", "messaggio", "conversazione", "assistente", "thread"]
+---
+
+# MnChat
+
+Real-time chat interface with message threading and AI assistant support.
+
+## When to use
+
+Use for conversational UIs, support chat, or AI copilot interactions.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `messages` | `ChatMessage[]` | **required** | — |
+| `loading` | `boolean` | — | — |
+| `quickActions` | `QuickAction[]` | — | — |
+| `placeholder` | `string` | — | — |
+| `onSend` | `(text: string) =&gt; void` | — | — |
+| `onVoiceStart` | `() =&gt; void` | — | — |
+| `onQuickAction` | `(action: string) =&gt; void` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnChat } from "@/components/maranello"
+
+<MnChat />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Status updates use `aria-live` for real-time announcements
+- Interactive elements support keyboard activation

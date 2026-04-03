@@ -1,0 +1,38 @@
+---
+title: MnStateScaffold
+category: feedback
+description: "Empty-state scaffold rendering contextual illustrations and call-to-action"
+keywords: ["state", "scaffold", "stato", "placeholder", "empty", "vuoto", "error", "errore"]
+---
+
+# MnStateScaffold
+
+Empty-state scaffold rendering contextual illustrations and call-to-action.
+
+## When to use
+
+Use for empty, error, or loading states to guide users toward next steps.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `state` | `StateScaffoldState` | **required** | — |
+| `message` | `string` | — | — |
+| `actionLabel` | `string` | — | — |
+| `onRetry` | `() =&gt; void` | — | — |
+| `onAction` | `() =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnStateScaffold } from "@/components/maranello"
+
+<MnStateScaffold />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Uses `role="alert"` or `aria-live` regions for dynamic content
+- Focus is managed appropriately when content appears/disappears

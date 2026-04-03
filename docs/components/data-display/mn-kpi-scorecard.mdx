@@ -1,0 +1,38 @@
+---
+title: MnKpiScorecard
+category: data-display
+description: "KPI scorecard displaying key metrics with trend indicators and sparklines"
+keywords: ["kpi", "scorecard", "metric", "metrica", "indicatore", "trend", "performance", "prestazione"]
+---
+
+# MnKpiScorecard
+
+KPI scorecard displaying key metrics with trend indicators and sparklines.
+
+## When to use
+
+Use to highlight important business metrics with delta and trend context.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `rows` | `KpiRow[]` | **required** | — |
+| `currency` | `string` | — | — |
+| `onSelect` | `(row: KpiRow) =&gt; void` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnKpiScorecard } from "@/components/maranello"
+
+<MnKpiScorecard rows={sampleData} />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible

@@ -1,0 +1,45 @@
+---
+title: MnNeuralNodes
+category: agentic
+description: "Interactive neural network node graph for visualizing model architectures"
+keywords: ["neural", "nodes", "network", "neurale", "nodi", "rete", "graph", "grafo", "AI"]
+---
+
+# MnNeuralNodes
+
+Interactive neural network node graph for visualizing model architectures.
+
+## When to use
+
+Use to render neural-network-style node graphs or AI pipeline topologies.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `nodes` | `NeuralNodeData[]` | — | — |
+| `connections` | `NeuralConnection[]` | — | — |
+| `nodeCount` | `number` | — | — |
+| `connectionDensity` | `number` | — | — |
+| `colors` | `string[]` | — | — |
+| `pulseSpeed` | `number` | — | — |
+| `particleCount` | `number` | — | — |
+| `interactive` | `boolean` | — | — |
+| `labels` | `boolean` | — | — |
+| `forceLayout` | `boolean` | — | — |
+| `labelFont` | `string` | — | — |
+| `onReady` | `(controller: NeuralNodesController) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnNeuralNodes } from "@/components/maranello"
+
+<MnNeuralNodes />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Status updates use `aria-live` for real-time announcements
+- Interactive elements support keyboard activation

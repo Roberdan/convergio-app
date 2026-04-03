@@ -1,0 +1,37 @@
+---
+title: MnBinnacle
+category: ops
+description: "Operational binnacle log combining events, metrics, and alerts in one stream"
+keywords: ["binnacle", "log", "giornale di bordo", "registro", "operations", "operazioni", "events"]
+---
+
+# MnBinnacle
+
+Operational binnacle log combining events, metrics, and alerts in one stream.
+
+## When to use
+
+Use to unify operational signals into a single chronological view.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `entries` | `BinnacleEntry[]` | **required** | — |
+| `maxVisible` | `number` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnBinnacle } from "@/components/maranello"
+
+<MnBinnacle />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Data tables include proper `<th>` scope attributes
+- Drag-and-drop has keyboard alternatives

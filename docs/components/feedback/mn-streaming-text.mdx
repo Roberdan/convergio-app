@@ -1,0 +1,41 @@
+---
+title: MnStreamingText
+category: feedback
+description: "Streaming text display with typewriter animation for AI-generated content"
+keywords: ["streaming", "text", "testo", "typewriter", "AI", "LLM", "animation", "animazione"]
+---
+
+# MnStreamingText
+
+Streaming text display with typewriter animation for AI-generated content.
+
+## When to use
+
+Use when rendering text that arrives token-by-token from an LLM.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `text` | `string` | **required** | — |
+| `streaming` | `boolean` | — | — |
+| `typingCursor` | `boolean` | — | — |
+| `processMarkdown` | `boolean` | — | — |
+| `speed` | `number` | — | — |
+| `onDone` | `() =&gt; void` | — | — |
+| `onCitationClick` | `(index: number) =&gt; void` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnStreamingText } from "@/components/maranello"
+
+<MnStreamingText />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Uses `role="alert"` or `aria-live` regions for dynamic content
+- Focus is managed appropriately when content appears/disappears

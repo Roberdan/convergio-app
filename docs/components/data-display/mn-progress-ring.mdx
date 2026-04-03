@@ -1,0 +1,40 @@
+---
+title: MnProgressRing
+category: data-display
+description: "Circular progress indicator with percentage label and animated fill"
+keywords: ["progress", "ring", "circular", "progresso", "anello", "circolare", "percentage"]
+---
+
+# MnProgressRing
+
+Circular progress indicator with percentage label and animated fill.
+
+## When to use
+
+Use to show completion percentage of a task or process.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | — | — |
+| `max` | `number` | — | — |
+| `size` | `ProgressRingSize` | — | — |
+| `variant` | `ProgressRingVariant` | — | — |
+| `animate` | `boolean` | — | — |
+| `label` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnProgressRing } from "@/components/maranello"
+
+<MnProgressRing label="Example" />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible

@@ -1,0 +1,37 @@
+---
+title: MnCohortGrid
+category: data-viz
+description: "Cohort analysis grid showing retention or behavior across time cohorts"
+keywords: ["cohort", "grid", "coorte", "griglia", "retention", "ritenzione", "analysis", "analisi"]
+---
+
+# MnCohortGrid
+
+Cohort analysis grid showing retention or behavior across time cohorts.
+
+## When to use
+
+Use to visualize user cohort retention or temporal behavior patterns.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `rows` | `CohortRow[]` | **required** | — |
+| `periodLabels` | `string[]` | — | — |
+| `showAbsolute` | `boolean` | — | — |
+| `onCellHover` | `(row: CohortRow, periodIdx: number, value: number) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnCohortGrid } from "@/components/maranello"
+
+<MnCohortGrid rows={sampleData} />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with patterns or labels for color-blind users

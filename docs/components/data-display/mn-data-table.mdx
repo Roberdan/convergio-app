@@ -1,0 +1,42 @@
+---
+title: MnDataTable
+category: data-display
+description: "Full-featured data table with sorting, filtering, pagination, and row selection"
+keywords: ["table", "data", "tabella", "dati", "grid", "griglia", "sort", "filter", "pagination"]
+---
+
+# MnDataTable
+
+Full-featured data table with sorting, filtering, pagination, and row selection.
+
+## When to use
+
+Use to display structured tabular data with interactive column controls.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `columns` | `DataTableColumn&lt;T&gt;[]` | **required** | — |
+| `groupBy` | `string` | — | — |
+| `loading` | `boolean` | — | — |
+| `onRowClick` | `(row: T, index: number) =&gt; void` | — | — |
+| `onSort` | `(key: string, direction: SortDir) =&gt; void` | — | — |
+| `onFilter` | `(filters: Record&lt;string, string&gt;) =&gt; void` | — | — |
+| `onSelectionChange` | `(selected: T[]) =&gt; void` | — | — |
+| `onAction` | `(actionId: string, row: T) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnDataTable } from "@/components/maranello"
+
+<MnDataTable />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible
+- Follows WAI-ARIA Tabs pattern with `role="tablist"` / `role="tab"` / `role="tabpanel"`

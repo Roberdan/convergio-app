@@ -1,0 +1,41 @@
+---
+title: MnChart
+category: data-viz
+description: "General-purpose chart wrapper supporting line, bar, area, and pie chart types"
+keywords: ["chart", "grafico", "line", "bar", "area", "pie", "torta", "linea", "barra"]
+---
+
+# MnChart
+
+General-purpose chart wrapper supporting line, bar, area, and pie chart types.
+
+## When to use
+
+Use as the base chart component for standard data visualizations.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `ChartType` | **required** | — |
+| `series` | `ChartSeries[]` | — | — |
+| `segments` | `DonutSegment[]` | — | — |
+| `points` | `BubblePoint[]` | — | — |
+| `radarData` | `RadarPoint[]` | — | — |
+| `labels` | `string[]` | — | — |
+| `showLegend` | `boolean` | — | — |
+| `animate` | `boolean` | — | — |
+
+## Example
+
+```tsx
+import { MnChart } from "@/components/maranello"
+
+<MnChart />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with patterns or labels for color-blind users

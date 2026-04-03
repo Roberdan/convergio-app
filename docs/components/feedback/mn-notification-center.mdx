@@ -1,0 +1,43 @@
+---
+title: MnNotificationCenter
+category: feedback
+description: "Notification center panel with categorized alerts and read/unread state"
+keywords: ["notification", "center", "notifica", "centro", "alert", "avviso", "bell", "campana"]
+---
+
+# MnNotificationCenter
+
+Notification center panel with categorized alerts and read/unread state.
+
+## When to use
+
+Use to aggregate and manage app-wide notifications in one place.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | **required** | — |
+| `onOpenChange` | `(open: boolean) =&gt; void` | **required** | — |
+| `notifications` | `MnNotification[]` | **required** | — |
+| `onMarkRead` | `(id: string) =&gt; void` | — | — |
+| `onMarkAllRead` | `() =&gt; void` | — | — |
+| `onRemove` | `(id: string) =&gt; void` | — | — |
+| `onClear` | `() =&gt; void` | — | — |
+| `loading` | `boolean` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnNotificationCenter } from "@/components/maranello"
+
+<MnNotificationCenter />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Uses `role="alert"` or `aria-live` regions for dynamic content
+- Focus is managed appropriately when content appears/disappears
+- Auto-dismissed after timeout with configurable duration

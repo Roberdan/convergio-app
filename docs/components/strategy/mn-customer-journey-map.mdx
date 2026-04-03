@@ -1,0 +1,36 @@
+---
+title: MnCustomerJourneyMap
+category: strategy
+description: "Customer journey map with touchpoints, emotions, and channel lanes"
+keywords: ["customer", "journey", "map", "cliente", "viaggio", "mappa", "touchpoint", "esperienza"]
+---
+
+# MnCustomerJourneyMap
+
+Customer journey map with touchpoints, emotions, and channel lanes.
+
+## When to use
+
+Use to visualize end-to-end customer experience across channels.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `stages` | `JourneyStage[]` | **required** | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnCustomerJourneyMap } from "@/components/maranello"
+
+<MnCustomerJourneyMap />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Matrix cells are keyboard navigable
+- Visual data is supplemented with text descriptions

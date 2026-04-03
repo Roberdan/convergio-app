@@ -1,0 +1,37 @@
+---
+title: MnDashboardStrip
+category: layout
+description: "Horizontal strip of compact dashboard KPI cards"
+keywords: ["dashboard", "strip", "cruscotto", "striscia", "kpi", "summary", "riepilogo"]
+---
+
+# MnDashboardStrip
+
+Horizontal strip of compact dashboard KPI cards.
+
+## When to use
+
+Use for a top-of-page summary bar with key performance indicators.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `metrics` | `StripMetric[]` | — | — |
+| `zones` | `StripZone[]` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnDashboardStrip } from "@/components/maranello"
+
+<MnDashboardStrip />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Landmarks (`<main>`, `<nav>`, `<aside>`) structure the layout
+- Skip-to-content link is supported

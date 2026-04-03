@@ -1,0 +1,38 @@
+---
+title: MnGauge
+category: data-viz
+description: "Full circular gauge dial with needle indicator and configurable ranges"
+keywords: ["gauge", "indicatore", "dial", "quadrante", "meter", "misuratore", "needle", "lancetta"]
+---
+
+# MnGauge
+
+Full circular gauge dial with needle indicator and configurable ranges.
+
+## When to use
+
+Use to display a single metric as a dial gauge with color-coded zones.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | — | — |
+| `ticks` | `number` | — | — |
+| `startAngle` | `number` | — | — |
+| `arcBar` | `ArcBar` | — | — |
+| `odometer` | `Odometer` | — | — |
+
+## Example
+
+```tsx
+import { MnGauge } from "@/components/maranello"
+
+<MnGauge />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with patterns or labels for color-blind users

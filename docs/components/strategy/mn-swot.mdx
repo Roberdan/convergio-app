@@ -1,0 +1,41 @@
+---
+title: MnSwot
+category: strategy
+description: "SWOT analysis grid with four editable quadrants"
+keywords: ["swot", "strengths", "weaknesses", "opportunities", "threats", "forze", "debolezze"]
+---
+
+# MnSwot
+
+SWOT analysis grid with four editable quadrants.
+
+## When to use
+
+Use to conduct a structured SWOT analysis with collaborative editing.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `strengths` | `string[]` | **required** | — |
+| `weaknesses` | `string[]` | **required** | — |
+| `opportunities` | `string[]` | **required** | — |
+| `threats` | `string[]` | **required** | — |
+| `editable` | `boolean` | — | — |
+| `onChange` | `(quadrant: SwotQuadrant, items: string[]) =&gt; void` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnSwot } from "@/components/maranello"
+
+<MnSwot />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Matrix cells are keyboard navigable
+- Visual data is supplemented with text descriptions

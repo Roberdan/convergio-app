@@ -1,0 +1,42 @@
+---
+title: MnToggleSwitch
+category: forms
+description: "Toggle switch with on/off labels and accessible keyboard interaction"
+keywords: ["toggle", "switch", "interruttore", "on", "off", "boolean", "setting", "impostazione"]
+---
+
+# MnToggleSwitch
+
+Toggle switch with on/off labels and accessible keyboard interaction.
+
+## When to use
+
+Use for binary settings that take effect immediately.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `checked` | `boolean` | **required** | — |
+| `onCheckedChange` | `(checked: boolean) =&gt; void` | **required** | — |
+| `label` | `string` | — | — |
+| `disabled` | `boolean` | — | — |
+| `size` | `ToggleSize` | — | — |
+| `className` | `string` | — | — |
+| `id` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnToggleSwitch } from "@/components/maranello"
+
+<MnToggleSwitch label="Example" />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Form controls are associated with labels via `htmlFor`/`id`
+- Validation errors are announced to screen readers
+- Supports keyboard navigation between fields
+- Uses `role="switch"` with `aria-checked` state

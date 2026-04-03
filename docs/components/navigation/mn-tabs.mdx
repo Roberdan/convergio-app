@@ -1,0 +1,37 @@
+---
+title: MnTabs
+category: navigation
+description: "Tabbed interface with accessible keyboard navigation and lazy panel loading"
+keywords: ["tabs", "tab", "schede", "scheda", "panel", "pannello", "switch", "navigazione"]
+---
+
+# MnTabs
+
+Tabbed interface with accessible keyboard navigation and lazy panel loading.
+
+## When to use
+
+Use to organize content into mutually exclusive tabbed panels.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | — | — |
+| `defaultValue` | `string` | — | — |
+| `onValueChange` | `(value: string) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnTabs } from "@/components/maranello"
+
+<MnTabs />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Implements `aria-current` for active navigation items
+- Full keyboard navigation support with arrow keys
+- Follows WAI-ARIA Tabs pattern with `role="tablist"` / `role="tab"` / `role="tabpanel"`

@@ -1,0 +1,38 @@
+---
+title: MnInstrumentBinnacle
+category: ops
+description: "Instrument cluster binnacle with gauges, indicators, and real-time telemetry"
+keywords: ["instrument", "binnacle", "strumento", "giornale di bordo", "cockpit", "cruscotto"]
+---
+
+# MnInstrumentBinnacle
+
+Instrument cluster binnacle with gauges, indicators, and real-time telemetry.
+
+## When to use
+
+Use to present multiple live instruments in a dashboard cockpit view.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `entries` | `BinnacleEntry[]` | **required** | — |
+| `metrics` | `StripMetric[]` | **required** | — |
+| `maxVisible` | `number` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnInstrumentBinnacle } from "@/components/maranello"
+
+<MnInstrumentBinnacle />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Data tables include proper `<th>` scope attributes
+- Drag-and-drop has keyboard alternatives

@@ -1,0 +1,39 @@
+---
+title: MnDropdownMenu
+category: theme
+description: "Dropdown menu with nested sub-menus, icons, and keyboard navigation"
+keywords: ["dropdown", "menu", "tendina", "menù", "context", "contesto", "action", "azione"]
+---
+
+# MnDropdownMenu
+
+Dropdown menu with nested sub-menus, icons, and keyboard navigation.
+
+## When to use
+
+Use for context menus or action menus triggered by a button.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `trigger` | `React.ReactNode` | **required** | — |
+| `children` | `React.ReactNode` | **required** | — |
+| `align` | `"start" \| "end"` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnDropdownMenu } from "@/components/maranello"
+
+<MnDropdownMenu>
+  {/* content */}
+</MnDropdownMenu>
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Theme changes are announced via `aria-live`
+- All controls meet WCAG 2.1 contrast requirements

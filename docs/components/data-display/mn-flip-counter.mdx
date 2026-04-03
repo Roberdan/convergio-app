@@ -1,0 +1,43 @@
+---
+title: MnFlipCounter
+category: data-display
+description: "Animated flip-card counter for displaying changing numeric values"
+keywords: ["counter", "flip", "animation", "contatore", "animazione", "number", "numero", "ticker"]
+---
+
+# MnFlipCounter
+
+Animated flip-card counter for displaying changing numeric values.
+
+## When to use
+
+Use for animated number transitions in dashboards or scoreboards.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | **required** | — |
+| `digits` | `number` | — | — |
+| `decimals` | `number` | — | — |
+| `padZero` | `boolean` | — | — |
+| `prefix` | `string` | — | — |
+| `suffix` | `string` | — | — |
+| `size` | `FlipCounterSize` | — | — |
+| `animationDuration` | `number` | — | — |
+| `label` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnFlipCounter } from "@/components/maranello"
+
+<MnFlipCounter label="Example" />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible

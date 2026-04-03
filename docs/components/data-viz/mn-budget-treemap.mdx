@@ -1,0 +1,37 @@
+---
+title: MnBudgetTreemap
+category: data-viz
+description: "Treemap chart visualizing budget allocation across hierarchical categories"
+keywords: ["treemap", "budget", "bilancio", "chart", "grafico", "allocation", "allocazione"]
+---
+
+# MnBudgetTreemap
+
+Treemap chart visualizing budget allocation across hierarchical categories.
+
+## When to use
+
+Use to show proportional budget distribution with drill-down capability.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `TreemapItem[]` | **required** | — |
+| `total` | `number` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnBudgetTreemap } from "@/components/maranello"
+
+<MnBudgetTreemap items={sampleData} />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with patterns or labels for color-blind users

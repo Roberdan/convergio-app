@@ -1,0 +1,48 @@
+---
+title: MnLogin
+category: forms
+description: "Login form with email/password fields, SSO options, and forgot-password link"
+keywords: ["login", "auth", "accesso", "autenticazione", "password", "sign-in", "email"]
+---
+
+# MnLogin
+
+Login form with email/password fields, SSO options, and forgot-password link.
+
+## When to use
+
+Use as the primary authentication entry point.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | — | — |
+| `titleAccent` | `string` | — | — |
+| `subtitle` | `string` | — | — |
+| `version` | `string` | — | — |
+| `env` | `string` | — | — |
+| `error` | `string` | — | — |
+| `submitLabel` | `string` | — | — |
+| `forgotPasswordHref` | `string` | — | — |
+| `onForgotPassword` | `() =&gt; void` | — | — |
+| `onSubmit` | `(email: string, password: string) =&gt; void` | — | — |
+| `socialProviders` | `SocialProvider[]` | — | — |
+| `onSocialLogin` | `(providerId: string) =&gt; void` | — | — |
+| `checks` | `LoginServiceCheck[]` | — | — |
+| `loading` | `boolean` | — | — |
+
+## Example
+
+```tsx
+import { MnLogin } from "@/components/maranello"
+
+<MnLogin title="Example Title" />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Form controls are associated with labels via `htmlFor`/`id`
+- Validation errors are announced to screen readers
+- Supports keyboard navigation between fields

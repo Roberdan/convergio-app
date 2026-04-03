@@ -1,0 +1,36 @@
+---
+title: MnSocialGraph
+category: network
+description: "Social network graph showing relationships and connection strength"
+keywords: ["social", "graph", "sociale", "grafo", "network", "rete", "relationship", "relazione"]
+---
+
+# MnSocialGraph
+
+Social network graph showing relationships and connection strength.
+
+## When to use
+
+Use to map social or professional relationships between entities.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `nodes` | `SocialGraphNode[]` | **required** | — |
+| `groups` | `Record&lt;string, string&gt;` | — | — |
+| `onNodeClick` | `(node: SocialGraphNode) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnSocialGraph } from "@/components/maranello"
+
+<MnSocialGraph />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Interactive graph nodes are keyboard focusable
+- Status information uses `aria-live` for dynamic updates

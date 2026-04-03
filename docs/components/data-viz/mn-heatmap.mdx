@@ -1,0 +1,34 @@
+---
+title: MnHeatmap
+category: data-viz
+description: "Matrix heatmap with color-coded cells and interactive tooltips"
+keywords: ["heatmap", "mappa di calore", "matrix", "matrice", "color", "colore", "intensity"]
+---
+
+# MnHeatmap
+
+Matrix heatmap with color-coded cells and interactive tooltips.
+
+## When to use
+
+Use to reveal patterns across two dimensions via color intensity.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `data` | `{ label: string` | **required** | — |
+
+## Example
+
+```tsx
+import { MnHeatmap } from "@/components/maranello"
+
+<MnHeatmap data={sampleData} />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with patterns or labels for color-blind users

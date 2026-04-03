@@ -1,0 +1,42 @@
+---
+title: MnEntityWorkbench
+category: ops
+description: "Workbench view for inspecting and editing a single business entity"
+keywords: ["entity", "workbench", "entità", "banco di lavoro", "edit", "modifica", "detail"]
+---
+
+# MnEntityWorkbench
+
+Workbench view for inspecting and editing a single business entity.
+
+## When to use
+
+Use to provide a full editing surface for a complex domain entity.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `tabs` | `EntityWorkbenchTab[]` | **required** | — |
+| `activeTabId` | `string` | — | — |
+| `onTabSelect` | `(tabId: string) =&gt; void` | — | — |
+| `onTabClose` | `(tabId: string) =&gt; void` | — | — |
+| `onTabAdd` | `() =&gt; void` | — | — |
+| `onSave` | `(tabId: string) =&gt; void` | — | — |
+| `onReorder` | `(tabIds: string[]) =&gt; void` | — | — |
+| `allowAdd` | `boolean` | — | — |
+| `renderContent` | `(tab: EntityWorkbenchTab) =&gt; React.ReactNode` | — | — |
+
+## Example
+
+```tsx
+import { MnEntityWorkbench } from "@/components/maranello"
+
+<MnEntityWorkbench />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Data tables include proper `<th>` scope attributes
+- Drag-and-drop has keyboard alternatives

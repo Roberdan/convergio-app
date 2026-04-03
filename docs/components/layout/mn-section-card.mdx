@@ -1,0 +1,39 @@
+---
+title: MnSectionCard
+category: layout
+description: "Card container with title bar, actions slot, and collapsible body"
+keywords: ["section", "card", "sezione", "scheda", "container", "contenitore", "panel", "pannello"]
+---
+
+# MnSectionCard
+
+Card container with title bar, actions slot, and collapsible body.
+
+## When to use
+
+Use to group related content into a visually distinct section.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | **required** | — |
+| `action` | `SectionCardAction` | — | — |
+| `badge` | `number` | — | — |
+| `collapsible` | `boolean` | — | — |
+| `defaultOpen` | `boolean` | — | — |
+| `noPadding` | `boolean` | — | — |
+
+## Example
+
+```tsx
+import { MnSectionCard } from "@/components/maranello"
+
+<MnSectionCard title="Example Title" />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Landmarks (`<main>`, `<nav>`, `<aside>`) structure the layout
+- Skip-to-content link is supported

@@ -1,0 +1,38 @@
+---
+title: MnAugmentedBrain
+category: agentic
+description: "Visual representation of AI-augmented decision-making combining human and machine intelligence"
+keywords: ["brain", "augmented", "AI", "cervello", "aumentato", "intelligence", "intelligenza"]
+---
+
+# MnAugmentedBrain
+
+Visual representation of AI-augmented decision-making combining human and machine intelligence.
+
+## When to use
+
+Use to display the interplay between human insight and AI suggestions.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `nodes` | `BrainNode[]` | **required** | — |
+| `connections` | `BrainConnection[]` | **required** | — |
+| `onNodeClick` | `(node: BrainNode) =&gt; void` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `height` | `number` | — | — |
+
+## Example
+
+```tsx
+import { MnAugmentedBrain } from "@/components/maranello"
+
+<MnAugmentedBrain />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Status updates use `aria-live` for real-time announcements
+- Interactive elements support keyboard activation

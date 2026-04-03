@@ -1,0 +1,35 @@
+---
+title: MnGantt
+category: ops
+description: "Gantt chart with task dependencies, milestones, and drag-to-reschedule"
+keywords: ["gantt", "chart", "grafico", "project", "progetto", "timeline", "cronologia", "schedule"]
+---
+
+# MnGantt
+
+Gantt chart with task dependencies, milestones, and drag-to-reschedule.
+
+## When to use
+
+Use to plan and track project schedules with task timelines.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `tasks` | `GanttTask[]` | **required** | — |
+| `labelWidth` | `number` | — | — |
+
+## Example
+
+```tsx
+import { MnGantt } from "@/components/maranello"
+
+<MnGantt />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Data tables include proper `<th>` scope attributes
+- Drag-and-drop has keyboard alternatives

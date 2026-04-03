@@ -1,0 +1,39 @@
+---
+title: MnDashboard
+category: layout
+description: "Pre-composed dashboard layout with configurable widget slots"
+keywords: ["dashboard", "cruscotto", "layout", "grid", "griglia", "widget", "panel", "pannello"]
+---
+
+# MnDashboard
+
+Pre-composed dashboard layout with configurable widget slots.
+
+## When to use
+
+Use to build standard dashboards with a header, sidebar, and grid area.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `schema` | `DashboardSchema` | **required** | — |
+| `data` | `Record&lt;string, unknown&gt;` | — | — |
+| `onWidgetClick` | `(dataKey: string, data: unknown) =&gt; void` | — | — |
+| `renderWidget` | `(` | — | — |
+| `widget` | `DashboardWidget,` | **required** | — |
+| `data` | `unknown,` | **required** | — |
+
+## Example
+
+```tsx
+import { MnDashboard } from "@/components/maranello"
+
+<MnDashboard data={sampleData} />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Landmarks (`<main>`, `<nav>`, `<aside>`) structure the layout
+- Skip-to-content link is supported

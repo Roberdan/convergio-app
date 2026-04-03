@@ -1,0 +1,37 @@
+---
+title: MnOrgChart
+category: network
+description: "Organizational chart with hierarchical node layout and expand/collapse"
+keywords: ["org", "chart", "organigramma", "grafico", "hierarchy", "gerarchia", "organization"]
+---
+
+# MnOrgChart
+
+Organizational chart with hierarchical node layout and expand/collapse.
+
+## When to use
+
+Use to visualize company or team hierarchies with reporting lines.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `tree` | `OrgNode` | **required** | — |
+| `onNodeClick` | `(node: OrgNode) =&gt; void` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnOrgChart } from "@/components/maranello"
+
+<MnOrgChart />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Interactive graph nodes are keyboard focusable
+- Status information uses `aria-live` for dynamic updates

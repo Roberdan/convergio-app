@@ -1,0 +1,37 @@
+---
+title: MnDecisionMatrix
+category: strategy
+description: "Weighted decision matrix for scoring options against criteria"
+keywords: ["decision", "matrix", "decisione", "matrice", "criteria", "criteri", "score", "punteggio"]
+---
+
+# MnDecisionMatrix
+
+Weighted decision matrix for scoring options against criteria.
+
+## When to use
+
+Use to objectively compare alternatives with weighted scoring.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `criteria` | `DecisionCriterion[]` | **required** | — |
+| `options` | `DecisionOption[]` | **required** | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnDecisionMatrix } from "@/components/maranello"
+
+<MnDecisionMatrix />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Matrix cells are keyboard navigable
+- Visual data is supplemented with text descriptions

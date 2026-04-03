@@ -1,0 +1,37 @@
+---
+title: MnBcgMatrix
+category: strategy
+description: "BCG growth-share matrix with quadrant labels and bubble plot"
+keywords: ["bcg", "matrix", "matrice", "growth", "crescita", "share", "quota", "strategy", "strategia"]
+---
+
+# MnBcgMatrix
+
+BCG growth-share matrix with quadrant labels and bubble plot.
+
+## When to use
+
+Use to classify business units or products by growth and market share.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `BCGItem[]` | — | — |
+| `shareThreshold` | `number` | — | — |
+| `onItemHover` | `(item: BCGItem \| null) =&gt; void` | — | — |
+| `onItemClick` | `(item: BCGItem) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnBcgMatrix } from "@/components/maranello"
+
+<MnBcgMatrix items={sampleData} />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Matrix cells are keyboard navigable
+- Visual data is supplemented with text descriptions

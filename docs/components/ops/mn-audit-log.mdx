@@ -1,0 +1,37 @@
+---
+title: MnAuditLog
+category: ops
+description: "Paginated audit log table with actor, action, and timestamp columns"
+keywords: ["audit", "log", "registro", "controllo", "history", "cronologia", "trace", "traccia"]
+---
+
+# MnAuditLog
+
+Paginated audit log table with actor, action, and timestamp columns.
+
+## When to use
+
+Use to display a chronological record of system or user actions.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `entries` | `AuditEntry[]` | **required** | — |
+| `maxVisible` | `number` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnAuditLog } from "@/components/maranello"
+
+<MnAuditLog />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Data tables include proper `<th>` scope attributes
+- Drag-and-drop has keyboard alternatives

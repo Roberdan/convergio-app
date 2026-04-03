@@ -1,0 +1,46 @@
+---
+title: MnModal
+category: feedback
+description: "Accessible modal dialog with backdrop, focus trap, and size variants"
+keywords: ["modal", "dialog", "modale", "dialogo", "popup", "overlay", "confirm", "conferma"]
+---
+
+# MnModal
+
+Accessible modal dialog with backdrop, focus trap, and size variants.
+
+## When to use
+
+Use for confirmations, forms, or content that requires focused attention.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | **required** | — |
+| `onOpenChange` | `(open: boolean) =&gt; void` | **required** | — |
+| `title` | `string` | — | — |
+| `closeOnBackdropClick` | `boolean` | — | — |
+| `closeOnEscape` | `boolean` | — | — |
+| `titleId` | `string` | — | — |
+| `bodyId` | `string` | — | — |
+| `className` | `string` | — | — |
+| `children` | `React.ReactNode` | — | — |
+
+## Example
+
+```tsx
+import { MnModal } from "@/components/maranello"
+
+<MnModal title="Example Title">
+  {/* content */}
+</MnModal>
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Uses `role="alert"` or `aria-live` regions for dynamic content
+- Focus is managed appropriately when content appears/disappears
+- Focus is trapped inside the modal while open
+- Escape key closes the modal

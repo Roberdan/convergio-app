@@ -1,0 +1,38 @@
+---
+title: MnApprovalChain
+category: agentic
+description: "Sequential approval workflow showing sign-off status across stakeholders"
+keywords: ["approval", "chain", "workflow", "approvazione", "catena", "flusso", "sign-off"]
+---
+
+# MnApprovalChain
+
+Sequential approval workflow showing sign-off status across stakeholders.
+
+## When to use
+
+Use for multi-step approval processes requiring ordered sign-offs.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `steps` | `ApprovalStep[]` | **required** | — |
+| `orientation` | `"horizontal" \| "vertical"` | — | — |
+| `editable` | `boolean` | — | — |
+| `onAction` | `(step: ApprovalStep, action: ApprovalAction) =&gt; void` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnApprovalChain } from "@/components/maranello"
+
+<MnApprovalChain />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Status updates use `aria-live` for real-time announcements
+- Interactive elements support keyboard activation

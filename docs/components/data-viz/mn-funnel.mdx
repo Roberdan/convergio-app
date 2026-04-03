@@ -1,0 +1,35 @@
+---
+title: MnFunnel
+category: data-viz
+description: "Funnel chart showing progressive stage-to-stage conversion rates"
+keywords: ["funnel", "imbuto", "conversion", "conversione", "pipeline", "stages", "fasi", "vendite"]
+---
+
+# MnFunnel
+
+Funnel chart showing progressive stage-to-stage conversion rates.
+
+## When to use
+
+Use to visualize sales, conversion, or pipeline funnels.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `data` | `FunnelData \| null` | **required** | — |
+| `onStageClick` | `(stage: FunnelStage, index: number) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnFunnel } from "@/components/maranello"
+
+<MnFunnel data={sampleData} />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with patterns or labels for color-blind users

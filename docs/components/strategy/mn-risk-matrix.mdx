@@ -1,0 +1,39 @@
+---
+title: MnRiskMatrix
+category: strategy
+description: "Risk matrix heatmap plotting likelihood vs. impact with editable risks"
+keywords: ["risk", "matrix", "rischio", "matrice", "likelihood", "probabilità", "impact", "impatto"]
+---
+
+# MnRiskMatrix
+
+Risk matrix heatmap plotting likelihood vs. impact with editable risks.
+
+## When to use
+
+Use to assess and prioritize risks by probability and severity.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `RiskItem[]` | **required** | — |
+| `animate` | `boolean` | — | — |
+| `onItemHover` | `(item: RiskItem \| null) =&gt; void` | — | — |
+| `onItemClick` | `(item: RiskItem) =&gt; void` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnRiskMatrix } from "@/components/maranello"
+
+<MnRiskMatrix items={sampleData} />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Matrix cells are keyboard navigable
+- Visual data is supplemented with text descriptions

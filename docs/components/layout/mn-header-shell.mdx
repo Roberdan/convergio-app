@@ -1,0 +1,38 @@
+---
+title: MnHeaderShell
+category: layout
+description: "App header bar with logo slot, navigation, search, and user menu"
+keywords: ["header", "shell", "intestazione", "guscio", "navbar", "barra di navigazione", "top"]
+---
+
+# MnHeaderShell
+
+App header bar with logo slot, navigation, search, and user menu.
+
+## When to use
+
+Use as the top-level header for all application pages.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `sections` | `HeaderShellSectionDef[]` | — | — |
+| `callbacks` | `HeaderShellCallbacks` | — | — |
+| `brand` | `React.ReactNode` | — | — |
+| `nav` | `React.ReactNode` | — | — |
+| `actions` | `React.ReactNode` | — | — |
+
+## Example
+
+```tsx
+import { MnHeaderShell } from "@/components/maranello"
+
+<MnHeaderShell />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Landmarks (`<main>`, `<nav>`, `<aside>`) structure the layout
+- Skip-to-content link is supported

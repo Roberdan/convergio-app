@@ -1,0 +1,38 @@
+---
+title: MnFilterPanel
+category: forms
+description: "Collapsible filter panel with multi-facet controls and apply/reset actions"
+keywords: ["filter", "panel", "filtro", "pannello", "facet", "criteria", "criteri", "search", "ricerca"]
+---
+
+# MnFilterPanel
+
+Collapsible filter panel with multi-facet controls and apply/reset actions.
+
+## When to use
+
+Use to provide advanced multi-criteria filtering for data views.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `sections` | `FilterSection[]` | **required** | — |
+| `onFilterChange` | `(filters: ActiveFilters) =&gt; void` | — | — |
+| `onApply` | `(filters: ActiveFilters) =&gt; void` | — | — |
+| `clearAllLabel` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnFilterPanel } from "@/components/maranello"
+
+<MnFilterPanel />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Form controls are associated with labels via `htmlFor`/`id`
+- Validation errors are announced to screen readers
+- Supports keyboard navigation between fields

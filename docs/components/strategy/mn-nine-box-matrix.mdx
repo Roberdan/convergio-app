@@ -1,0 +1,42 @@
+---
+title: MnNineBoxMatrix
+category: strategy
+description: "Nine-box talent matrix plotting performance vs. potential"
+keywords: ["nine-box", "matrix", "matrice", "talent", "talento", "performance", "potential", "HR"]
+---
+
+# MnNineBoxMatrix
+
+Nine-box talent matrix plotting performance vs. potential.
+
+## When to use
+
+Use for talent reviews and succession planning discussions.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `NineBoxItem[]` | **required** | — |
+| `xLabel` | `string` | — | — |
+| `yLabel` | `string` | — | — |
+| `xAxisLabels` | `[string, string, string]` | — | — |
+| `yAxisLabels` | `[string, string, string]` | — | — |
+| `onSelect` | `(item: NineBoxItem) =&gt; void` | — | — |
+| `onMove` | `(item: NineBoxItem, performance: 0 \| 1 \| 2, potential: 0 \| 1 \| 2) =&gt; void` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnNineBoxMatrix } from "@/components/maranello"
+
+<MnNineBoxMatrix items={sampleData} />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Matrix cells are keyboard navigable
+- Visual data is supplemented with text descriptions

@@ -1,0 +1,35 @@
+---
+title: MnBadge
+category: data-display
+description: "Status indicator badge with CVA variants for severity levels"
+keywords: ["badge", "status", "tag", "etichetta", "stato", "label", "count", "conteggio"]
+---
+
+# MnBadge
+
+Status indicator badge with CVA variants for severity levels.
+
+## When to use
+
+Use to show status, counts, or labels inline with other content.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | — | — |
+| `tone` | `BadgeTone` | — | — |
+
+## Example
+
+```tsx
+import { MnBadge } from "@/components/maranello"
+
+<MnBadge label="Example" />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible

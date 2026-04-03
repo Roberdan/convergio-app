@@ -1,0 +1,39 @@
+---
+title: MnSystemStatus
+category: network
+description: "System status dashboard showing service health with uptime indicators"
+keywords: ["system", "status", "sistema", "stato", "health", "salute", "uptime", "operativo"]
+---
+
+# MnSystemStatus
+
+System status dashboard showing service health with uptime indicators.
+
+## When to use
+
+Use to provide an at-a-glance operational health overview.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `services` | `Service[]` | **required** | — |
+| `incidents` | `Incident[]` | — | — |
+| `refreshInterval` | `number` | — | — |
+| `onRefresh` | `() =&gt; void` | — | — |
+| `version` | `string` | — | — |
+| `environment` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnSystemStatus } from "@/components/maranello"
+
+<MnSystemStatus />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Interactive graph nodes are keyboard focusable
+- Status information uses `aria-live` for dynamic updates

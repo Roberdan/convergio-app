@@ -1,0 +1,36 @@
+---
+title: MnCustomerJourney
+category: strategy
+description: "Simplified customer journey flow showing sequential interaction steps"
+keywords: ["customer", "journey", "cliente", "viaggio", "flow", "flusso", "stages", "fasi"]
+---
+
+# MnCustomerJourney
+
+Simplified customer journey flow showing sequential interaction steps.
+
+## When to use
+
+Use for a compact, linear view of key customer interaction stages.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `phases` | `JourneyPhase[]` | **required** | — |
+| `selected` | `string \| null` | — | — |
+| `onSelect` | `(engagement: JourneyEngagement) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnCustomerJourney } from "@/components/maranello"
+
+<MnCustomerJourney />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Matrix cells are keyboard navigable
+- Visual data is supplemented with text descriptions

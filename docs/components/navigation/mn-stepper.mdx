@@ -1,0 +1,37 @@
+---
+title: MnStepper
+category: navigation
+description: "Multi-step wizard stepper with progress tracking and step validation"
+keywords: ["stepper", "wizard", "step", "passo", "procedura guidata", "progress", "workflow"]
+---
+
+# MnStepper
+
+Multi-step wizard stepper with progress tracking and step validation.
+
+## When to use
+
+Use to guide users through a sequential multi-step workflow.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `steps` | `Step[]` | **required** | — |
+| `currentStep` | `number` | **required** | — |
+| `className` | `string` | — | — |
+| `onChange` | `(step: number) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnStepper } from "@/components/maranello"
+
+<MnStepper />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Implements `aria-current` for active navigation items
+- Full keyboard navigation support with arrow keys

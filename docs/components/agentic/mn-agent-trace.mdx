@@ -1,0 +1,38 @@
+---
+title: MnAgentTrace
+category: agentic
+description: "Trace viewer showing step-by-step execution of AI agent reasoning and actions"
+keywords: ["trace", "agent", "debug", "traccia", "agente", "steps", "reasoning", "passaggi"]
+---
+
+# MnAgentTrace
+
+Trace viewer showing step-by-step execution of AI agent reasoning and actions.
+
+## When to use
+
+Use to debug or inspect how an AI agent arrived at its response.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `steps` | `TraceStep[]` | **required** | — |
+| `onSelect` | `(step: TraceStep) =&gt; void` | — | — |
+| `maxVisible` | `number` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnAgentTrace } from "@/components/maranello"
+
+<MnAgentTrace />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Status updates use `aria-live` for real-time announcements
+- Interactive elements support keyboard activation

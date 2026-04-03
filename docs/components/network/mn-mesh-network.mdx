@@ -1,0 +1,40 @@
+---
+title: MnMeshNetwork
+category: network
+description: "Composite mesh network view combining canvas, cards, and toolbar"
+keywords: ["mesh", "network", "rete", "topology", "topologia", "graph", "grafo", "nodes", "nodi"]
+---
+
+# MnMeshNetwork
+
+Composite mesh network view combining canvas, cards, and toolbar.
+
+## When to use
+
+Use to render a complete mesh network topology with interactive controls.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `nodes` | `MeshNode[]` | **required** | — |
+| `edges` | `MeshEdge[]` | **required** | — |
+| `onNodeSelect` | `(node: MeshNode) =&gt; void` | — | — |
+| `onAction` | `(action: MeshAction) =&gt; void` | — | — |
+| `onNodeAction` | `(node: MeshNode, action: string) =&gt; void` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `maxParticles` | `number` | — | — |
+
+## Example
+
+```tsx
+import { MnMeshNetwork } from "@/components/maranello"
+
+<MnMeshNetwork />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Interactive graph nodes are keyboard focusable
+- Status information uses `aria-live` for dynamic updates

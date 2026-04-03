@@ -1,0 +1,37 @@
+---
+title: MnHubSpoke
+category: agentic
+description: "Hub-and-spoke diagram visualizing central node relationships to satellite nodes"
+keywords: ["hub", "spoke", "diagram", "diagramma", "mozzo", "raggi", "network", "rete"]
+---
+
+# MnHubSpoke
+
+Hub-and-spoke diagram visualizing central node relationships to satellite nodes.
+
+## When to use
+
+Use to show a central entity connected to multiple peripheral entities.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `hub` | `HubSpokeHub` | **required** | — |
+| `spokes` | `HubSpokeSpoke[]` | **required** | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnHubSpoke } from "@/components/maranello"
+
+<MnHubSpoke />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Status updates use `aria-live` for real-time announcements
+- Interactive elements support keyboard activation

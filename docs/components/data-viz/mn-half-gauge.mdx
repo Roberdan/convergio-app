@@ -1,0 +1,42 @@
+---
+title: MnHalfGauge
+category: data-viz
+description: "Semi-circular gauge for compact metric display with threshold zones"
+keywords: ["gauge", "half", "semi", "indicatore", "mezzo", "semicircolare", "compact"]
+---
+
+# MnHalfGauge
+
+Semi-circular gauge for compact metric display with threshold zones.
+
+## When to use
+
+Use when a full gauge is too large and a half-circle fits the layout.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | — | — |
+| `min` | `number` | — | — |
+| `max` | `number` | — | — |
+| `unit` | `string` | — | — |
+| `label` | `string` | — | — |
+| `colors` | `HalfGaugeColorStop[]` | — | — |
+| `trackColor` | `string` | — | — |
+| `thickness` | `number` | — | — |
+| `animate` | `boolean` | — | — |
+
+## Example
+
+```tsx
+import { MnHalfGauge } from "@/components/maranello"
+
+<MnHalfGauge label="Example" />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with patterns or labels for color-blind users

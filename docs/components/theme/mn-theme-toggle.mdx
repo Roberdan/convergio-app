@@ -1,0 +1,35 @@
+---
+title: MnThemeToggle
+category: theme
+description: "Light/dark theme toggle switch with system-preference detection"
+keywords: ["theme", "toggle", "tema", "interruttore", "dark", "light", "scuro", "chiaro", "mode"]
+---
+
+# MnThemeToggle
+
+Light/dark theme toggle switch with system-preference detection.
+
+## When to use
+
+Use to switch between light, dark, and system color schemes.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `showLabel` | `boolean` | — | — |
+
+## Example
+
+```tsx
+import { MnThemeToggle } from "@/components/maranello"
+
+<MnThemeToggle />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Theme changes are announced via `aria-live`
+- All controls meet WCAG 2.1 contrast requirements
+- Uses `role="switch"` with `aria-checked` state

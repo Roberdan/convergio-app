@@ -1,0 +1,37 @@
+---
+title: MnSpeedometer
+category: data-viz
+description: "Speedometer-style gauge with animated needle and RPM-inspired design"
+keywords: ["speedometer", "tachimetro", "gauge", "speed", "velocità", "needle", "lancetta"]
+---
+
+# MnSpeedometer
+
+Speedometer-style gauge with animated needle and RPM-inspired design.
+
+## When to use
+
+Use for a high-impact single-value gauge with automotive aesthetics.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | — | — |
+| `ticks` | `number[]` | — | — |
+| `arcStart` | `number` | — | — |
+| `subLabel` | `string \| null` | — | — |
+
+## Example
+
+```tsx
+import { MnSpeedometer } from "@/components/maranello"
+
+<MnSpeedometer />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with patterns or labels for color-blind users

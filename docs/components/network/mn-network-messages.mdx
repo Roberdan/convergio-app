@@ -1,0 +1,41 @@
+---
+title: MnNetworkMessages
+category: network
+description: "Message log panel for network communication events and packet traces"
+keywords: ["network", "messages", "rete", "messaggi", "log", "packet", "pacchetto", "traffic"]
+---
+
+# MnNetworkMessages
+
+Message log panel for network communication events and packet traces.
+
+## When to use
+
+Use to display real-time or historical network message traffic.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `nodes` | `NetNode[]` | **required** | — |
+| `connections` | `NetConnection[]` | **required** | — |
+| `width` | `number` | — | — |
+| `height` | `number` | — | — |
+| `particleTrail` | `boolean` | — | — |
+| `glowEffect` | `boolean` | — | — |
+| `onNodeClick` | `(node: NetNode) =&gt; void` | — | — |
+| `controllerRef` | `{ current: NetworkMessagesController \| null` | — | — |
+
+## Example
+
+```tsx
+import { MnNetworkMessages } from "@/components/maranello"
+
+<MnNetworkMessages />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Interactive graph nodes are keyboard focusable
+- Status information uses `aria-live` for dynamic updates

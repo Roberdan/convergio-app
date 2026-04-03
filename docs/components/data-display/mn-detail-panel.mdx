@@ -1,0 +1,44 @@
+---
+title: MnDetailPanel
+category: data-display
+description: "Slide-out panel showing detailed information for a selected record"
+keywords: ["detail", "panel", "dettaglio", "pannello", "drawer", "sidebar", "info", "informazioni"]
+---
+
+# MnDetailPanel
+
+Slide-out panel showing detailed information for a selected record.
+
+## When to use
+
+Use to reveal extended details without leaving the current view.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | **required** | — |
+| `onOpenChange` | `(open: boolean) =&gt; void` | **required** | — |
+| `title` | `string` | **required** | — |
+| `sections` | `DetailSection[]` | **required** | — |
+| `defaultEditing` | `boolean` | — | — |
+| `editable` | `boolean` | — | — |
+| `onSave` | `(data: Record&lt;string, unknown&gt;) =&gt; void` | — | — |
+| `className` | `string` | — | — |
+| `children` | `React.ReactNode` | — | — |
+
+## Example
+
+```tsx
+import { MnDetailPanel } from "@/components/maranello"
+
+<MnDetailPanel title="Example Title">
+  {/* content */}
+</MnDetailPanel>
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible

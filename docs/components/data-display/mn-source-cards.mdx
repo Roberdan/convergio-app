@@ -1,0 +1,39 @@
+---
+title: MnSourceCards
+category: data-display
+description: "Card grid displaying data source metadata with connection status"
+keywords: ["source", "card", "fonte", "scheda", "integration", "integrazione", "connection", "connessione"]
+---
+
+# MnSourceCards
+
+Card grid displaying data source metadata with connection status.
+
+## When to use
+
+Use to present data sources, integrations, or API connections as cards.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `cards` | `SourceCard[]` | **required** | — |
+| `onSelect` | `(card: SourceCard) =&gt; void` | — | — |
+| `maxVisible` | `number` | — | — |
+| `layout` | `SourceCardLayout` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnSourceCards } from "@/components/maranello"
+
+<MnSourceCards />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible

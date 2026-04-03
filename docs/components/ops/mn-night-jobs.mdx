@@ -1,0 +1,36 @@
+---
+title: MnNightJobs
+category: ops
+description: "Night jobs monitor showing scheduled batch job runs and their outcomes"
+keywords: ["night", "jobs", "lavori notturni", "batch", "lotto", "schedule", "programmazione", "cron"]
+---
+
+# MnNightJobs
+
+Night jobs monitor showing scheduled batch job runs and their outcomes.
+
+## When to use
+
+Use to track overnight or scheduled batch processing jobs.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `jobs` | `NightJob[]` | **required** | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnNightJobs } from "@/components/maranello"
+
+<MnNightJobs />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Data tables include proper `<th>` scope attributes
+- Drag-and-drop has keyboard alternatives

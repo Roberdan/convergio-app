@@ -1,0 +1,37 @@
+---
+title: MnMeshNetworkCard
+category: network
+description: "Summary card for a single node within a mesh network view"
+keywords: ["mesh", "card", "rete", "scheda", "node", "nodo", "network", "status", "stato"]
+---
+
+# MnMeshNetworkCard
+
+Summary card for a single node within a mesh network view.
+
+## When to use
+
+Use to display metadata and status of an individual mesh network node.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `node` | `MeshNode` | **required** | — |
+| `selected` | `boolean` | — | — |
+| `onSelect` | `(node: MeshNode) =&gt; void` | — | — |
+| `onAction` | `(node: MeshNode, action: string) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnMeshNetworkCard } from "@/components/maranello"
+
+<MnMeshNetworkCard />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Interactive graph nodes are keyboard focusable
+- Status information uses `aria-live` for dynamic updates

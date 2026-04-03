@@ -1,0 +1,36 @@
+---
+title: MnMap
+category: network
+description: "Interactive geographic map with marker clusters and region overlays"
+keywords: ["map", "mappa", "geography", "geografia", "location", "posizione", "marker", "pin"]
+---
+
+# MnMap
+
+Interactive geographic map with marker clusters and region overlays.
+
+## When to use
+
+Use to display location-based data on a geographic map.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `markers` | `MapMarker[]` | — | — |
+| `enableZoom` | `boolean` | — | — |
+| `onMarkerClick` | `(marker: MapMarker) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnMap } from "@/components/maranello"
+
+<MnMap />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Interactive graph nodes are keyboard focusable
+- Status information uses `aria-live` for dynamic updates

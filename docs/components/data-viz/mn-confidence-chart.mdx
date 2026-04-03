@@ -1,0 +1,42 @@
+---
+title: MnConfidenceChart
+category: data-viz
+description: "Chart displaying confidence intervals and probability distributions"
+keywords: ["confidence", "chart", "grafico", "confidenza", "interval", "intervallo", "probability"]
+---
+
+# MnConfidenceChart
+
+Chart displaying confidence intervals and probability distributions.
+
+## When to use
+
+Use to visualize prediction confidence, error ranges, or probability bands.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `labels` | `string[]` | **required** | — |
+| `values` | `number[]` | **required** | — |
+| `lower` | `number[]` | **required** | — |
+| `upper` | `number[]` | **required** | — |
+| `unit` | `string` | — | — |
+| `color` | `string` | — | — |
+| `showDots` | `boolean` | — | — |
+| `animate` | `boolean` | — | — |
+| `height` | `number` | — | — |
+
+## Example
+
+```tsx
+import { MnConfidenceChart } from "@/components/maranello"
+
+<MnConfidenceChart />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with patterns or labels for color-blind users

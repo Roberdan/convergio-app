@@ -1,0 +1,37 @@
+---
+title: MnHbar
+category: data-viz
+description: "Horizontal bar chart with grouped or stacked bar support"
+keywords: ["bar", "horizontal", "chart", "barra", "orizzontale", "grafico", "comparison", "confronto"]
+---
+
+# MnHbar
+
+Horizontal bar chart with grouped or stacked bar support.
+
+## When to use
+
+Use for category comparisons where horizontal bars improve label readability.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `bars` | `HBarItem[]` | **required** | — |
+| `showValues` | `boolean` | — | — |
+| `animate` | `boolean` | — | — |
+| `onBarClick` | `(bar: HBarItem, index: number) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnHbar } from "@/components/maranello"
+
+<MnHbar />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with patterns or labels for color-blind users

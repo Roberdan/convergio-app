@@ -1,0 +1,45 @@
+---
+title: MnAdminShell
+category: layout
+description: "Admin layout shell with sidebar navigation, header, and content area"
+keywords: ["admin", "shell", "layout", "amministrazione", "guscio", "sidebar", "barra laterale"]
+---
+
+# MnAdminShell
+
+Admin layout shell with sidebar navigation, header, and content area.
+
+## When to use
+
+Use as the top-level layout for admin or back-office applications.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `collapsed` | `boolean` | — | — |
+| `defaultCollapsed` | `boolean` | — | — |
+| `onCollapsedChange` | `(collapsed: boolean) =&gt; void` | — | — |
+| `sidebarHeader` | `React.ReactNode` | — | — |
+| `sidebarFooter` | `React.ReactNode` | — | — |
+| `nav` | `AdminShellNavItem[]` | — | — |
+| `activeNavId` | `string` | — | — |
+| `onNavigate` | `(id: string) =&gt; void` | — | — |
+| `topBar` | `boolean` | — | — |
+| `breadcrumbs` | `AdminShellBreadcrumb[]` | — | — |
+| `pageTitle` | `string` | — | — |
+| `contentId` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnAdminShell } from "@/components/maranello"
+
+<MnAdminShell />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Landmarks (`<main>`, `<nav>`, `<aside>`) structure the layout
+- Skip-to-content link is supported

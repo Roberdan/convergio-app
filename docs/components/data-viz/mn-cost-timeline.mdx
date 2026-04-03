@@ -1,0 +1,39 @@
+---
+title: MnCostTimeline
+category: data-viz
+description: "Timeline chart showing cost evolution with cumulative trend line"
+keywords: ["cost", "timeline", "costo", "linea temporale", "expense", "spesa", "trend", "cumulative"]
+---
+
+# MnCostTimeline
+
+Timeline chart showing cost evolution with cumulative trend line.
+
+## When to use
+
+Use to track expenses or costs over time with running totals.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `labels` | `string[]` | **required** | — |
+| `series` | `CostSeries[]` | **required** | — |
+| `stacked` | `boolean` | — | — |
+| `animate` | `boolean` | — | — |
+| `unit` | `string` | — | — |
+| `onHover` | `(label: string, values: Record&lt;string, number&gt;) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnCostTimeline } from "@/components/maranello"
+
+<MnCostTimeline />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with patterns or labels for color-blind users

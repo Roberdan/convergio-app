@@ -1,0 +1,36 @@
+---
+title: MnAgentCostBreakdown
+category: financial
+description: "Breakdown panel detailing AI agent costs by model, tokens, and task"
+keywords: ["cost", "breakdown", "costo", "scomposizione", "agent", "agente", "billing", "fatturazione"]
+---
+
+# MnAgentCostBreakdown
+
+Breakdown panel detailing AI agent costs by model, tokens, and task.
+
+## When to use
+
+Use to itemize and attribute costs of AI agent operations.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `rows` | `AgentCostRow[]` | **required** | — |
+| `onSelect` | `(row: AgentCostRow) =&gt; void` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnAgentCostBreakdown } from "@/components/maranello"
+
+<MnAgentCostBreakdown rows={sampleData} />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Monetary values use `aria-label` for screen reader clarity
+- Tables include proper header associations

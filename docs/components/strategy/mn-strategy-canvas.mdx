@@ -1,0 +1,37 @@
+---
+title: MnStrategyCanvas
+category: strategy
+description: "Strategy canvas line chart comparing value curves across competitors"
+keywords: ["strategy", "canvas", "strategia", "tela", "value curve", "curva di valore", "comparison"]
+---
+
+# MnStrategyCanvas
+
+Strategy canvas line chart comparing value curves across competitors.
+
+## When to use
+
+Use to contrast strategic profiles using Blue Ocean value curves.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `segments` | `CanvasSegment[]` | **required** | — |
+| `onChange` | `(segments: CanvasSegment[]) =&gt; void` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnStrategyCanvas } from "@/components/maranello"
+
+<MnStrategyCanvas />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Matrix cells are keyboard navigable
+- Visual data is supplemented with text descriptions

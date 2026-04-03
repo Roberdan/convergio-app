@@ -1,0 +1,38 @@
+---
+title: MnActivityFeed
+category: feedback
+description: "Chronological activity feed with grouped events and actor avatars"
+keywords: ["activity", "feed", "attività", "flusso", "timeline", "cronologia", "events", "eventi"]
+---
+
+# MnActivityFeed
+
+Chronological activity feed with grouped events and actor avatars.
+
+## When to use
+
+Use to display a timeline of user actions, system events, or audit entries.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `ActivityItem[]` | **required** | — |
+| `onRefresh` | `() =&gt; void` | — | — |
+| `refreshInterval` | `number` | — | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnActivityFeed } from "@/components/maranello"
+
+<MnActivityFeed items={sampleData} />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Uses `role="alert"` or `aria-live` regions for dynamic content
+- Focus is managed appropriately when content appears/disappears

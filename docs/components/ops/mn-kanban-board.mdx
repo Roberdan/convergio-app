@@ -1,0 +1,36 @@
+---
+title: MnKanbanBoard
+category: ops
+description: "Kanban board with draggable cards, swimlanes, and WIP limits"
+keywords: ["kanban", "board", "lavagna", "task", "compito", "drag", "workflow", "flusso", "agile"]
+---
+
+# MnKanbanBoard
+
+Kanban board with draggable cards, swimlanes, and WIP limits.
+
+## When to use
+
+Use to manage workflow stages with visual card-based task tracking.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `columns` | `KanbanColumn[]` | **required** | — |
+| `onCardMove` | `(cardId: string, fromCol: string, toCol: string, position: number) =&gt; void` | — | — |
+| `onCardClick` | `(card: KanbanCard) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnKanbanBoard } from "@/components/maranello"
+
+<MnKanbanBoard />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Data tables include proper `<th>` scope attributes
+- Drag-and-drop has keyboard alternatives

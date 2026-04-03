@@ -1,0 +1,42 @@
+---
+title: MnUserTable
+category: data-display
+description: "User management table with role badges, status filters, and bulk actions"
+keywords: ["user", "table", "utente", "tabella", "role", "ruolo", "management", "gestione"]
+---
+
+# MnUserTable
+
+User management table with role badges, status filters, and bulk actions.
+
+## When to use
+
+Use to list and manage users with role-based access information.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `users` | `AdminUser[]` | **required** | — |
+| `searchable` | `boolean` | — | — |
+| `selectable` | `boolean` | — | — |
+| `loading` | `boolean` | — | — |
+| `emptyMessage` | `string` | — | — |
+| `onSelect` | `(user: AdminUser) =&gt; void` | — | — |
+| `onAction` | `(user: AdminUser, action: UserAction) =&gt; void` | — | — |
+| `onSelectionChange` | `(selected: AdminUser[]) =&gt; void` | — | — |
+
+## Example
+
+```tsx
+import { MnUserTable } from "@/components/maranello"
+
+<MnUserTable />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible
+- Follows WAI-ARIA Tabs pattern with `role="tablist"` / `role="tab"` / `role="tabpanel"`

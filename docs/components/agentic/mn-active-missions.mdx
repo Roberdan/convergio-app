@@ -1,0 +1,36 @@
+---
+title: MnActiveMissions
+category: agentic
+description: "Dashboard panel tracking active AI agent missions and their real-time progress"
+keywords: ["missions", "agent", "tasks", "missioni", "agente", "compiti", "active", "attive", "progress"]
+---
+
+# MnActiveMissions
+
+Dashboard panel tracking active AI agent missions and their real-time progress.
+
+## When to use
+
+Use to monitor running AI tasks, agent workflows, or background missions.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `missions` | `Mission[]` | **required** | — |
+| `ariaLabel` | `string` | — | — |
+| `className` | `string` | — | — |
+
+## Example
+
+```tsx
+import { MnActiveMissions } from "@/components/maranello"
+
+<MnActiveMissions />
+```
+
+## Accessibility
+
+- Uses semantic HTML elements for proper document structure
+- Status updates use `aria-live` for real-time announcements
+- Interactive elements support keyboard activation
