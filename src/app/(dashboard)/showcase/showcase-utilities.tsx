@@ -16,7 +16,16 @@ import {
   MnDetailPanel,
 } from '@/components/maranello';
 import type { DateRange, DataTableColumn } from '@/components/maranello';
+import { CATALOG } from '@/lib/component-catalog';
+import { ComponentDoc } from './component-doc';
+import { COMPONENT_PROPS } from './component-props';
 import { stepperSteps } from './showcase-data';
+
+function entry(slug: string) {
+  const e = CATALOG.find((c) => c.slug === slug);
+  if (!e) throw new Error(`Missing catalog entry: ${slug}`);
+  return e;
+}
 
 const tableColumns: DataTableColumn<Record<string, unknown>>[] = [
   { key: 'name', label: 'Agent', sortable: true, filterable: true },
@@ -51,8 +60,15 @@ export function ShowcaseUtilities() {
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Avatar */}
-        <div className="rounded-lg border p-4 space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">MnAvatar</h3>
+        <ComponentDoc
+          entry={entry('mn-avatar')}
+          props={COMPONENT_PROPS['mn-avatar']}
+          example={`<MnAvatar initials="AL" size="sm" status="online" />
+<MnAvatarGroup max={3}>
+  <MnAvatar initials="TS" size="md" />
+  <MnAvatar initials="PL" size="md" />
+</MnAvatarGroup>`}
+        >
           <div className="flex items-center gap-4">
             <MnAvatar initials="AL" size="sm" status="online" />
             <MnAvatar initials="MR" size="md" status="busy" />
@@ -65,36 +81,63 @@ export function ShowcaseUtilities() {
               <MnAvatar initials="NM" size="md" />
             </MnAvatarGroup>
           </div>
-        </div>
+        </ComponentDoc>
 
         {/* Spinners */}
-        <div className="rounded-lg border p-4 space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">MnSpinner</h3>
+        <ComponentDoc
+          entry={entry('mn-spinner')}
+          props={COMPONENT_PROPS['mn-spinner']}
+          example={`<MnSpinner size="sm" variant="primary" label="Loading" />
+<MnSpinner size="md" variant="muted" label="Processing" />
+<MnSpinner size="lg" variant="destructive" label="Error state" />`}
+        >
           <div className="flex items-center gap-4">
             <MnSpinner size="sm" variant="primary" label="Loading" />
             <MnSpinner size="md" variant="muted" label="Processing" />
             <MnSpinner size="lg" variant="destructive" label="Error state" />
           </div>
-        </div>
+        </ComponentDoc>
 
         {/* Toggles */}
-        <div className="rounded-lg border p-4 space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">MnToggleSwitch</h3>
+        <ComponentDoc
+          entry={entry('mn-toggle-switch')}
+          props={COMPONENT_PROPS['mn-toggle-switch']}
+          example={`<MnToggleSwitch
+  checked={enabled}
+  onCheckedChange={setEnabled}
+  label="Auto-deploy"
+/>`}
+        >
           <div className="flex flex-col gap-2">
             <MnToggleSwitch checked={toggleA} onCheckedChange={setToggleA} label="Auto-deploy" />
             <MnToggleSwitch checked={toggleB} onCheckedChange={setToggleB} label="Reduced motion" size="sm" />
           </div>
-        </div>
+        </ComponentDoc>
 
         {/* Stepper */}
-        <div className="rounded-lg border p-4 space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">MnStepper</h3>
+        <ComponentDoc
+          entry={entry('mn-stepper')}
+          props={COMPONENT_PROPS['mn-stepper']}
+          example={`<MnStepper
+  steps={[{ label: "Plan" }, { label: "Review" }, { label: "Deploy" }]}
+  currentStep={1}
+  onChange={setStep}
+/>`}
+        >
           <MnStepper steps={stepperSteps} currentStep={currentStep} onChange={setCurrentStep} />
-        </div>
+        </ComponentDoc>
 
         {/* Dropdown */}
-        <div className="rounded-lg border p-4 space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">MnDropdownMenu</h3>
+        <ComponentDoc
+          entry={entry('mn-dropdown-menu')}
+          props={COMPONENT_PROPS['mn-dropdown-menu']}
+          example={`<MnDropdownMenu trigger={<button>Actions</button>}>
+  <MnDropdownLabel>Operations</MnDropdownLabel>
+  <MnDropdownItem onSelect={handleStart}>Start</MnDropdownItem>
+  <MnDropdownSeparator />
+  <MnDropdownItem onSelect={handleExport}>Export</MnDropdownItem>
+</MnDropdownMenu>`}
+        >
           <MnDropdownMenu trigger={<span className="px-3 py-1.5 rounded border text-sm">Actions</span>}>
             <MnDropdownLabel>Plan Operations</MnDropdownLabel>
             <MnDropdownItem onSelect={() => {}}>Start execution</MnDropdownItem>
@@ -102,11 +145,21 @@ export function ShowcaseUtilities() {
             <MnDropdownSeparator />
             <MnDropdownItem onSelect={() => {}}>Export report</MnDropdownItem>
           </MnDropdownMenu>
-        </div>
+        </ComponentDoc>
 
         {/* Detail Panel */}
-        <div className="rounded-lg border p-4 space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">MnDetailPanel</h3>
+        <ComponentDoc
+          entry={entry('mn-detail-panel')}
+          props={COMPONENT_PROPS['mn-detail-panel']}
+          example={`<MnDetailPanel
+  open={open}
+  onOpenChange={setOpen}
+  title="Agent Config"
+  editable
+  onSave={handleSave}
+  sections={[{ title: "General", fields: [...] }]}
+/>`}
+        >
           <button onClick={() => setDetailOpen(true)} className="px-3 py-1.5 rounded border text-sm">
             Open Detail Panel
           </button>
@@ -127,19 +180,37 @@ export function ShowcaseUtilities() {
               },
             ]}
           />
-        </div>
+        </ComponentDoc>
 
         {/* Data Table */}
-        <div className="rounded-lg border p-4 space-y-3 md:col-span-2">
-          <h3 className="text-sm font-medium text-muted-foreground">MnDataTable</h3>
+        <ComponentDoc
+          entry={entry('mn-data-table')}
+          props={COMPONENT_PROPS['mn-data-table']}
+          example={`<MnDataTable
+  columns={[
+    { key: "name", label: "Agent", sortable: true },
+    { key: "status", label: "Status", type: "status" },
+  ]}
+  data={rows}
+  pageSize={5}
+/>`}
+        >
           <MnDataTable columns={tableColumns} data={tableData} pageSize={5} aria-label="Agent overview" />
-        </div>
+        </ComponentDoc>
 
         {/* Calendar Range */}
-        <div className="rounded-lg border p-4 space-y-3 md:col-span-2">
-          <h3 className="text-sm font-medium text-muted-foreground">MnCalendarRange</h3>
+        <ComponentDoc
+          entry={entry('mn-calendar-range')}
+          props={COMPONENT_PROPS['mn-calendar-range']}
+          example={`<MnCalendarRange
+  value={dateRange}
+  onChange={setDateRange}
+  startLabel="Sprint start"
+  endLabel="Sprint end"
+/>`}
+        >
           <MnCalendarRange value={dateRange} onChange={setDateRange} startLabel="Sprint start" endLabel="Sprint end" />
-        </div>
+        </ComponentDoc>
       </div>
     </section>
   );
