@@ -79,6 +79,17 @@ NEVER take the quick path. ALWAYS fix the root cause.
 - Test fails? Don't delete the test — fix the code.
 - 3 consecutive fixes that each introduce new problems → STOP. Explain root cause, propose rebuild.
 
+### CRITICAL: explore design system BEFORE building (Constitution Rule #7)
+NEVER grab a random component. FIRST explore what Maranello has for your use case:
+- src/components/maranello/agentic/ — agent activity, delegation, AI components
+- src/components/maranello/data-viz/ — charts, gauges, treemaps, timelines
+- src/components/maranello/data-display/ — tables, lists, cards, badges
+- src/components/maranello/forms/ — inputs, selects, dialogs
+- src/components/maranello/feedback/ — alerts, toasts, progress
+- src/components/maranello/layout/ — grids, panels, splits
+Read each component file, understand what it's designed for, THEN choose.
+If you need "show agent activity" → look in agentic/ first, not grab a generic table.
+
 ### Full reference
 ~/Desktop/WORKSPACE-SPLIT.md is the single source of truth for the entire project.
 READ IT for any non-trivial decision.
