@@ -36,6 +36,7 @@ import { searchCatalog } from "@/lib/component-catalog"
 interface CommandMenuProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  anchorRef?: React.RefObject<HTMLElement | null>
 }
 
 const NAV_ITEMS = [
@@ -63,7 +64,7 @@ const THEME_ITEMS = [
   { label: "Colorblind", value: "colorblind" as const, icon: Shield },
 ] as const
 
-export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
+export function CommandMenu({ open, onOpenChange, anchorRef }: CommandMenuProps) {
   const router = useRouter()
   const { setTheme } = useTheme()
   const [query, setQuery] = useState("")
@@ -85,13 +86,30 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
     return () => document.removeEventListener("keydown", onKeyDown)
   }, [open, onOpenChange])
 
+  // Position + focus when opening — use layout effect to avoid flicker
   useEffect(() => {
-    if (open) {
-      requestAnimationFrame(() => {
-        panelRef.current?.querySelector<HTMLInputElement>("input")?.focus()
-      })
+    if (!open) return
+    const panel = panelRef.current
+    if (!panel) return
+    const el = anchorRef?.current
+    if (el) {
+      const rect = el.getBoundingClientRect()
+      panel.style.position = "fixed"
+      panel.style.top = `${rect.bottom + 4}px`
+      panel.style.left = `${rect.left}px`
+      panel.style.width = `${rect.width}px`
+      panel.style.right = ""
+    } else {
+      panel.style.position = "fixed"
+      panel.style.top = "56px"
+      panel.style.left = "16px"
+      panel.style.right = "16px"
+      panel.style.width = "auto"
     }
-  }, [open])
+    requestAnimationFrame(() => {
+      panel.querySelector<HTMLInputElement>("input")?.focus()
+    })
+  }) // runs every render when open — keeps position fresh
 
   const close = useCallback(() => {
     onOpenChange(false)
@@ -99,18 +117,12 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
   }, [onOpenChange])
 
   const handleNav = useCallback(
-    (href: string) => {
-      close()
-      router.push(href)
-    },
+    (href: string) => { close(); router.push(href) },
     [close, router],
   )
 
   const handleTheme = useCallback(
-    (value: "light" | "dark" | "navy" | "colorblind") => {
-      setTheme(value)
-      close()
-    },
+    (value: "light" | "dark" | "navy" | "colorblind") => { setTheme(value); close() },
     [setTheme, close],
   )
 
@@ -118,27 +130,15 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
 
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-50 bg-black/20 supports-backdrop-filter:backdrop-blur-xs"
-        onClick={close}
-        aria-hidden="true"
-      />
-      {/* Dropdown anchored below header, aligned to search bar */}
-      <div
-        ref={panelRef}
-        role="dialog"
-        aria-label="Command Palette"
-        className="fixed top-[52px] left-1/2 z-50 w-full max-w-md -translate-x-1/2 p-2"
-      >
+      <div className="fixed inset-0 z-50 bg-black/20 supports-backdrop-filter:backdrop-blur-xs" onClick={close} aria-hidden="true" />
+      <div ref={panelRef} role="dialog" aria-label="Command Palette" className="z-50">
         <Command
           shouldFilter={false}
-          className="rounded-xl border border-[var(--mn-border)] bg-popover text-popover-foreground shadow-lg ring-1 ring-foreground/10"
+          className="rounded-xl border border-[var(--mn-border)] bg-popover text-popover-foreground shadow-xl ring-1 ring-foreground/10"
         >
           <CommandInput placeholder="Type a command or search..." value={query} onValueChange={setQuery} />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
-
             {results.length > 0 ? (
               <CommandGroup heading="Components">
                 {results.map((entry) => (
@@ -159,9 +159,7 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
                     </CommandItem>
                   ))}
                 </CommandGroup>
-
                 <CommandSeparator />
-
                 <CommandGroup heading="Categories">
                   {CATEGORY_ITEMS.map((item) => (
                     <CommandItem key={item.href} onSelect={() => handleNav(item.href)}>
@@ -170,9 +168,7 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
                     </CommandItem>
                   ))}
                 </CommandGroup>
-
                 <CommandSeparator />
-
                 <CommandGroup heading="Theme">
                   {THEME_ITEMS.map((item) => (
                     <CommandItem key={item.value} onSelect={() => handleTheme(item.value)}>

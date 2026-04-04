@@ -16,36 +16,65 @@ function MnManettino({ positions = ["WET", "COMFORT", "SPORT", "RACE", "ESC OFF"
   const { idx, go, onKey } = useStep(controlled, defaultValue, count - 1, positions, onChange)
   const ARC = 240, START = -120
   const angle = count > 1 ? START + (idx / (count - 1)) * ARC : 0
+
+  // SVG layout: viewBox 200x200, center at 100,100
+  const CX = 100, CY = 100
+  const RING_R = 42  // ring radius
+  const KNOB_R = 24  // knob radius (must be < RING_R)
+  const LABEL_R = 80 // label distance from center
+
   return (
     <div className={cn(controlBase({ size }), className)}>
       {label && <span className={LBL}>{label}</span>}
-      <div className="relative h-[220px] w-[220px]">
-        {/* Outer ring */}
-        <div className="absolute left-1/2 top-1/2 h-[120px] w-[120px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--mn-border)] pointer-events-none" />
-        {/* Position labels arranged radially */}
+      <div className="relative w-full max-w-[240px] aspect-square">
+        <svg viewBox="0 0 200 200" className="w-full h-full" aria-hidden="true">
+          {/* Outer ring */}
+          <circle cx={CX} cy={CY} r={RING_R} fill="none" stroke="var(--mn-border)" strokeWidth="1.5" opacity="0.6" />
+          {/* Tick marks at each position */}
+          {positions.map((_, i) => {
+            const a = count > 1 ? START + (i / (count - 1)) * ARC : 0
+            const rad = ((a - 90) * Math.PI) / 180
+            const x1 = CX + Math.cos(rad) * (RING_R - 6)
+            const y1 = CY + Math.sin(rad) * (RING_R - 6)
+            const x2 = CX + Math.cos(rad) * (RING_R + 6)
+            const y2 = CY + Math.sin(rad) * (RING_R + 6)
+            return (
+              <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
+                stroke={i === idx ? "var(--mn-accent, #FFC72C)" : "var(--mn-border)"}
+                strokeWidth={i === idx ? 2 : 1} strokeLinecap="round" />
+            )
+          })}
+        </svg>
+        {/* Position labels — absolutely positioned over SVG */}
         {positions.map((p, i) => {
           const a = count > 1 ? START + (i / (count - 1)) * ARC : 0
           const rad = ((a - 90) * Math.PI) / 180
-          const r = 96
+          const x = 50 + (Math.cos(rad) * LABEL_R / 2)  // % coordinates
+          const y = 50 + (Math.sin(rad) * LABEL_R / 2)
           return (
             <button key={i} onClick={() => go(i)}
-              className={cn("absolute whitespace-nowrap text-[11px] uppercase tracking-wider -translate-x-1/2 -translate-y-1/2 transition-colors duration-150",
-                i === idx ? "font-bold text-[var(--mn-accent,#FFC72C)]" : "font-medium text-[var(--mn-text-secondary)] hover:text-[var(--mn-text)]")}
-              style={{ left: 110 + Math.cos(rad) * r, top: 110 + Math.sin(rad) * r }}>
+              className={cn(
+                "absolute whitespace-nowrap text-[0.6rem] sm:text-[0.7rem] uppercase tracking-wider -translate-x-1/2 -translate-y-1/2 transition-colors duration-150",
+                "focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--mn-focus-ring)] rounded px-1",
+                i === idx ? "font-bold text-[var(--mn-accent,#FFC72C)]" : "font-medium text-[var(--mn-text-secondary)] hover:text-[var(--mn-text)]"
+              )}
+              style={{ left: `${x}%`, top: `${y}%` }}>
               {p}
             </button>
           )
         })}
-        {/* Knob */}
+        {/* Knob — centered */}
         <div role="slider" aria-label={label ?? "Manettino selector"} aria-valuemin={0} aria-valuemax={count - 1}
           aria-valuenow={idx} aria-valuetext={positions[idx]} tabIndex={0} onKeyDown={onKey}
-          className={cn(DIAL, "absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2",
+          className={cn(DIAL,
+            "absolute left-1/2 top-1/2 w-[24%] aspect-square -translate-x-1/2 -translate-y-1/2",
             "shadow-[0_3px_8px_rgba(0,0,0,.55),inset_0_1px_1px_rgba(255,255,255,.2)]",
-            "active:shadow-[0_1px_4px_rgba(0,0,0,.7),inset_0_1px_1px_rgba(255,255,255,.15)]")}
+            "active:shadow-[0_1px_4px_rgba(0,0,0,.7),inset_0_1px_1px_rgba(255,255,255,.15)]",
+            "focus-visible:ring-2 focus-visible:ring-[var(--mn-focus-ring)] focus-visible:outline-none"
+          )}
           style={{ transform: `translate(-50%,-50%) rotate(${angle}deg)` }}
           onClick={() => go((idx + 1) % count)}>
-          {/* Pointer notch */}
-          <div className="absolute left-1/2 top-1.5 h-4 w-0.5 -translate-x-1/2 rounded-sm bg-[var(--mn-text)] pointer-events-none" />
+          <div className="absolute left-1/2 top-[10%] h-[30%] w-[3px] -translate-x-1/2 rounded-sm bg-[var(--mn-text)] pointer-events-none" />
         </div>
       </div>
       <span className="text-xs font-semibold tracking-wide text-[var(--mn-accent,#FFC72C)]">{positions[idx]}</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu, Search, Bell } from "lucide-react";
+import { useRef } from "react";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -8,9 +9,10 @@ export interface HeaderProps {
   onMenuToggle: () => void;
   onSearchClick: () => void;
   breadcrumb: string[];
+  searchRef?: React.RefObject<HTMLButtonElement | null>;
 }
 
-export function Header({ onMenuToggle, onSearchClick, breadcrumb }: HeaderProps) {
+export function Header({ onMenuToggle, onSearchClick, breadcrumb, searchRef }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 z-50 flex h-[52px] w-full items-center border-b border-sidebar-border bg-sidebar text-sidebar-foreground">
       {/* Left zone */}
@@ -50,6 +52,7 @@ export function Header({ onMenuToggle, onSearchClick, breadcrumb }: HeaderProps)
       {/* Center zone — search trigger */}
       <div className="hidden flex-1 justify-center px-4 md:flex">
         <button
+          ref={searchRef}
           type="button"
           onClick={onSearchClick}
           className="flex h-8 w-full max-w-md items-center gap-2 rounded-md border border-sidebar-border bg-sidebar px-3 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar, type NavSection } from "./sidebar";
 import { Header } from "./header";
@@ -18,6 +18,7 @@ export function AppShell({ children, sections, brandName, brandLogo }: AppShellP
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
+  const searchRef = useRef<HTMLButtonElement>(null);
 
   const toggleSidebar = useCallback(() => setCollapsed((c) => !c), []);
   const openCommand = useCallback(() => setCommandOpen(true), []);
@@ -36,6 +37,7 @@ export function AppShell({ children, sections, brandName, brandLogo }: AppShellP
         onMenuToggle={toggleSidebar}
         onSearchClick={openCommand}
         breadcrumb={breadcrumb}
+        searchRef={searchRef}
       />
       <div className="flex pt-[52px]">
         <Sidebar
@@ -51,7 +53,7 @@ export function AppShell({ children, sections, brandName, brandLogo }: AppShellP
           </div>
         </main>
       </div>
-      <CommandMenu open={commandOpen} onOpenChange={setCommandOpen} />
+      <CommandMenu open={commandOpen} onOpenChange={setCommandOpen} anchorRef={searchRef} />
       <MnA11yFab />
     </>
   );
