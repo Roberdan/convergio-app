@@ -88,8 +88,8 @@ export default function AgentsPage() {
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold">Agents</h1>
           {runtime && (
-            <MnBadge tone={runtime.active_agents > 0 ? 'success' : 'neutral'}>
-              {runtime.active_agents} active
+            <MnBadge tone={runtime.active_agents.length > 0 ? 'success' : 'neutral'}>
+              {runtime.active_agents.length} active
             </MnBadge>
           )}
         </div>
@@ -103,7 +103,7 @@ export default function AgentsPage() {
 
       {runtime && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <KpiCard label="Active" value={runtime.active_agents} />
+          <KpiCard label="Active" value={runtime.active_agents.length} />
           <KpiCard label="Queue" value={runtime.queue_depth} />
           <KpiCard label="Delegations" value={runtime.delegations_active} />
           <KpiCard label="Stale" value={runtime.stale_count} warn={runtime.stale_count > 0} />

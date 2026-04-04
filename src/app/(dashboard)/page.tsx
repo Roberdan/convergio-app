@@ -8,6 +8,7 @@ import type {
   Agent,
   IpcEvent,
   RuntimeView,
+  RuntimeWorker,
   CostSummary,
 } from '@/lib/types';
 import { MnSectionCard } from '@/components/maranello/layout';
@@ -29,6 +30,16 @@ import {
   MnHubSpoke,
   type HubSpokeHub,
   type HubSpokeSpoke,
+  MnAugmentedBrain,
+  type BrainNode,
+  type BrainConnection,
+  MnAugmentedBrainV2,
+  type BrainV2Node,
+  type BrainV2Synapse,
+  type BrainV2Stats,
+  MnBrain3D,
+  type Brain3DNode,
+  type Brain3DEdge,
 } from '@/components/maranello/agentic';
 import { MnBadge } from '@/components/maranello/data-display';
 import { MnChart } from '@/components/maranello/data-viz';
@@ -157,7 +168,7 @@ export default function DashboardPage() {
     return [
       {
         id: 'active',
-        name: `${runtime.active_agents} active agent${runtime.active_agents !== 1 ? 's' : ''}`,
+        name: `${runtime.active_agents.length} active agent${runtime.active_agents.length !== 1 ? 's' : ''}`,
         progress: pct,
         status: 'active' as const,
         agent: `${runtime.delegations_active} delegations`,
@@ -232,6 +243,109 @@ export default function DashboardPage() {
     [costs],
   );
 
+  /* ── Brain V1: augmented brain from active workers ── */
+  const { brainNodes, brainConns } = useMemo(() => {
+    const workers = runtime?.active_agents ?? [];
+    if (workers.length === 0) {
+      return { brainNodes: [] as BrainNode[], brainConns: [] as BrainConnection[] };
+    }
+    const layers: BrainNode['type'][] = ['core', 'memory', 'skill', 'sense'];
+    const nodes: BrainNode[] = workers.map((w: RuntimeWorker, i: number) => ({
+      id: w.id,
+      label: w.agent_name,
+      type: w.task_id ? 'core' : layers[i % layers.length],
+      active: w.stage === 'running',
+    }));
+    const conns: BrainConnection[] = [];
+    const coreIds = nodes.filter((n) => n.type === 'core').map((n) => n.id);
+    for (const node of nodes) {
+      if (node.type !== 'core' && coreIds.length > 0) {
+        conns.push({ from: coreIds[0], to: node.id, strength: 0.6 });
+      }
+    }
+    for (let i = 1; i < coreIds.length; i++) {
+      conns.push({ from: coreIds[0], to: coreIds[i], strength: 0.8 });
+    }
+    return { brainNodes: nodes, brainConns: conns };
+  }, [runtime]);
+
+  /* ── Brain V2: augmented brain v2 from active workers ── */
+  const { brainV2Nodes, brainV2Synapses, brainV2Stats } = useMemo(() => {
+    const workers = runtime?.active_agents ?? [];
+    if (workers.length === 0) {
+      return {
+        brainV2Nodes: [] as BrainV2Node[],
+        brainV2Synapses: [] as BrainV2Synapse[],
+        brainV2Stats: { sessions: 0, plans: 0, tasks: 0, synapses: 0 } as BrainV2Stats,
+      };
+    }
+    const statusMap: Record<string, BrainV2Node['status']> = {
+      running: 'active', spawning: 'idle', stopped: 'completed', error: 'error',
+    };
+    const hub: BrainV2Node = { id: 'hub-convergio', label: 'Convergio', type: 'hub', status: 'active', size: 2 };
+    const nodes: BrainV2Node[] = [
+      hub,
+      ...workers.map((w: RuntimeWorker) => ({
+        id: w.id,
+        label: w.agent_name,
+        type: (w.task_id ? 'task' : 'agent') as BrainV2Node['type'],
+        status: statusMap[w.stage] ?? 'idle',
+        size: w.budget_usd > 10 ? 1.5 : 1,
+      })),
+    ];
+    const synapses: BrainV2Synapse[] = workers.map((w: RuntimeWorker) => ({
+      from: hub.id,
+      to: w.id,
+      strength: w.stage === 'running' ? 0.8 : 0.3,
+      active: w.stage === 'running',
+    }));
+    const tasked = workers.filter((w: RuntimeWorker) => w.task_id);
+    return {
+      brainV2Nodes: nodes,
+      brainV2Synapses: synapses,
+      brainV2Stats: {
+        sessions: workers.length,
+        tasks: tasked.length,
+        synapses: synapses.length,
+      } as BrainV2Stats,
+    };
+  }, [runtime]);
+
+  /* ── Brain 3D: three.js brain from active workers ── */
+  const { brain3DNodes, brain3DEdges } = useMemo(() => {
+    const workers = runtime?.active_agents ?? [];
+    if (workers.length === 0) {
+      return { brain3DNodes: [] as Brain3DNode[], brain3DEdges: [] as Brain3DEdge[] };
+    }
+    const statusMap: Record<string, Brain3DNode['status']> = {
+      running: 'active', spawning: 'idle', stopped: 'offline', error: 'error',
+    };
+    const coordinator: Brain3DNode = {
+      id: 'coord-main', label: 'Coordinator', type: 'coordinator',
+      status: 'active', activeTasks: workers.length, group: 'core',
+    };
+    const nodes: Brain3DNode[] = [
+      coordinator,
+      ...workers.map((w: RuntimeWorker) => ({
+        id: w.id,
+        label: w.agent_name,
+        type: 'worker' as const,
+        status: statusMap[w.stage] ?? ('idle' as const),
+        model: w.model ?? undefined,
+        activeTasks: w.task_id ? 1 : 0,
+        group: w.org_id,
+      })),
+    ];
+    const edges: Brain3DEdge[] = workers.map((w: RuntimeWorker) => ({
+      source: coordinator.id,
+      target: w.id,
+      type: (w.task_id ? 'delegation' : 'sync') as Brain3DEdge['type'],
+      strength: w.stage === 'running' ? 0.8 : 0.3,
+      active: w.stage === 'running',
+    }));
+    return { brain3DNodes: nodes, brain3DEdges: edges };
+  }, [runtime]);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -242,7 +356,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <KpiCard label="Active Agents" value={runtime?.active_agents ?? 0} />
+        <KpiCard label="Active Agents" value={runtime?.active_agents?.length ?? 0} />
         <KpiCard label="Queue Depth" value={runtime?.queue_depth ?? 0} />
         <KpiCard
           label="Budget Spent"
@@ -276,6 +390,60 @@ export default function DashboardPage() {
           )}
         </div>
       </MnSectionCard>
+
+      {/* Brain visualizations — full width */}
+      <MnSectionCard title="Brain 3D" collapsible defaultOpen>
+        <div className="p-4">
+          {brain3DNodes.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No active workers</p>
+          ) : (
+            <MnBrain3D
+              nodes={brain3DNodes}
+              edges={brain3DEdges}
+              autoRotate
+              autoRotateSpeed={0.4}
+              showLabels
+              height={500}
+              size="fluid"
+            />
+          )}
+        </div>
+      </MnSectionCard>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <MnSectionCard title="Augmented Brain" collapsible defaultOpen>
+          <div className="p-4">
+            {brainNodes.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No active workers</p>
+            ) : (
+              <MnAugmentedBrain
+                nodes={brainNodes}
+                connections={brainConns}
+                height={420}
+                size="fluid"
+              />
+            )}
+          </div>
+        </MnSectionCard>
+
+        <MnSectionCard title="Brain V2 — Synaptic Map" collapsible defaultOpen>
+          <div className="p-4">
+            {brainV2Nodes.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No active workers</p>
+            ) : (
+              <MnAugmentedBrainV2
+                nodes={brainV2Nodes}
+                synapses={brainV2Synapses}
+                stats={brainV2Stats}
+                title="Worker Synapses"
+                showControls
+                height={420}
+                size="fluid"
+              />
+            )}
+          </div>
+        </MnSectionCard>
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <MnSectionCard title="Event Stream" collapsible defaultOpen>

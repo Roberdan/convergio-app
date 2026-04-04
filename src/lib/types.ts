@@ -16,8 +16,23 @@ export interface Metric { name: string; value: number; unit?: string; labels?: R
 export interface MetricsResponse { metrics: Metric[] }
 
 /* ── Agents ── */
+export interface RuntimeWorker {
+  id: string;
+  agent_name: string;
+  budget_usd: number;
+  created_at: string;
+  last_heartbeat: string | null;
+  model: string | null;
+  node: string;
+  org_id: string;
+  priority: number;
+  spent_usd: number;
+  stage: string;
+  task_id: number | null;
+  workspace_path: string;
+}
 export interface RuntimeView {
-  active_agents: number;
+  active_agents: RuntimeWorker[];
   queue_depth: number;
   total_budget_usd: number;
   total_spent_usd: number;
