@@ -11,6 +11,7 @@ import type {
   RuntimeWorker,
   CostSummary,
 } from '@/lib/types';
+import { DiscoveredAgentsList } from './discovered-agents';
 import { MnSectionCard } from '@/components/maranello/layout';
 import {
   MnSystemStatus,
@@ -356,7 +357,11 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <KpiCard label="Active Agents" value={runtime?.active_agents?.length ?? 0} />
+        <KpiCard
+          label="Active Agents"
+          value={(runtime?.active_agents?.length ?? 0) + (runtime?.discovered_agents?.length ?? 0)}
+          sub={runtime?.discovered_agents?.length ? `${runtime.discovered_agents.length} external` : undefined}
+        />
         <KpiCard label="Queue Depth" value={runtime?.queue_depth ?? 0} />
         <KpiCard
           label="Budget Spent"
@@ -481,6 +486,7 @@ export default function DashboardPage() {
         <MnSectionCard title="Active Agents" collapsible defaultOpen>
           <div className="p-4">
             <MnActiveMissions missions={missions} />
+            <DiscoveredAgentsList agents={runtime?.discovered_agents ?? []} />
           </div>
         </MnSectionCard>
 

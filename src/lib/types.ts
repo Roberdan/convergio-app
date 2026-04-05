@@ -31,8 +31,17 @@ export interface RuntimeWorker {
   task_id: number | null;
   workspace_path: string;
 }
+export interface DiscoveredAgent {
+  name: string;
+  agent_type: string;
+  host: string;
+  pid: number | null;
+  last_seen: string;
+  parent_agent: string | null;
+}
 export interface RuntimeView {
   active_agents: RuntimeWorker[];
+  discovered_agents: DiscoveredAgent[];
   queue_depth: number;
   total_budget_usd: number;
   total_spent_usd: number;
