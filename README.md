@@ -1,30 +1,129 @@
-# Maranello Design System
+# Convergio Frontend
 
-100 React components, 4 themes, config-driven architecture, shadcn-compatible registry. Built on Next.js 16 App Router, Tailwind CSS v4, CVA.
+A **config-driven dashboard framework** with 100 React components, 4 themes, and a shadcn-compatible registry. Write YAML, get a full working app — sidebar, themes, AI chat, data visualizations — with zero custom code.
 
-## Quick Start
+**Maranello** is the design system inside Convergio. The framework ships everything: layout shell, theme engine, config loader, page renderer, component showcase, and optional AI/desktop layers.
+
+## Two Ways to Use It
+
+### 1. Framework Mode — Clone and Configure (Recommended)
+
+Clone this repo, edit one YAML file, and you have a production-ready dashboard app. No React code required for basic dashboards.
 
 ```bash
+git clone https://github.com/Roberdan/convergio-frontend.git my-app
+cd my-app
 pnpm install
-pnpm dev          # http://localhost:3000
-pnpm build        # production build
-pnpm lint         # ESLint
-pnpm typecheck    # TypeScript strict
-pnpm test         # unit tests (Vitest)
-pnpm test:e2e     # Playwright E2E
 ```
 
-## Install Components in Your Project
+Edit `maranello.yaml` (or `convergio.yaml`) in the project root:
 
-Maranello components are available via a shadcn-compatible registry. Add individual components to any Next.js or React project:
+```yaml
+app:
+  name: Acme Dashboard
+  logo: /logo.svg
+
+theme:
+  default: dark
+
+navigation:
+  sections:
+    - label: Main
+      items:
+        - { id: home, label: Home, href: /, icon: LayoutDashboard }
+        - { id: team, label: Team, href: /team, icon: Users }
+
+pages:
+  /:
+    title: Home
+    rows:
+      - columns: 3
+        blocks:
+          - { type: kpi-card, label: Revenue, value: "$1.2M", change: "+8%", trend: up }
+          - { type: kpi-card, label: Users, value: "34,521", change: "+12%", trend: up }
+          - { type: kpi-card, label: Uptime, value: "99.97%", trend: flat }
+      - columns: 2
+        blocks:
+          - type: chart-block
+            chartType: area
+            labels: [Jan, Feb, Mar, Apr, May, Jun]
+            series:
+              - { label: Revenue, data: [80, 95, 110, 108, 130, 142] }
+          - type: gauge-block
+            label: CPU Load
+            value: 73
+            min: 0
+            max: 100
+            unit: "%"
+            size: md
+  /team:
+    title: Team
+    rows:
+      - columns: 1
+        blocks:
+          - type: data-table-maranello
+            columns: [{ accessorKey: name, header: Name }, { accessorKey: role, header: Role }]
+            data:
+              - { name: Alice, role: Engineer }
+              - { name: Bob, role: Designer }
+```
 
 ```bash
-npx shadcn add mn-badge --registry https://your-host/r
-npx shadcn add mn-gauge --registry https://your-host/r
-npx shadcn add mn-data-table --registry https://your-host/r
+pnpm dev    # open http://localhost:3000 — your dashboard is live
 ```
 
-Or browse the full registry at `/r/index.json`. See `docs/guides/using-the-registry.md` for full setup instructions.
+**What you get out of the box:**
+- Responsive sidebar navigation (auto-generated from YAML)
+- 4 themes with one-click switching (header dropdown, Cmd-K palette, or Manettino dial)
+- WCAG 2.2 AA accessibility with floating a11y toolbar
+- Command palette (Cmd-K) with fuzzy search across all components
+- Config-driven pages — add new routes by adding entries to `pages:` in YAML
+- Optional AI chat panel, SSE event streams, API polling hooks
+
+**What you add when you need it:**
+- Custom React pages in `src/app/(dashboard)/your-page/page.tsx`
+- Custom components in `src/components/maranello/your-category/`
+- API backend connection via `API_URL` env var + `use-api-query` / `use-event-source` hooks
+
+### 2. Registry Mode — Cherry-Pick Components
+
+Already have a Next.js/React project? Install individual Maranello components via the shadcn CLI:
+
+```bash
+npx shadcn add mn-badge --registry https://your-maranello-host/r
+npx shadcn add mn-gauge mn-chart mn-data-table --registry https://your-maranello-host/r
+```
+
+Browse the full registry at `/r/index.json`. Each component JSON includes source code, npm dependencies, and registry dependencies. See `docs/guides/using-the-registry.md` for setup instructions.
+
+> **Note:** Registry mode gives you individual components. Framework mode gives you the complete app shell, config engine, theme system, and all 100 components working together.
+
+---
+
+## How It Works
+
+```
+maranello.yaml ──> config-loader.ts ──> Zod validation ──> page-renderer.tsx ──> UI
+                   (reads YAML,          (config-schema.ts    (maps block types
+                    caches result,        validates structure)  to React components)
+                    watches for changes)
+```
+
+1. **You write YAML** — branding, navigation, pages with block layouts, optional AI agents
+2. **Config loader** (`src/lib/config-loader.ts`) parses and validates with Zod, caches the result, and watches for changes in dev mode
+3. **Layout shell** (`src/components/shell/`) reads `app` + `navigation` from config and renders sidebar, header, breadcrumbs
+4. **Page renderer** (`src/components/page-renderer.tsx`) reads `pages` config and maps each block `type` to its React component
+5. **Theme engine** applies `--mn-*` CSS custom properties based on `data-theme` attribute on `<html>`
+
+Config file resolution (first match wins):
+1. `$MARANELLO_CONFIG_PATH` env var
+2. `$CONVERGIO_CONFIG_PATH` env var
+3. `./maranello.yaml` in project root
+4. `./convergio.yaml` in project root
+
+If no config file is found, the framework renders sensible defaults (app name "Maranello", navy theme, empty navigation).
+
+---
 
 ## Stack
 
@@ -39,22 +138,21 @@ Or browse the full registry at `/r/index.json`. See `docs/guides/using-the-regis
 | AI | Vercel AI SDK v6 (optional — not required for design system) |
 | Desktop | Tauri (optional, `src-tauri/`) |
 
+## Scripts
+
+```bash
+pnpm dev          # start dev server at http://localhost:3000
+pnpm build        # production build
+pnpm lint         # ESLint
+pnpm typecheck    # TypeScript strict
+pnpm test         # unit tests (Vitest)
+pnpm test:e2e     # Playwright E2E
+pnpm format       # Prettier
+```
+
 ---
 
-## Config-Driven Architecture
-
-The app reads `maranello.yaml` (or `convergio.yaml`) at startup for branding, navigation, dashboard pages, and AI agents. Edit this file and restart the dev server — no source code changes needed.
-
-The config loader searches for files in this order:
-
-1. `$MARANELLO_CONFIG_PATH` (env var override)
-2. `$CONVERGIO_CONFIG_PATH` (env var override)
-3. `./maranello.yaml` (project root)
-4. `./convergio.yaml` (project root)
-
-`src/lib/config-loader.ts` parses the YAML, validates it with Zod (`src/lib/config-schema.ts`), and caches the result.
-
-### Full YAML Schema Reference
+## Full YAML Reference
 
 ```yaml
 # ── App Identity ──
@@ -179,10 +277,18 @@ public/r/                   # shadcn-compatible component registry
 src/
   app/
     (dashboard)/            # shell — layout with sidebar + header
-      showcase/             # component showcase landing
-        [category]/         # per-category live demo pages (12 categories)
-        icons/              # icon browser with search + copy-to-clipboard
-        themes/             # theme playground — side-by-side comparison
+      agents/               #   built-in page: agent management
+      billing/              #   built-in page: billing/costs
+      inference/            #   built-in page: inference monitoring
+      mesh/                 #   built-in page: mesh network
+      metrics/              #   built-in page: live metrics
+      observatory/          #   built-in page: event observatory
+      orgs/                 #   built-in page: organizations
+      plans/                #   built-in page: plan management
+      prompts/              #   built-in page: prompt studio
+      settings/             #   built-in page: settings
+      showcase/             #   component showcase (12 categories + icons + themes)
+      [...slug]/            #   catch-all for YAML-defined pages
     api/
       chat/route.ts         # AI streaming endpoint (optional)
       health/route.ts       # liveness probe
@@ -204,19 +310,20 @@ src/
       theme/                #   6 theme control + accessibility components
       shared/               #   shared utilities + tests
       index.ts              #   barrel re-export (all 100 components)
-    blocks/                 # page blocks: renders config → UI
+    blocks/                 # page blocks — renders config → UI
     page-renderer.tsx       # renders config pages → block grid
     shell/                  # sidebar, header, command-menu (Cmd-K)
     theme/                  # theme-provider, theme-switcher, theme-script
     ui/                     # shadcn/ui source components
   hooks/
-    use-api-query.ts        # generic SWR-like API poller
-    use-event-source.ts     # SSE event stream hook
+    use-api-query.ts        # generic SWR-like API poller (pollInterval, error handling)
+    use-event-source.ts     # SSE event stream hook (auto-reconnect, exponential backoff)
   lib/
-    config-loader.ts        # YAML parser + Zod validation (cached)
+    config-loader.ts        # YAML parser + Zod validation (cached, file-watched in dev)
     config-schema.ts        # Zod schema for config file
     config-block-schemas.ts # Zod schemas for each block type
     component-catalog.ts    # 100-entry catalog with bilingual search
+    env.ts                  # environment variable resolution
     icon-map.ts             # Lucide icon name → component resolver
     icon-slot.tsx           # <IconSlot name="..." /> for dynamic icons
     utils.ts                # cn() helper (clsx + tailwind-merge)
@@ -228,27 +335,51 @@ docs/
   adr/                      # architecture decision records
 ```
 
+### Adding Custom Pages
+
+For pages that go beyond YAML blocks, create a standard Next.js page:
+
+```
+src/app/(dashboard)/your-page/page.tsx
+```
+
+It automatically gets the sidebar, header, breadcrumbs, and theme — the `(dashboard)` layout wraps everything. Use any Maranello component:
+
+```tsx
+import { MnChart, MnDataTable, MnBadge } from "@/components/maranello";
+
+export default function YourPage() {
+  return (
+    <div className="space-y-6">
+      <h1>Your Page</h1>
+      <MnChart type="area" series={[...]} labels={[...]} />
+    </div>
+  );
+}
+```
+
+Then add the navigation entry in YAML:
+
+```yaml
+navigation:
+  sections:
+    - label: Main
+      items:
+        - { id: your-page, label: Your Page, href: /your-page, icon: Sparkles }
+```
+
 ## Showcase
 
-The built-in showcase app at `/showcase` demonstrates all 100 components with live interactive demos:
+The built-in showcase at `/showcase` demonstrates all 100 components with live interactive demos:
 
 - **Landing** (`/showcase`) — category cards with component counts + live previews
-- **Category pages** (`/showcase/[category]`) — live demos per category with inline documentation (description, when to use, props table, code examples)
-- **Icons browser** (`/showcase/icons`) — searchable grid of all Lucide icons with click-to-copy import
+- **Category pages** (`/showcase/[category]`) — live demos with inline documentation (description, when to use, props table, code examples)
+- **Icons browser** (`/showcase/icons`) — searchable grid of all Lucide icons with click-to-copy
 - **Theme playground** (`/showcase/themes`) — side-by-side comparison across all 4 themes
-
-### Sidebar Navigation
-
-The sidebar is organized into two groups:
-
-| Section | Items |
-|---|---|
-| **Design System** | Home, Icons |
-| **Components** | Agentic AI, Data Display, Data Viz, Feedback, Financial, Forms, Layout, Navigation, Network, Operations, Strategy, Theme & A11y |
 
 ### Command Palette (Cmd-K)
 
-Press `Cmd+K` (or `Ctrl+K`) to open the command palette with:
+Press `Cmd+K` (or `Ctrl+K`) to open the command palette:
 - **Fuzzy search** across all 100 components (bilingual IT/EN keywords)
 - **Category navigation** — jump to any showcase section
 - **Theme switching** — switch between all 4 themes
@@ -287,7 +418,7 @@ All themes use `--mn-*` CSS custom properties defined in `globals.css`. All pass
 
 ### Accessibility (A11y)
 
-The app includes `MnA11yFab`, a floating accessibility toolbar giving users runtime control over:
+Built-in `MnA11yFab` floating toolbar gives users runtime control over:
 - **Font size** — S / M / L / XL
 - **Line spacing** — 1x / 1.5x / 2x
 - **Dyslexia font** — toggles OpenDyslexic
@@ -295,7 +426,7 @@ The app includes `MnA11yFab`, a floating accessibility toolbar giving users runt
 - **High contrast** — increases contrast ratios
 - **Focus indicators** — toggle visible focus rings
 
-See `docs/guides/extending-the-system.md` § 5 for WCAG compliance details.
+---
 
 ## Component Catalog (100 components)
 
@@ -330,15 +461,15 @@ import { MnBadge, MnChart, MnDataTable, MnGauge } from "@/components/maranello"
 
 ## Documentation
 
-Full documentation lives in `docs/`:
-
 | Path | Content |
 |---|---|
-| `docs/guides/creating-a-component.md` | Step-by-step guide: naming, CVA template, theme tokens, barrel exports, registry, showcase demo, testing |
-| `docs/guides/adding-icons.md` | How to add Lucide icons, `IconSlot` vs direct import, custom SVG icons, sizing & coloring |
-| `docs/guides/adding-a-theme.md` | How to add a 5th theme: CSS tokens, ThemeProvider, theme-script, toggle/rotary |
+| `AGENTS.md` | Guide for AI coding agents working on this codebase |
+| `CONSTITUTION.md` | Binding governance rules (accessibility, themes, code style) |
+| `docs/guides/creating-a-component.md` | Step-by-step: naming, CVA template, theme tokens, barrel exports, registry, showcase, testing |
+| `docs/guides/adding-icons.md` | Lucide icons, `IconSlot` vs direct import, custom SVG, sizing & coloring |
+| `docs/guides/adding-a-theme.md` | Adding a 5th theme: CSS tokens, ThemeProvider, theme-script, toggle/rotary |
 | `docs/guides/extending-the-system.md` | Adding categories, themes, design tokens, WCAG AA compliance |
-| `docs/guides/using-the-registry.md` | How to install components via shadcn CLI into your project |
+| `docs/guides/using-the-registry.md` | Installing components via shadcn CLI into your project |
 | `docs/components/{category}/` | Per-component MDX: description, props table, code example, a11y notes |
 | `docs/adr/` | Architecture decision records |
 
@@ -351,18 +482,6 @@ Full documentation lives in `docs/`:
 | `SESSION_SECRET` | `convergio-dev-secret` | HMAC signing secret for session cookies |
 | `MARANELLO_CONFIG_PATH` | `./maranello.yaml` | Override config file path |
 | `CONVERGIO_CONFIG_PATH` | `./convergio.yaml` | Alternate config file path |
-
-## Scripts
-
-| Command | Description |
-|---|---|
-| `pnpm dev` | Start Next.js dev server |
-| `pnpm build` | Production build |
-| `pnpm lint` | ESLint check |
-| `pnpm typecheck` | TypeScript strict check |
-| `pnpm test` | Run unit tests (Vitest) |
-| `pnpm test:e2e` | Run E2E tests (Playwright) |
-| `pnpm format` | Format code with Prettier |
 
 ## Design Principles (CONSTITUTION.md)
 
