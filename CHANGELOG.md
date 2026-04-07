@@ -1,6 +1,10 @@
 # Changelog
 
-## [0.4.0] - 07 April 2026
+## [1.0.0] - 07 April 2026
+
+First stable release. Config-driven dashboard framework with 101 Maranello
+components, 4 themes, 17 dashboard pages, AI chat, shadcn-compatible registry,
+and complete documentation (7 guides, 102 component MDX docs).
 
 ### Night Agents Dashboard
 - Feat: `/night-agents` page — KPI strip, agent definitions table, active runs, tracked projects
@@ -21,6 +25,7 @@
 - Fix: night-agents page uses `MnDashboardStrip` instead of custom KpiCard (P10 compliance)
 - Fix: removed stale worktree, cleaned up merged/orphan branches and redundant PR
 - Docs: updated README and AGENTS.md — component count (101), new routes, new guides, P9-P12 rules
+- CI: E2E tests non-blocking (require daemon at localhost:8420)
 
 ## [0.3.0] - 06 April 2026
 
