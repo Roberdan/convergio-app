@@ -31,10 +31,10 @@
 ```tsx
 <MnDashboardStrip
   metrics={[
-    { label: "Total Engagements", value: "55", change: "+12%", trend: "up" },
+    { label: "Total Engagements", value: "55", trend: "up" },
     { label: "Active", value: "32" },
-    { label: "Completed", value: "18", change: "+3", trend: "up" },
-    { label: "At Risk", value: "5", change: "+2", trend: "down" },
+    { label: "Completed", value: "18", trend: "up" },
+    { label: "At Risk", value: "5", trend: "down" },
   ]}
 />
 ```
@@ -76,7 +76,7 @@
 const columns: ColumnDef<Item>[] = [
   { accessorKey: "name", header: "Name" },
   { accessorKey: "status", header: "Status",
-    cell: ({ row }) => <MnBadge variant="success">{row.original.status}</MnBadge> },
+    cell: ({ row }) => <MnBadge tone="success">{row.original.status}</MnBadge> },
   { accessorKey: "owner", header: "Owner" },
 ]
 
@@ -218,9 +218,8 @@ if (isLoading || error || data.length === 0) {
   return (
     <MnStateScaffold
       state={isLoading ? "loading" : error ? "error" : "empty"}
-      title={error?.message ?? "No data found"}
-      description={error ? "Please try again later" : "Create your first item"}
-      action={error ? { label: "Retry", onClick: retry } : undefined}
+      message={error?.message ?? "No data found"}
+      onRetry={error ? retry : undefined}
     />
   )
 }
@@ -247,7 +246,7 @@ if (isLoading || error || data.length === 0) {
 ### Correct
 
 ```tsx
-<MnBadge variant={status === "active" ? "success" : status === "paused" ? "warning" : "danger"}>
+<MnBadge tone={status === "active" ? "success" : status === "paused" ? "warning" : "danger"}>
   {status}
 </MnBadge>
 ```

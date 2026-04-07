@@ -1,22 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { MnSectionCard } from '@/components/maranello/layout';
-import { MnDataTable, type DataTableColumn, MnBadge } from '@/components/maranello/data-display';
+import { MnSectionCard, MnDataTable, type DataTableColumn } from '@/components/maranello';
 import type { NightAgentDef, NightRun, TrackedProject } from '@/types/night-agents';
-
-const STATUS_TONE: Record<string, 'success' | 'danger' | 'warning' | 'neutral' | 'info'> = {
-  success: 'success',
-  completed: 'success',
-  running: 'info',
-  pending: 'warning',
-  failed: 'danger',
-  cancelled: 'neutral',
-};
-
-function statusTone(s: string | null) {
-  return STATUS_TONE[s ?? ''] ?? 'neutral';
-}
 
 function formatTime(iso: string | null | undefined): string {
   if (!iso) return '—';
@@ -118,10 +104,4 @@ export function TrackedProjectsTable({ projects }: { projects: TrackedProject[] 
       <MnDataTable columns={PROJ_COLS} data={rows} emptyMessage="No tracked projects" />
     </MnSectionCard>
   );
-}
-
-/* ── Badge helper (exported for page) ── */
-
-export function StatusBadge({ status }: { status: string | null }) {
-  return <MnBadge tone={statusTone(status)}>{status ?? 'unknown'}</MnBadge>;
 }

@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import { useApiQuery } from '@/hooks/use-api-query';
 import * as nightApi from '@/lib/api-night-agents';
 import type { NightAgentDef, NightRun, TrackedProject } from '@/types/night-agents';
-import { MnStateScaffold } from '@/components/maranello/feedback';
-import { MnBadge } from '@/components/maranello/data-display';
+import type { StripMetric } from '@/components/maranello';
+import { MnDashboardStrip, MnStateScaffold, MnBadge } from '@/components/maranello';
 import {
   AgentDefsTable,
   ActiveRunsTable,
@@ -49,7 +49,7 @@ export default function NightAgentsPage() {
   const loading = defsLoading && runsLoading && projLoading;
   const error = defsError || runsError || projError;
 
-  const kpis = useMemo(() => {
+  const metrics = useMemo<StripMetric[]>(() => {
     const totalAgents = defs?.length ?? 0;
     const activeRuns = runs?.length ?? 0;
     const trackedProjects = projects?.filter((p) => p.enabled).length ?? 0;
@@ -59,47 +59,33 @@ export default function NightAgentsPage() {
     const lastRun = lastRunTimes.length > 0
       ? lastRunTimes.sort().reverse()[0]
       : null;
-    return { totalAgents, activeRuns, trackedProjects, lastRun };
+    return [
+      { label: 'Total Agents', value: totalAgents },
+      { label: 'Active Runs', value: activeRuns },
+      { label: 'Tracked Projects', value: trackedProjects },
+      { label: 'Last Run', value: formatRelative(lastRun) },
+    ];
   }, [defs, runs, projects]);
 
   if (loading) return <MnStateScaffold state="loading" message="Loading night agents..." />;
   if (error) return <MnStateScaffold state="error" message={error} onRetry={refetchDefs} />;
 
+  const activeRuns = runs?.length ?? 0;
+
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <h1 className="text-2xl font-bold">Night Agents</h1>
-        {kpis.activeRuns > 0 && (
-          <MnBadge tone="info">{kpis.activeRuns} running</MnBadge>
+        {activeRuns > 0 && (
+          <MnBadge tone="info">{activeRuns} running</MnBadge>
         )}
       </div>
 
-      {/* KPI Row */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <KpiCard label="Total Agents" value={kpis.totalAgents} />
-        <KpiCard label="Active Runs" value={kpis.activeRuns} warn={kpis.activeRuns > 0} />
-        <KpiCard label="Tracked Projects" value={kpis.trackedProjects} />
-        <KpiCard label="Last Run" value={formatRelative(kpis.lastRun)} />
-      </div>
+      <MnDashboardStrip metrics={metrics} />
 
-      {/* Agent Definitions */}
       <AgentDefsTable defs={defs ?? []} />
-
-      {/* Active Runs */}
       <ActiveRunsTable runs={runs ?? []} />
-
-      {/* Tracked Projects */}
       <TrackedProjectsTable projects={projects ?? []} />
-    </div>
-  );
-}
-
-function KpiCard({ label, value, warn }: { label: string; value: string | number; warn?: boolean }) {
-  return (
-    <div className="rounded-lg border bg-card p-4">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`text-2xl font-bold tabular-nums ${warn ? 'text-primary' : ''}`}>{value}</p>
     </div>
   );
 }

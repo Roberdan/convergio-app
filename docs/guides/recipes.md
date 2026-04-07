@@ -37,7 +37,7 @@ const COLUMNS: ColumnDef<DetailRow>[] = [
     cell: ({ row }) => `${row.original.progress}%` },
   { accessorKey: "owner", header: "Owner" },
   { accessorKey: "status", header: "Status",
-    cell: ({ row }) => <MnBadge variant={statusVariant(row.original.status)}>{row.original.status}</MnBadge> },
+    cell: ({ row }) => <MnBadge tone={row.original.status === "on-track" ? "success" : row.original.status === "at-risk" ? "warning" : "danger"}>{row.original.status}</MnBadge> },
 ]
 
 export function OkrDashboard({ data }: { data: OkrDashboardData }) {
@@ -108,8 +108,7 @@ export function CrudPage<T extends { id: string }>({
     return (
       <MnStateScaffold
         state={isLoading ? "loading" : error ? "error" : "empty"}
-        title={error ?? "No items yet"}
-        description={error ? "Try again later" : "Create your first item to get started"}
+        message={error ?? "No items yet"}
       />
     )
   }
@@ -203,25 +202,18 @@ export function AnalyticsPage({ data }: { data: AnalyticsData }) {
 
 ## 4. Gantt + Detail Panel
 
-**Components**: `MnGantt` + `MnDetailPanel` + `MnBadge` + `MnDashboardStrip`
+**Components**: `MnGantt` + `MnDataTable` + `MnDetailPanel` + `MnBadge` + `MnDashboardStrip`
 
 **When to use**: Project planning views with timeline visualization and task detail.
 
 ### Data shape
 
 ```ts
-interface GanttData {
+import type { GanttTask } from "@/components/maranello"
+
+interface GanttPageData {
   metrics: { label: string; value: string }[];
-  tasks: {
-    id: string;
-    name: string;
-    start: string;     // ISO date
-    end: string;       // ISO date
-    progress: number;  // 0–100
-    dependencies?: string[];
-    assignee?: string;
-    status: string;
-  }[];
+  tasks: GanttTask[];   // { id, title, start, end, status?, progress?, dependencies?, children? }
 }
 ```
 
@@ -232,39 +224,46 @@ interface GanttData {
 
 import { useState } from "react"
 import {
-  MnGantt, MnDetailPanel, MnBadge, MnDashboardStrip, MnProgressRing,
+  MnGantt, MnDataTable, MnDetailPanel, MnBadge, MnDashboardStrip, MnProgressRing,
 } from "@/components/maranello"
+import type { GanttTask } from "@/components/maranello"
 
-export function ProjectTimeline({ data }: { data: GanttData }) {
-  const [selectedTask, setSelectedTask] = useState<GanttData["tasks"][0] | null>(null)
+const TASK_COLS = [
+  { key: "title", label: "Task", sortable: true },
+  { key: "start", label: "Start", sortable: true },
+  { key: "end", label: "End", sortable: true },
+  { key: "status", label: "Status" },
+]
+
+export function ProjectTimeline({ data }: { data: GanttPageData }) {
+  const [selectedTask, setSelectedTask] = useState<GanttTask | null>(null)
 
   return (
     <div className="space-y-6">
-      {/* Summary strip */}
       <MnDashboardStrip metrics={data.metrics} />
 
-      {/* Gantt chart */}
-      <MnGantt
-        tasks={data.tasks}
-        onTaskClick={(task) => setSelectedTask(task)}
+      <MnGantt tasks={data.tasks} />
+
+      <MnDataTable
+        columns={TASK_COLS}
+        data={data.tasks as unknown as Record<string, unknown>[]}
+        onRowClick={(row) => setSelectedTask(row as unknown as GanttTask)}
       />
 
-      {/* Task detail panel */}
       <MnDetailPanel
         open={!!selectedTask}
         onClose={() => setSelectedTask(null)}
-        title={selectedTask?.name ?? ""}
+        title={selectedTask?.title ?? ""}
       >
         {selectedTask && (
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <MnBadge variant={statusVariant(selectedTask.status)}>
-                {selectedTask.status}
-              </MnBadge>
-            </div>
-            <MnProgressRing value={selectedTask.progress} size="md" />
+            <MnBadge tone={selectedTask.status === "completed" ? "success" : selectedTask.status === "on-hold" ? "warning" : "info"}>
+              {selectedTask.status ?? "planned"}
+            </MnBadge>
+            {selectedTask.progress != null && (
+              <MnProgressRing value={selectedTask.progress} size="md" />
+            )}
             <dl className="text-sm space-y-2 text-[var(--mn-text-muted)]">
-              <div><dt className="font-medium">Assignee</dt><dd>{selectedTask.assignee ?? "Unassigned"}</dd></div>
               <div><dt className="font-medium">Start</dt><dd>{selectedTask.start}</dd></div>
               <div><dt className="font-medium">End</dt><dd>{selectedTask.end}</dd></div>
             </dl>
