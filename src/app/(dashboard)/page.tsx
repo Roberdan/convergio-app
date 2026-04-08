@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useSse } from '@/hooks/use-sse';
 import * as api from '@/lib/api';
@@ -532,9 +533,9 @@ export default function DashboardPage() {
         </div>
         <div className="flex items-center gap-2">
           {demoMode ? (
-            <a href="/showcase" className="rounded-md border px-3 py-1.5 text-sm hover:bg-accent">
+            <Link href="/showcase" className="rounded-md border px-3 py-1.5 text-sm hover:bg-accent">
               Explore components
-            </a>
+            </Link>
           ) : null}
           <MnBadge tone={demoMode ? 'info' : connected ? 'success' : 'danger'}>
             {demoMode ? 'Demo mode' : connected ? 'Live' : 'Disconnected'}
