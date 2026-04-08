@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### MCP Server
+- Feat: built-in Model Context Protocol server (`pnpm mcp`) with 7 tools for AI agent integration
+- Tools: `search_components`, `get_component`, `list_categories`, `generate_yaml_page`, `list_block_types`, `get_composition`, `get_theme_tokens`
+- Reads from the real component catalog and Zod schemas — zero hardcoded data
+- Supports stdio transport for Copilot CLI, Claude Desktop, and VS Code
+
+### Onboarding (closes #35)
+- Docs: clarified that `convergio-design` is archived; `convergio-frontend` is the only starting point
+- Updated README "Two Ways to Use It" and AGENTS.md "Two Usage Modes" with explicit callout
+
 ### Cockpit Showcase & Gauge Complications
 - Feat: dedicated **Cockpit** showcase section (`/showcase/cockpit`) with 6 instrument groups faithful to the old convergio-design demo
 - Feat: `MnGauge` now supports **crosshair** complication (scatter dots, axis labels, quadrant counts) — new `crosshair` and `quadrantCounts` props

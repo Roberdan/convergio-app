@@ -10,6 +10,8 @@
 
 ### Two Usage Modes
 
+> **Important:** `convergio-design` (the lower-level design system repo) has been **archived**. All development now happens in `convergio-frontend`. Use this repo for both framework mode and registry mode.
+
 | Mode | When to use | What you do |
 |---|---|---|
 | **Framework mode** | Building a new dashboard/app from scratch | Clone this repo, edit `maranello.yaml`, run `pnpm dev`. You get a full app with zero custom code. Add custom pages in `src/app/(dashboard)/` when YAML blocks aren't enough. |

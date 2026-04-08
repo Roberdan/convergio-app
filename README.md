@@ -10,6 +10,8 @@ A **config-driven dashboard framework** with 101+ React components, 4 themes, an
 
 ## Two Ways to Use It
 
+> **Note:** The `convergio-design` repo (lower-level design tokens and web components) has been **archived**. For all new projects — whether you want the full framework or individual components — start here with `convergio-frontend`.
+
 ### 1. Framework Mode — Clone and Configure (Recommended)
 
 Clone this repo, edit one YAML file, and you have a production-ready dashboard app. No React code required for basic dashboards.
@@ -403,6 +405,54 @@ Press `Cmd+K` (or `Ctrl+K`) to open the command palette:
 - **Fuzzy search** across all 101 components (bilingual IT/EN keywords)
 - **Category navigation** — jump to any showcase section
 - **Theme switching** — switch between all 4 themes
+
+## MCP Server (AI Agent Integration)
+
+The framework includes a built-in [Model Context Protocol](https://modelcontextprotocol.io) server that lets AI agents discover components, generate YAML configs, and get composition advice.
+
+```bash
+pnpm mcp   # starts the MCP server (stdio transport)
+```
+
+### Available Tools
+
+| Tool | Description |
+|---|---|
+| `search_components` | Fuzzy search the 101+ component catalog by name, category, or keyword |
+| `get_component` | Full details: props, when-to-use, code example, file path |
+| `list_categories` | All categories with component counts |
+| `generate_yaml_page` | Generate valid YAML page config from a description |
+| `list_block_types` | Available YAML block types with descriptions |
+| `get_composition` | Recommended component combinations for a use-case |
+| `get_theme_tokens` | Theme color tokens for all 4 themes |
+
+### Configure in your MCP client
+
+**Claude Desktop** (`claude_desktop_config.json`):
+```json
+{
+  "mcpServers": {
+    "convergio": {
+      "command": "npx",
+      "args": ["tsx", "src/mcp/server.ts"],
+      "cwd": "/path/to/convergio-frontend"
+    }
+  }
+}
+```
+
+**VS Code / Copilot** (`.vscode/mcp.json`):
+```json
+{
+  "servers": {
+    "convergio": {
+      "command": "npx",
+      "args": ["tsx", "src/mcp/server.ts"],
+      "cwd": "${workspaceFolder}"
+    }
+  }
+}
+```
 
 ## Component Registry
 
