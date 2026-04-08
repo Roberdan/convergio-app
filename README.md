@@ -8,6 +8,20 @@ A **config-driven dashboard framework** with 101+ React components, 4 themes, an
 
 > **Live demo:** [convergio-frontend.vercel.app](https://convergio-frontend.vercel.app) — explore all components interactively, including the [Cockpit](https://convergio-frontend.vercel.app/showcase/cockpit) with Ferrari Luce-inspired gauges, dashboard strip, and instrument binnacle.
 
+### Screenshots
+
+| Homepage | Category Grid |
+|---|---|
+| ![Homepage](docs/screenshots/homepage.png) | ![Categories](docs/screenshots/category-grid.png) |
+
+| Cockpit — Dashboard Strip | Cockpit — KPI Binnacle |
+|---|---|
+| ![Cockpit Dials](docs/screenshots/cockpit-dials.png) | ![Cockpit Binnacle](docs/screenshots/cockpit-binnacle.png) |
+
+| Agentic AI | Data Visualization |
+|---|---|
+| ![Agentic](docs/screenshots/agentic.png) | ![Data Viz](docs/screenshots/dataviz.png) |
+
 ## Two Ways to Use It
 
 > **Note:** The `convergio-design` repo (lower-level design tokens and web components) has been **archived**. For all new projects — whether you want the full framework or individual components — start here with `convergio-frontend`.
