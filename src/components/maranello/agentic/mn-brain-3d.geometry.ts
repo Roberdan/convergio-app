@@ -135,9 +135,9 @@ export function createConnectionCurve(
 }
 
 /* ── Traveling particle sphere ───────────────────────────── */
-export function createTravelParticle(color: Color): Mesh {
+export function createTravelParticle(color: Color, size = 0.45): Mesh {
   return new Mesh(
-    new SphereGeometry(0.45, 8, 8),
+    new SphereGeometry(size, 8, 8),
     new MeshBasicMaterial({
       color, transparent: true, opacity: 0.9, blending: AdditiveBlending,
     }),

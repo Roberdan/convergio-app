@@ -18,6 +18,14 @@ export interface Brain3DEdge {
   type: "delegation" | "sync" | "data" | "control"
   strength?: number
   active?: boolean
+  /** Number of active particles (0 = none, undefined = use active ? 4 : 0) */
+  particles?: number
+  /** Particle speed 0-1, default 0.5 */
+  particleSpeed?: number
+  /** Override edge color for particles */
+  particleColor?: string
+  /** Particles flow both ways */
+  bidirectional?: boolean
 }
 
 export const NODE_TYPE_TOKENS: Record<Brain3DNode["type"], [string, string]> = {
