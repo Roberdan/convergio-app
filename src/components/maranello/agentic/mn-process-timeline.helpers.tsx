@@ -123,13 +123,17 @@ export function Connector({
   const isH = orientation === "horizontal";
 
   return (
-    <div
-      aria-hidden="true"
-      className={cn(
-        "flex items-center justify-center",
-        isH ? "flex-col mx-0.5 flex-1 min-w-6" : "flex-row my-0.5 min-h-6 self-center",
+    <>
+      {showDuration && duration && (
+        <span className="sr-only">{t.duration}: {duration}</span>
       )}
-    >
+      <div
+        aria-hidden="true"
+        className={cn(
+          "flex items-center justify-center",
+          isH ? "flex-col mx-0.5 flex-1 min-w-6" : "flex-row my-0.5 min-h-6 self-center",
+        )}
+      >
       <div
         className={cn(
           "transition-colors",
@@ -149,11 +153,10 @@ export function Connector({
           {duration}
         </span>
       )}
-    </div>
+      </div>
+    </>
   );
 }
-
-/* ── Vertical step node ── */
 
 export function VerticalStepNode({ step, size, animate, showActors, interactive, onClick }: StepNodeProps) {
   const t = useLocale("processTimeline");

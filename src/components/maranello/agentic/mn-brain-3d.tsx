@@ -39,7 +39,7 @@ export function MnBrain3D({
   nodes, edges, onNodeClick, onNodeHover,
   autoRotate = true, autoRotateSpeed = 0.5, showLabels = true,
   height = 500, ariaLabel = "3D agent network visualization",
-  particleSize,
+  particleSize, showTraffic,
   size = "md", className, ...rest
 }: MnBrain3DProps) {
   const wrap = React.useRef<HTMLDivElement>(null)
@@ -60,7 +60,7 @@ export function MnBrain3D({
       handle.current = createBrainScene({
         canvas, nodes, edges, palette,
         width: w, height, showLabels, reducedMotion,
-        onNodeClick, onNodeHover, particleSize,
+        onNodeClick, onNodeHover, particleSize, showTraffic,
       })
     })
 
@@ -71,7 +71,7 @@ export function MnBrain3D({
           canvas, nodes, edges,
           palette: readBrain3DPalette(host),
           width: host.clientWidth || 400, height, showLabels, reducedMotion,
-          onNodeClick, onNodeHover, particleSize,
+          onNodeClick, onNodeHover, particleSize, showTraffic,
         })
       })
     })
@@ -84,7 +84,7 @@ export function MnBrain3D({
     ro?.observe(host)
 
     return () => { handle.current?.dispose(); themeObs.disconnect(); ro?.disconnect() }
-  }, [nodes, edges, height, showLabels, reducedMotion, onNodeClick, onNodeHover, particleSize])
+  }, [nodes, edges, height, showLabels, reducedMotion, onNodeClick, onNodeHover, particleSize, showTraffic])
 
   React.useEffect(() => {
     handle.current?.setAutoRotate(autoRotate, autoRotateSpeed)
