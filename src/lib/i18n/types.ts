@@ -341,6 +341,9 @@ export interface AgentTraceLabels {
   input: string;
   output: string;
   noTraceSteps: string;
+  actorLabel: string;
+  handoff: string;
+  legend: string;
 }
 
 export interface ApprovalChainLabels {

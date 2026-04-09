@@ -12,6 +12,9 @@ export const agentTraceDefaults: AgentTraceLabels = {
   input: "Input",
   output: "Output",
   noTraceSteps: "No trace steps to display.",
+  actorLabel: "Actor",
+  handoff: "Handoff",
+  legend: "Legend",
 };
 
 export const approvalChainDefaults: ApprovalChainLabels = {
