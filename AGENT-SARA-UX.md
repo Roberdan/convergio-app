@@ -54,6 +54,7 @@ Every page follows this structure — see `docs/guides/recipes.md`:
 - Pages without loading/error/empty states
 - Creating new API clients without types in `src/types/`
 - Hardcoded mock data in production pages
+- Hardcoded English strings in JSX — use `useLocale("namespace")` (see `docs/guides/i18n.md`)
 - `export default` for components (named exports only — pages can use default)
 
 ### Key files you must know
@@ -67,6 +68,7 @@ Every page follows this structure — see `docs/guides/recipes.md`:
 | `src/hooks/use-event-source.ts` | SSE with auto-reconnect |
 | `docs/guides/recipes.md` | 5 composition recipes |
 | `docs/guides/common-mistakes.md` | 10 mistakes to avoid |
+| `docs/guides/i18n.md` | i18n guide — `useLocale()`, `resolveLocale()`, YAML `locale:` |
 
 ## Rules (always)
 
@@ -74,6 +76,7 @@ Every page follows this structure — see `docs/guides/recipes.md`:
 - Search `component-catalog-data.ts` before creating any UI element (P12)
 - Check `maranello.yaml` / `convergio.yaml` before creating a page — it might be config-driven
 - All colors via `--mn-*` tokens — zero hardcoded hex (P11)
+- All user-facing strings via `useLocale("namespace")` — zero hardcoded English (see `docs/guides/i18n.md`)
 - Max 250 lines per file — split to `.helpers.ts` (P4)
 - Named exports only, `"use client"` only with hooks
 - English code, conventional commits

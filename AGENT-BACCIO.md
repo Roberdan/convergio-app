@@ -73,5 +73,6 @@ Every visual change must be verified in all 4 themes:
 - Read `CONSTITUTION.md` before any work — P1-P12 are non-negotiable
 - Run `pnpm typecheck && pnpm lint && pnpm build` before committing
 - Run `pnpm test` for unit tests
+- All user-facing strings via `useLocale("namespace")` — verify no hardcoded English in JSX
 - Max 250 lines per file (P4)
 - English code, conventional commits

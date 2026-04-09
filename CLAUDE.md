@@ -5,6 +5,7 @@
 2. **No custom UI**: Search `component-catalog-data.ts` BEFORE writing any component
 3. **No hardcoded colors**: Use `var(--mn-*)` tokens exclusively
 4. **No raw HTML elements**: Use Maranello components for tables, forms, panels, charts
+5. **No hardcoded English**: Use `useLocale("ns")` for UI strings — see `src/lib/i18n/`
 
 ## Component Selection — MANDATORY lookup
 Before creating ANY UI element, search the catalog by intent:
@@ -135,6 +136,9 @@ export default function DashboardPage() {
 // Maranello components — import from barrel
 import { MnDataTable, MnBadge, MnDashboardStrip } from "@/components/maranello"
 
+// i18n — import from i18n barrel
+import { useLocale } from "@/lib/i18n"
+
 // Icons — import from lucide-react
 import { BarChart3, Users, TrendingUp } from "lucide-react"
 
@@ -148,3 +152,4 @@ import { cn } from "@/lib/utils"
 - `"use client"` only when hooks are actually used
 - TypeScript strict — no `any` types
 - All colors via `--mn-*` CSS variables — NEVER hardcoded hex
+- All user-facing strings via `useLocale("namespace")` — NEVER hardcoded English in JSX

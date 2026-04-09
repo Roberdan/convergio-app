@@ -305,7 +305,7 @@ pages:
 ## Architecture
 
 ```
-maranello.yaml              # config: branding, nav, pages, AI agents
+maranello.yaml              # config: branding, nav, pages, AI agents, locale
 public/r/                   # shadcn-compatible component registry
 src/
   app/
@@ -509,6 +509,38 @@ Built-in `MnA11yFab` floating toolbar gives users runtime control over:
 - **Reduced motion** — disables animations
 - **High contrast** — increases contrast ratios
 - **Focus indicators** — toggle visible focus rings
+
+---
+
+## i18n (Internationalization)
+
+All framework UI strings are translatable. English defaults ship out of the box — downstream apps override via YAML or React context.
+
+### Override via YAML
+
+```yaml
+locale:
+  shell:
+    skipToContent: "Saltar al contenido principal"
+    dashboard: "Panel"
+  dataTable:
+    loading: "Cargando..."
+    filterPlaceholder: "Filtrar..."
+  a11yFab:
+    accessibilitySettings: "Configuración de accesibilidad"
+```
+
+### Override via React
+
+```tsx
+import { MnLocaleProvider } from "@/lib/i18n";
+
+<MnLocaleProvider messages={myTranslations}>
+  {children}
+</MnLocaleProvider>
+```
+
+80+ namespaces cover shell, theme, data-display, forms, feedback, layout, navigation, agentic, network, ops, strategy, financial, and data-viz components. See `docs/guides/i18n.md` for the full list.
 
 ---
 

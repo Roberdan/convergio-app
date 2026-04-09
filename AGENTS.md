@@ -32,7 +32,8 @@ config-loader.ts ──> Zod validation (config-schema.ts)
       ├──> loadAppConfig()    ──> app-shell.tsx (brand name, logo)
       ├──> loadNavSections()  ──> sidebar.tsx (navigation sections)
       ├──> loadPageConfig()   ──> page-renderer.tsx (block grid)
-      └──> loadAIConfig()     ──> ai-chat-panel (agents, models)
+      ├──> loadAIConfig()     ──> ai-chat-panel (agents, models)
+      └──> loadLocaleOverrides() ──> MnLocaleProvider (i18n)
 ```
 
 **The YAML is the single source of truth.** When a user edits `maranello.yaml` (or `convergio.yaml`) and restarts the dev server, the entire app updates: branding, sidebar navigation, page layouts, AI agents — everything.
@@ -63,6 +64,7 @@ Config file resolution (first match wins):
 | `CONSTITUTION.md` | Binding code rules (accessibility, themes, naming, file size limits) |
 | `src/lib/component-catalog-data.ts` | 101-entry searchable catalog — search before creating any UI |
 | `src/lib/api-night-agents.ts` | Typed HTTP client for night-agents daemon API |
+| `src/lib/i18n/` | i18n system: `MnLocaleProvider`, `useLocale()`, `resolveLocale()`, English defaults |
 
 ### Specialist Agents
 
@@ -179,6 +181,7 @@ These are **non-negotiable**. Violations will be rejected in review.
 | No hardcoded hex in JSX | Use `var(--mn-*)` tokens only (P11) |
 | Catalog-first | Search `component-catalog-data.ts` before creating any UI (P12) |
 | English only | All code, comments, and documentation in English |
+| i18n-ready | All user-facing strings via `useLocale()` — no hardcoded English in JSX |
 
 ---
 
@@ -240,3 +243,4 @@ pnpm test:e2e     # Playwright E2E
 10. **Creating custom metric cards** — use `MnDashboardStrip` or `MnKpiScorecard` (P10).
 11. **Skipping catalog search** — always check `component-catalog-data.ts` before creating any UI element (P12).
 12. **Using `Sheet`/`Dialog` for detail views** — use `MnDetailPanel` instead. See `docs/guides/common-mistakes.md`.
+13. **Hardcoding English strings** — use `useLocale("namespace")` for client components or `resolveLocale("namespace")` for server components. See `docs/guides/i18n.md`.

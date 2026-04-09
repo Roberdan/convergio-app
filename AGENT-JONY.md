@@ -56,6 +56,7 @@ Everything related to data tables, CRUD pages, forms, modals, detail panels, and
 - Read `CLAUDE.md` and `CONSTITUTION.md` before any work
 - Search `component-catalog-data.ts` before creating any UI element (P12)
 - All colors via `--mn-*` tokens — zero hardcoded hex (P11)
+- All user-facing strings via `useLocale("namespace")` — zero hardcoded English (see `docs/guides/i18n.md`)
 - Max 250 lines per file — split to `.helpers.ts` (P4)
 - Named exports only, `"use client"` only with hooks
 - English code, conventional commits

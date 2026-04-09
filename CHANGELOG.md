@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0] - 09 April 2026
+
+### i18n (closes #41, #42)
+- Feat: framework-wide i18n system — `MnLocaleProvider` context, `useLocale()` hook, `resolveLocale()` for server components
+- Feat: YAML `locale:` section support in config schema and loader
+- Feat: 80+ typed i18n namespaces with English defaults covering all components
+- Migrated 75+ components from hardcoded English to `useLocale()`: shell, theme, data-display, feedback, forms, layout, navigation, agentic, network, ops, strategy, financial, data-viz
+- Migrated error pages, 404, login page, UI primitives (dialog, sheet)
+- Docs: added `docs/guides/i18n.md` — full i18n guide with YAML and React examples
+- Docs: updated CLAUDE.md, AGENTS.md, all specialist agent files with i18n rules
+- Zero breaking changes — all components work unchanged with English defaults
+
 ## [1.2.0] - 08 April 2026
 
 ### MCP Server
