@@ -66,6 +66,8 @@ Every page follows this structure — see `docs/guides/recipes.md`:
 | `src/lib/component-catalog-data.ts` | 101-entry catalog — search before creating UI |
 | `src/hooks/use-api-query.ts` | SWR-like poller with `pollInterval` |
 | `src/hooks/use-event-source.ts` | SSE with auto-reconnect |
+| `src/hooks/use-sse-adapter.ts` | Generic SSE adapter — reducer-based state over `useEventSource` |
+| `src/hooks/use-sse-adapter.convenience.ts` | 5 typed SSE hooks for agentic components (Brain3D, AgentTrace, HubSpoke, ApprovalChain, ActiveMissions) |
 | `docs/guides/recipes.md` | 5 composition recipes |
 | `docs/guides/common-mistakes.md` | 10 mistakes to avoid |
 | `docs/guides/i18n.md` | i18n guide — `useLocale()`, `resolveLocale()`, YAML `locale:` |

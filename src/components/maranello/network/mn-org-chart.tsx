@@ -26,13 +26,6 @@ const STATUS_COLORS: Record<OrgNode['status'], string> = {
   error: 'bg-status-error',
 };
 
-const STATUS_LABEL_DEFAULTS: Record<OrgNode['status'], string> = {
-  active: 'Active',
-  inactive: 'Inactive',
-  busy: 'Busy',
-  error: 'Error',
-};
-
 interface FlatNode {
   node: OrgNode;
   depth: number;

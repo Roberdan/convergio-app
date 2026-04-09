@@ -209,6 +209,12 @@ Components read colors via:
 |---|---|---|
 | `useApiQuery` | SWR-like poller with `pollInterval`, error handling, `refetch()` | `src/hooks/use-api-query.ts` |
 | `useEventSource` | SSE stream with auto-reconnect + exponential backoff | `src/hooks/use-event-source.ts` |
+| `useSSEAdapter` | Generic SSE adapter — reducer-based state accumulation over `useEventSource` | `src/hooks/use-sse-adapter.ts` |
+| `useBrain3DLive` | SSE → Brain3D nodes/edges (convenience wrapper) | `src/hooks/use-sse-adapter.convenience.ts` |
+| `useAgentTraceLive` | SSE → AgentTrace steps (convenience wrapper) | `src/hooks/use-sse-adapter.convenience.ts` |
+| `useHubSpokeLive` | SSE → HubSpoke hub/spokes (convenience wrapper) | `src/hooks/use-sse-adapter.convenience.ts` |
+| `useApprovalChainLive` | SSE → ApprovalChain steps (convenience wrapper) | `src/hooks/use-sse-adapter.convenience.ts` |
+| `useActiveMissionsLive` | SSE → ActiveMissions missions (convenience wrapper) | `src/hooks/use-sse-adapter.convenience.ts` |
 
 Backend URL comes from `src/lib/env.ts`:
 - Server: `API_URL` env var (default `http://localhost:8420`)

@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.0] - 09 April 2026
+
+### Agentic Enhancements (closes #46, #47, #48, #49)
+- Feat: `useSSEAdapter<T>` — generic SSE adapter hook with reducer-based state accumulation
+- Feat: 5 convenience SSE hooks: `useBrain3DLive`, `useAgentTraceLive`, `useHubSpokeLive`, `useApprovalChainLive`, `useActiveMissionsLive`
+- Feat: `MnProcessTimeline` — new horizontal/vertical multi-step workflow visualization with actor avatars, status indicators, duration display, and click handlers
+- Feat: `MnAgentTrace` — actor grouping with color bands, actor headers on ownership change, handoff bridges, and legend component
+- Feat: `MnBrain3D` — configurable animated edge particles with per-edge `particles`, `particleSpeed`, `particleColor`, `bidirectional` props; 20-particle cap for performance
+
+### Code Quality
+- Fix: resolved all 20 ESLint warnings across 14 files (unused vars, img elements)
+- Fix: `react-hooks/refs` error in `useSSEAdapter` — moved ref update to useEffect
+- Fix: extracted `mn-agent-trace.helpers.tsx` to keep file under 250-line limit
+- Zero ESLint warnings remaining
+
 ## [1.3.1] - 09 April 2026
 
 ### Bug Fixes

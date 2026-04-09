@@ -81,6 +81,7 @@ export function ActorBadge({ actor, size }: { actor: ProcessTimelineStep["actor"
 
   if (actor.avatar) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={actor.avatar}
         alt={actor.name}

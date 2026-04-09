@@ -91,6 +91,7 @@ function MnProfile({ name, email, avatarUrl, sections = [], trigger, size, class
   const renderAvatar = (sz: "size-9 text-xs" | "size-14 text-sm") => (
     <span className={cn(avatarBase, sz)}>
       {showImg ? (
+        // eslint-disable-next-line @next/next/no-img-element
         <img src={avatarUrl} alt="" aria-hidden="true" className="size-full object-cover" onError={() => setImgErr(true)} />
       ) : <span aria-hidden="true">{initials}</span>}
     </span>

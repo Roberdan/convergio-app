@@ -12,12 +12,6 @@ import type {
   Brain3DEdge,
 } from '@/components/maranello/agentic';
 
-const TYPE_COLORS: Record<string, string> = {
-  'external-claude': '#3b82f6',
-  'external-copilot': '#f59e0b',
-  'external-mlx': '#22c55e',
-};
-
 function nodeType(agentType: string): string {
   if (agentType.includes('claude')) return 'claude';
   if (agentType.includes('copilot')) return 'copilot';

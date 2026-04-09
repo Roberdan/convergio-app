@@ -135,6 +135,7 @@ function MnUserTable({
   function renderAvatar(user: AdminUser) {
     if (user.avatarUrl) {
       return (
+        // eslint-disable-next-line @next/next/no-img-element
         <img src={user.avatarUrl} alt={user.name}
           className="h-8 w-8 rounded-full object-cover" />
       )

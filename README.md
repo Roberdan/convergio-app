@@ -352,6 +352,8 @@ src/
   hooks/
     use-api-query.ts        # generic SWR-like API poller (pollInterval, error handling)
     use-event-source.ts     # SSE event stream hook (auto-reconnect, exponential backoff)
+    use-sse-adapter.ts      # generic SSE adapter — reducer-based state accumulation
+    use-sse-adapter.convenience.ts  # 5 typed SSE hooks for agentic components
   lib/
     config-loader.ts        # YAML parser + Zod validation (cached, file-watched in dev)
     config-schema.ts        # Zod schema for config file
