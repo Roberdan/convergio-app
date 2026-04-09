@@ -379,6 +379,13 @@ export interface NeuralNodesLabels {
   neuralNodesVisualization: string;
 }
 
+export interface ProcessTimelineLabels {
+  defaultAriaLabel: string;
+  stepStatus: string;
+  duration: string;
+  noSteps: string;
+}
+
 /* ── Network ── */
 
 export interface DeploymentTableLabels {
@@ -672,6 +679,7 @@ export interface LocaleMessages {
   chat: ChatLabels;
   hubSpoke: HubSpokeLabels;
   neuralNodes: NeuralNodesLabels;
+  processTimeline: ProcessTimelineLabels;
   deploymentTable: DeploymentTableLabels;
   map: MapLabels;
   meshNetworkCanvas: MeshNetworkCanvasLabels;

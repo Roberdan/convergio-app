@@ -1,7 +1,7 @@
 import type {
   ActiveMissionsLabels, AgentTraceLabels, ApprovalChainLabels,
   AugmentedBrainLabels, AugmentedBrainV2Labels, ChatLabels,
-  HubSpokeLabels, NeuralNodesLabels,
+  HubSpokeLabels, NeuralNodesLabels, ProcessTimelineLabels,
 } from "../types";
 
 export const activeMissionsDefaults: ActiveMissionsLabels = {
@@ -48,4 +48,11 @@ export const hubSpokeDefaults: HubSpokeLabels = {
 
 export const neuralNodesDefaults: NeuralNodesLabels = {
   neuralNodesVisualization: "Neural nodes visualization",
+};
+
+export const processTimelineDefaults: ProcessTimelineLabels = {
+  defaultAriaLabel: "Process timeline",
+  stepStatus: "status",
+  duration: "Duration",
+  noSteps: "No steps to display.",
 };
