@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Check, Copy, Search } from 'lucide-react';
+import { ArrowLeft, Check, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getAllIcons } from '@/lib/icon-map';
 

@@ -2,8 +2,14 @@
 
 import { cn } from '@/lib/utils';
 import { useLocale } from '@/lib/i18n';
-import { cva } from 'class-variance-authority';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+  StepRow,
+  groupStepsByActor,
+  buildActorLegend,
+} from './mn-agent-trace.helpers';
+
+/* ── Public types ── */
 
 export type TraceStepStatus = 'pending' | 'running' | 'done' | 'error';
 export type TraceStepKind = 'tool' | 'reasoning' | 'result' | 'handoff';
@@ -17,6 +23,9 @@ export interface TraceStep {
   input?: string;
   output?: string;
   timestamp?: string;
+  actorId?: string;
+  actorLabel?: string;
+  actorColor?: string;
 }
 
 export interface MnAgentTraceProps {
@@ -27,154 +36,83 @@ export interface MnAgentTraceProps {
   maxVisible?: number;
   ariaLabel?: string;
   className?: string;
+  /** Group steps by actor with color bands (default: false) */
+  groupByActor?: boolean;
+  /** Show actor name header when ownership changes (default: true when groupByActor) */
+  showActorHeaders?: boolean;
+  /** Override actor colors by actorId */
+  actorColors?: Record<string, string>;
 }
 
-const KIND_LABELS: Record<TraceStepKind, string> = {
-  tool: 'T',
-  reasoning: 'R',
-  result: 'Res',
-  handoff: 'H',
-};
+/* ── Inline sub-components (small, actor-specific) ── */
 
-const MAX_DISPLAY_LEN = 500;
-
-const kindBadge = cva(
-  'inline-flex h-6 w-6 shrink-0 items-center justify-center rounded text-[10px] font-bold',
-  {
-    variants: {
-      kind: {
-        tool: 'bg-[var(--mn-kind-tool-bg,theme(colors.blue.500/0.15))] text-[var(--mn-kind-tool-fg,theme(colors.blue.600))]',
-        reasoning:
-          'bg-[var(--mn-kind-reasoning-bg,theme(colors.purple.500/0.15))] text-[var(--mn-kind-reasoning-fg,theme(colors.purple.600))]',
-        result:
-          'bg-[var(--mn-kind-result-bg,theme(colors.green.500/0.15))] text-[var(--mn-kind-result-fg,theme(colors.green.600))]',
-        handoff:
-          'bg-[var(--mn-kind-handoff-bg,theme(colors.amber.500/0.15))] text-[var(--mn-kind-handoff-fg,theme(colors.amber.600))]',
-      },
-    },
-  },
-);
-
-const statusDot = cva('h-2.5 w-2.5 shrink-0 rounded-full', {
-  variants: {
-    status: {
-      pending: 'bg-muted-foreground/40',
-      running: 'bg-status-warning animate-pulse',
-      done: 'bg-status-success',
-      error: 'bg-status-error',
-    },
-  },
-});
-
-function truncate(text: string | undefined): string {
-  if (!text) return '';
-  return text.length > MAX_DISPLAY_LEN
-    ? text.slice(0, MAX_DISPLAY_LEN) + '\u2026'
-    : text;
-}
-
-function StepBody({ step }: { step: TraceStep }) {
-  const t = useLocale("agentTrace");
-  const hasContent = step.input || step.output;
-  if (!hasContent) return null;
-
+function ActorHeader({ label, color }: { label: string; color: string }) {
+  const t = useLocale('agentTrace');
   return (
-    <div className="border-t border-border/50 px-3 py-2 text-xs">
-      {step.input && (
-        <div className="mb-2">
-          <span className="mb-1 block font-semibold text-muted-foreground">
-            {t.input}
-          </span>
-          <pre className="whitespace-pre-wrap break-words rounded bg-muted/50 p-2 font-mono text-card-foreground">
-            {truncate(step.input)}
-          </pre>
-        </div>
-      )}
-      {step.output && (
-        <div>
-          <span className="mb-1 block font-semibold text-muted-foreground">
-            {t.output}
-          </span>
-          <pre className="whitespace-pre-wrap break-words rounded bg-muted/50 p-2 font-mono text-card-foreground">
-            {truncate(step.output)}
-          </pre>
-        </div>
-      )}
+    <div
+      role="heading"
+      aria-level={3}
+      className="flex items-center gap-2 px-1 py-1.5 text-xs font-semibold text-muted-foreground"
+    >
+      <span
+        className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+        style={{ backgroundColor: color }}
+        aria-hidden="true"
+      />
+      <span>
+        {t.actorLabel}: {label}
+      </span>
     </div>
   );
 }
 
-function StepRow({
-  step,
-  expanded,
-  onToggle,
+function ActorLegend({
+  entries,
 }: {
-  step: TraceStep;
-  expanded: boolean;
-  onToggle: (id: string) => void;
+  entries: { actorId: string; label: string; color: string }[];
 }) {
-  const hasBody = !!(step.input || step.output);
-
-  function handleClick() {
-    if (hasBody) onToggle(step.id);
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      if (hasBody) onToggle(step.id);
-    }
-  }
+  const t = useLocale('agentTrace');
+  if (entries.length <= 1) return null;
 
   return (
+    <div className="flex flex-wrap items-center gap-3 border-t border-border/50 px-2 pt-2 text-xs text-muted-foreground">
+      <span className="font-semibold">{t.legend}:</span>
+      {entries.map((e) => (
+        <span key={e.actorId} className="inline-flex items-center gap-1">
+          <span
+            className="inline-block h-2 w-2 rounded-full"
+            style={{ backgroundColor: e.color }}
+            aria-hidden="true"
+          />
+          {e.label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/* ── Handoff bridge between actor groups ── */
+
+function HandoffBridge({ fromColor, toColor }: { fromColor: string; toColor: string }) {
+  const t = useLocale('agentTrace');
+  return (
     <div
-      role="listitem"
-      data-id={step.id}
-      className={cn(
-        'rounded-md border bg-card transition-colors',
-        step.status === 'error' && 'border-status-error/30',
-      )}
+      className="mx-auto flex w-full items-center gap-1 px-2 py-0.5"
+      aria-label={t.handoff}
     >
-      <div
-        role="button"
-        tabIndex={0}
-        aria-expanded={hasBody ? expanded : undefined}
-        aria-label={`${step.kind} step: ${step.label}, status ${step.status}${step.durationMs != null ? `, ${step.durationMs}ms` : ''}`}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        className={cn(
-          'flex cursor-pointer items-center gap-2 px-3 py-2 text-sm',
-          'hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md',
-          !hasBody && 'cursor-default',
-        )}
-      >
-        <span className={kindBadge({ kind: step.kind })}>
-          {KIND_LABELS[step.kind]}
-        </span>
-
-        <span className="min-w-0 flex-1 truncate font-medium text-card-foreground">
-          {step.label}
-        </span>
-
-        {step.timestamp && (
-          <span className="shrink-0 text-xs text-muted-foreground">
-            {step.timestamp}
-          </span>
-        )}
-
-        {step.durationMs != null && (
-          <span className="shrink-0 tabular-nums text-xs text-muted-foreground">
-            {step.durationMs}ms
-          </span>
-        )}
-
-        <span
-          className={statusDot({ status: step.status })}
-          aria-label={`Status: ${step.status}`}
-        />
-      </div>
-
-      {expanded && <StepBody step={step} />}
+      <span
+        className="h-0.5 flex-1 rounded"
+        style={{ backgroundColor: fromColor }}
+        aria-hidden="true"
+      />
+      <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+        {t.handoff}
+      </span>
+      <span
+        className="h-0.5 flex-1 rounded"
+        style={{ backgroundColor: toColor }}
+        aria-hidden="true"
+      />
     </div>
   );
 }
@@ -183,8 +121,9 @@ function StepRow({
  * Visualizes AI agent execution traces.
  *
  * Displays steps with kind badges, status indicators, and
- * expandable input/output sections. Supports keyboard navigation
- * and auto-scrolls to the latest step.
+ * expandable input/output sections. Supports keyboard navigation,
+ * optional actor grouping with color bands, and auto-scrolls to
+ * the latest step.
  */
 export function MnAgentTrace({
   steps,
@@ -192,10 +131,22 @@ export function MnAgentTrace({
   maxVisible,
   ariaLabel = 'Agent trace',
   className,
+  groupByActor = false,
+  showActorHeaders,
+  actorColors,
 }: MnAgentTraceProps) {
-  const t = useLocale("agentTrace");
+  const t = useLocale('agentTrace');
   const [expandedSet, setExpandedSet] = useState<Set<string>>(new Set());
   const listRef = useRef<HTMLDivElement>(null);
+
+  const showHeaders = showActorHeaders ?? groupByActor;
+
+  const { groups, legend } = useMemo(() => {
+    if (!groupByActor) return { groups: null, legend: [] };
+    const { groups: g } = groupStepsByActor(steps, actorColors);
+    const leg = buildActorLegend(steps, actorColors);
+    return { groups: g, legend: leg };
+  }, [steps, groupByActor, actorColors]);
 
   const toggle = useCallback(
     (id: string) => {
@@ -240,14 +191,38 @@ export function MnAgentTrace({
       className={cn('flex flex-col gap-1.5 rounded-lg border bg-card p-2', className)}
       style={maxH}
     >
-      {steps.map((step) => (
-        <StepRow
-          key={step.id}
-          step={step}
-          expanded={expandedSet.has(step.id)}
-          onToggle={toggle}
-        />
-      ))}
+      {groups
+        ? groups.map((group, gi) => (
+            <div key={`${group.actorId}-${gi}`} className="flex flex-col gap-1.5">
+              {gi > 0 && (
+                <HandoffBridge
+                  fromColor={groups[gi - 1].color}
+                  toColor={group.color}
+                />
+              )}
+              {showHeaders && group.actorId !== '__default__' && (
+                <ActorHeader label={group.actorLabel} color={group.color} />
+              )}
+              {group.steps.map((step) => (
+                <StepRow
+                  key={step.id}
+                  step={step}
+                  expanded={expandedSet.has(step.id)}
+                  onToggle={toggle}
+                  actorColor={group.color}
+                />
+              ))}
+            </div>
+          ))
+        : steps.map((step) => (
+            <StepRow
+              key={step.id}
+              step={step}
+              expanded={expandedSet.has(step.id)}
+              onToggle={toggle}
+            />
+          ))}
+      {groupByActor && <ActorLegend entries={legend} />}
     </div>
   );
 }

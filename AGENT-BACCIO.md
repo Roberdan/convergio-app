@@ -20,7 +20,7 @@ Everything related to testing, accessibility (a11y), responsive behavior, perfor
 | Gate | Command | Must pass |
 |---|---|---|
 | TypeScript strict | `pnpm typecheck` | Zero errors, zero `any` |
-| ESLint | `pnpm lint` | Zero errors |
+| ESLint | `pnpm lint` | Zero errors, zero warnings |
 | Production build | `pnpm build` | All routes compile |
 | Unit tests | `pnpm test` | All pass |
 | E2E tests | `pnpm test:e2e` | All pass (needs daemon) |

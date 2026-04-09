@@ -4,17 +4,17 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { useLocale } from "@/lib/i18n"
 import {
-  type StatusBadgeMeta, STATUS_MAP,
-  type MetricValue, type PersonValue, type ProgressValue,
+  STATUS_MAP,
+  type PersonValue, type ProgressValue,
   type ActionDef, type ActionValue, type LinkValue,
   toInitials, clampPct,
-  type CellType, type DataTableColumn, type SortDir, type SelectionMode,
-  compare, processRows, groupRows,
+  type DataTableColumn, type SortDir, type SelectionMode,
+  processRows, groupRows,
   tableWrap, thBase, tdBase, rowBase, alignCls, widthStyle,
 } from "./mn-data-table.helpers"
 
 export type { DataTableColumn } from "./mn-data-table.helpers"
-export type { CellType, MetricValue, PersonValue, ProgressValue, ActionValue, ActionDef, LinkValue } from "./mn-data-table.helpers"
+export type { CellType, MetricValue, StatusBadgeMeta, PersonValue, ProgressValue, ActionValue, ActionDef, LinkValue } from "./mn-data-table.helpers"
 
 /* ── Built-in V2 Cell Renderers ──────────────────────────── */
 
@@ -49,6 +49,7 @@ function AvatarCell({ value }: { value: unknown }) {
   return (
     <div className="flex items-center gap-2">
       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--mn-primary-bg,var(--mn-surface-raised))] text-[0.6rem] font-bold text-[var(--mn-primary,var(--mn-accent))]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         {p.avatar ? <img src={p.avatar} alt={p.name} className="h-full w-full rounded-full object-cover" /> : toInitials(p.name)}
       </span>
       <span className="flex flex-col leading-tight">

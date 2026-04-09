@@ -81,9 +81,7 @@ test.describe("Mobile — sidebar sheet", () => {
     await page.goto("/", { waitUntil: "domcontentloaded", timeout: 20000 });
     await page.waitForTimeout(1000);
 
-    // Desktop aside should be hidden at mobile
-    const desktopSidebar = page.locator("aside").first();
-    // It may have hidden md:flex — check it's not blocking content
+    // Desktop aside should be hidden at mobile — check it's not blocking content
     const mainContent = page.locator("main").first();
     await expect(mainContent).toBeVisible();
 

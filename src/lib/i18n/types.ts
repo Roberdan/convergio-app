@@ -341,6 +341,9 @@ export interface AgentTraceLabels {
   input: string;
   output: string;
   noTraceSteps: string;
+  actorLabel: string;
+  handoff: string;
+  legend: string;
 }
 
 export interface ApprovalChainLabels {
@@ -377,6 +380,13 @@ export interface HubSpokeLabels {
 
 export interface NeuralNodesLabels {
   neuralNodesVisualization: string;
+}
+
+export interface ProcessTimelineLabels {
+  defaultAriaLabel: string;
+  stepStatus: string;
+  duration: string;
+  noSteps: string;
 }
 
 /* ── Network ── */
@@ -672,6 +682,7 @@ export interface LocaleMessages {
   chat: ChatLabels;
   hubSpoke: HubSpokeLabels;
   neuralNodes: NeuralNodesLabels;
+  processTimeline: ProcessTimelineLabels;
   deploymentTable: DeploymentTableLabels;
   map: MapLabels;
   meshNetworkCanvas: MeshNetworkCanvasLabels;

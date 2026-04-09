@@ -9,7 +9,6 @@ import {
   authenticate,
   collectPageIssues,
   checkErrorBoundary,
-  isInfraError,
 } from "./helpers";
 
 test.beforeEach(async ({ context }) => {
@@ -182,12 +181,6 @@ test.describe("Plans Page — Full Interaction", () => {
       await rows.first().click();
       await page.waitForTimeout(1000);
 
-      // Execution tree or detail panel should appear
-      const detailVisible = await page
-        .locator("text=/Wave|Task|Execution/i")
-        .first()
-        .isVisible()
-        .catch(() => false);
       // If no data, at least the page shouldn't crash
       await expect(page.locator("main").first()).toBeVisible();
     }
@@ -398,8 +391,6 @@ test.describe("Night Agents Page", () => {
     await page.waitForTimeout(1500);
 
     // If agents exist, trigger button should be present
-    const triggerBtns = page.getByRole("button", { name: /Trigger|Run|Start/i });
-    const hasBtn = (await triggerBtns.count()) > 0;
     // Relaxed — just no crash
     await expect(page.locator("main").first()).toBeVisible();
   });

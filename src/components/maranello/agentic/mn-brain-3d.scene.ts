@@ -31,6 +31,7 @@ export interface BrainSceneOpts {
   reducedMotion: boolean
   onNodeClick?: (node: Brain3DNode) => void
   onNodeHover?: (node: Brain3DNode | null) => void
+  particleSize?: number
 }
 
 export interface BrainSceneHandle {
@@ -42,7 +43,7 @@ export interface BrainSceneHandle {
 const BG = 0x080810
 
 export function createBrainScene(opts: BrainSceneOpts): BrainSceneHandle {
-  const { canvas, nodes, edges, palette, showLabels, reducedMotion } = opts
+  const { canvas, nodes, edges, palette, showLabels, reducedMotion, particleSize } = opts
   let { width, height } = opts
 
   /* ── Core setup ─────────────────────────────────────────── */
@@ -115,12 +116,26 @@ export function createBrainScene(opts: BrainSceneOpts): BrainSceneHandle {
     const src = nodes.find((n) => n.id === edge.source) ?? nodes[0]
     const { tube, curve } = createConnectionCurve(from, to, edge, palette, src)
     scene.add(tube)
-    if (edge.active && !reducedMotion) {
-      const c = new Color(nodeColor(src, palette))
-      for (let p = 0; p < 4; p++) {
-        const m = createTravelParticle(c)
+    if (reducedMotion) continue
+    const pCount = edge.particles ?? (edge.active ? 4 : 0)
+    if (pCount <= 0) continue
+    const pColor = edge.particleColor
+      ? new Color(edge.particleColor)
+      : new Color(nodeColor(src, palette))
+    const speedBase = 0.001 + (edge.particleSpeed ?? 0.5) * 0.005
+    const count = Math.min(pCount, 20)
+    for (let p = 0; p < count; p++) {
+      const m = createTravelParticle(pColor, particleSize)
+      scene.add(m)
+      travelers.push({ mesh: m, curve, t: Math.random(), speed: speedBase + Math.random() * 0.002 })
+    }
+    if (edge.bidirectional) {
+      const pts = curve.points
+      const rev = new CatmullRomCurve3([pts[pts.length - 1].clone(), pts[1].clone(), pts[0].clone()])
+      for (let p = 0; p < count; p++) {
+        const m = createTravelParticle(pColor, particleSize)
         scene.add(m)
-        travelers.push({ mesh: m, curve, t: Math.random(), speed: 0.0015 + Math.random() * 0.003 })
+        travelers.push({ mesh: m, curve: rev, t: Math.random(), speed: speedBase + Math.random() * 0.002 })
       }
     }
   }

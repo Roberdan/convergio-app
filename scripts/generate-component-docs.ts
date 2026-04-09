@@ -86,11 +86,6 @@ function extractProps(sourceFile: string, propsInterface: string): PropInfo[] {
   if (!fs.existsSync(sourceFile)) return [];
   const src = fs.readFileSync(sourceFile, "utf-8");
 
-  // Also read .helpers.ts for type definitions
-  const helpersFile = sourceFile.replace(/\.tsx$/, ".helpers.ts");
-  const helpersSrc = fs.existsSync(helpersFile) ? fs.readFileSync(helpersFile, "utf-8") : "";
-  const allSrc = src + "\n" + helpersSrc;
-
   // Find props interface/type
   const ifaceRe = new RegExp(
     `(?:export\\s+)?(?:interface|type)\\s+${escapeRe(propsInterface)}[^{]*\\{`,

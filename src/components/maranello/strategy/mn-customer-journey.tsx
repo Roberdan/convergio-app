@@ -112,6 +112,7 @@ export interface MnCustomerJourneyProps
 function Avatar({ engagement }: { engagement: JourneyEngagement }) {
   if (engagement.avatar) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={engagement.avatar}
         alt={engagement.assignee ?? ""}

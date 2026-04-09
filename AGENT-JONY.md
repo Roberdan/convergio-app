@@ -28,6 +28,7 @@ Everything related to data tables, CRUD pages, forms, modals, detail panels, and
 | `MnStateScaffold` | Loading/error/empty states — never custom spinners |
 | `MnTabs` | Tab navigation — never custom tab divs |
 | `MnStepper` | Multi-step wizards |
+| `MnProcessTimeline` | Horizontal/vertical workflow visualization with actors and status |
 | `MnFilterPanel` / `MnFacetWorkbench` | Filter UIs — never custom select dropdowns |
 | `MnSearchDrawer` / `MnCommandPalette` | Search UIs |
 | `MnKanbanBoard` | Kanban views |

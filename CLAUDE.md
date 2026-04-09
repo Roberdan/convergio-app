@@ -42,6 +42,7 @@ Before creating ANY UI element, search the catalog by intent:
 | Modal | `MnModal` | Raw dialog element |
 | Toast | `MnToast` | Custom alert divs |
 | Stepper/wizard | `MnStepper` | Custom step indicators |
+| Process/workflow timeline | `MnProcessTimeline` | Custom timeline divs |
 | Breadcrumb | `MnBreadcrumb` | Custom path links |
 
 ## How to find the right component

@@ -68,6 +68,8 @@ Example — full quality score gauge:
 |---|---|
 | `useApiQuery` | SWR-like poller with `pollInterval`, error handling, `refetch()` |
 | `useEventSource` | SSE stream with auto-reconnect + exponential backoff |
+| `useSSEAdapter` | Generic SSE adapter — reducer-based state accumulation for any SSE source |
+| `useBrain3DLive` | SSE → Brain3D nodes/edges (convenience wrapper over `useSSEAdapter`) |
 
 ### Patterns you enforce
 
@@ -77,7 +79,8 @@ Example — full quality score gauge:
 4. **Canvas components** use `readPalette(el)` to read theme from CSS vars + `data-theme`
 5. **Gauge complications** — use `MnGauge` props (arcBar, subDials, crosshair, multigraph), never build custom canvas instruments
 6. **Polling intervals**: KPI strip 5-10s, charts 10-30s, heavy queries 60s
-7. **SSE**: always use `useEventSource` with reconnect — never raw `EventSource`
+7. **SSE**: prefer `useSSEAdapter` with a `mapEvent` reducer for stateful streams, or convenience hooks (`useBrain3DLive`, `useAgentTraceLive`, etc.) — never raw `EventSource`
+8. **Brain3D particles**: configure per-edge via `particles`, `particleSpeed`, `particleColor`, `bidirectional` props — never create custom Three.js particle systems
 8. **Empty/error/loading states**: always `MnStateScaffold`, never custom spinners
 9. **Cockpit layouts**: combine `MnGauge` + `MnDashboardStrip` + `MnHeatmap` + `MnSystemStatus` for ops cockpits
 10. **Gauge orientation**: use `startAngle={-225} endAngle={45}` for Ferrari bottom-center start
