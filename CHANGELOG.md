@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.2] - 09 April 2026
+
+### Bug Fixes (closes #51, #52, #53, #54)
+- fix(brain3d): `showTraffic` prop now correctly forwarded to scene renderer (#51)
+- fix(a11y): duration text in MnProcessTimeline accessible via sr-only span (#52)
+- fix(sse): reconnect timer cleared on unmount — prevents stacked retries (#53)
+- fix(brain3d): bidirectional edges capped at 20 total particles (10 per direction) (#54)
+
 ## [1.4.1] - 09 April 2026
 
 ### Bug Fixes
