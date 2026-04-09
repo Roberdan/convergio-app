@@ -4,6 +4,7 @@ import * as React from "react"
 import { createPortal } from "react-dom"
 import { Loader2, Search, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import { searchDrawerBackdropVariants, searchDrawerVariants, type SearchDrawerResult, type MnSearchDrawerProps } from "./mn-search-drawer.helpers"
 
 export type { SearchDrawerResult, SearchDrawerSection, MnSearchDrawerProps } from "./mn-search-drawer.helpers"
@@ -24,6 +25,7 @@ function MnSearchDrawer({
   emptyMessage = "No results found",
   className,
 }: MnSearchDrawerProps) {
+  const t = useLocale("searchDrawer")
   const inputRef = React.useRef<HTMLInputElement>(null)
   const drawerRef = React.useRef<HTMLDivElement>(null)
   const [query, setQuery] = React.useState("")
@@ -165,7 +167,7 @@ function MnSearchDrawer({
           <button
             type="button"
             onClick={close}
-            aria-label="Close"
+            aria-label={t.close}
             className="rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             data-slot="mn-search-drawer-close"
           >
@@ -194,7 +196,7 @@ function MnSearchDrawer({
         {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto" data-slot="mn-search-drawer-body">
           {results.length > 0 && (
-            <div role="listbox" aria-label="Search results" className="py-1" data-slot="mn-search-drawer-results">
+            <div role="listbox" aria-label={t.searchResults} className="py-1" data-slot="mn-search-drawer-results">
               {results.map((r, i) => (
                 <div
                   key={r.id}

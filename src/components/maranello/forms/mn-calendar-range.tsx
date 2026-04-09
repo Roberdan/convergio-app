@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/lib/i18n";
 
 interface DateRange {
   start: string | null;
@@ -31,6 +32,7 @@ function MnCalendarRange({
   startLabel = "Start date",
   endLabel = "End date",
 }: MnCalendarRangeProps) {
+  const t = useLocale("calendarRange");
   const startId = React.useId();
   const endId = React.useId();
 
@@ -52,7 +54,7 @@ function MnCalendarRange({
 
   return (
     <fieldset className={cn("flex flex-wrap items-end gap-4", className)}>
-      <legend className="sr-only">Date range</legend>
+      <legend className="sr-only">{t.dateRange}</legend>
       <div className="flex flex-col gap-1">
         <label
           htmlFor={startId}

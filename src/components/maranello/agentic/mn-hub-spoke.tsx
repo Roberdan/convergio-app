@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { useMemo } from 'react';
 
 export interface HubSpokeHub {
@@ -46,6 +47,7 @@ export function MnHubSpoke({
   ariaLabel = 'Hub and spoke network',
   className,
 }: MnHubSpokeProps) {
+  const t = useLocale("hubSpoke");
   const size = 360;
   const cx = size / 2;
   const cy = size / 2;
@@ -163,9 +165,9 @@ export function MnHubSpoke({
       </svg>
 
       {/* screen reader fallback */}
-      <ul className="sr-only" aria-label="Network nodes">
+      <ul className="sr-only" aria-label={t.networkNodes}>
         <li>
-          Hub: {hub.label} ({STATUS_TEXT[hub.status]})
+          {t.hub} {hub.label} ({STATUS_TEXT[hub.status]})
         </li>
         {spokes.map((s, i) => (
           <li key={i}>
@@ -193,7 +195,7 @@ export function MnHubSpoke({
             style={{ animation: 'mn-pulse 2s ease-in-out infinite' }}
             aria-hidden="true"
           />
-          Active
+          {t.active}
         </span>
       </div>
     </div>

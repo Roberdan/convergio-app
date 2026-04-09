@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Formatters ────────────────────────────────────────────── */
 const NUM_FMT = new Intl.NumberFormat("en-US")
@@ -79,6 +80,7 @@ function MnTokenMeter({
   className,
   ...rest
 }: MnTokenMeterProps) {
+  const t = useLocale("tokenMeter")
   const data = usage ?? { prompt: 0, completion: 0 }
   const total = data.prompt + data.completion
   const max = data.budget ?? total
@@ -166,7 +168,7 @@ function MnTokenMeter({
           className="grid gap-x-3 gap-y-1"
           style={{ gridTemplateColumns: "auto 1fr auto auto" }}
           role="list"
-          aria-label="Token breakdown"
+          aria-label={t.tokenBreakdown}
         >
           {rows.map((row) => (
             <React.Fragment key={row.kind}>

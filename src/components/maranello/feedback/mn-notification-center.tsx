@@ -4,6 +4,7 @@ import * as React from "react"
 import { createPortal } from "react-dom"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import { Bell, X, CheckCircle } from "lucide-react"
 
 /* ------------------------------------------------------------------ */
@@ -118,6 +119,7 @@ function MnNotificationCenter({
   onRemove, onClear, loading, position, className,
 }: MnNotificationCenterProps) {
   const panelRef = React.useRef<HTMLDivElement>(null)
+  const t = useLocale("notificationCenter")
   const unreadCount = notifications.filter((n) => !n.read).length
 
   React.useEffect(() => {
@@ -162,11 +164,11 @@ function MnNotificationCenter({
   return createPortal(
     <>
       <div className={backdropVariants({ visible: open })} onClick={() => onOpenChange(false)} aria-hidden="true" data-slot="mn-notification-center-backdrop" />
-      <div ref={panelRef} role="dialog" aria-label="Notifications" aria-live="polite"
+      <div ref={panelRef} role="dialog" aria-label={t.notifications} aria-live="polite"
         className={cn(panelVariants({ position }), translateCls, className)} data-slot="mn-notification-center">
         <div className="flex items-center justify-between border-b border-border px-4 py-3" data-slot="mn-notification-center-header">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-foreground">Notifications</h2>
+            <h2 className="text-base font-semibold text-foreground">{t.notifications}</h2>
             {unreadCount > 0 && (
               <span className="inline-flex size-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground"
                 aria-label={`${unreadCount} unread`}>{unreadCount > 99 ? "99+" : unreadCount}</span>
@@ -174,18 +176,18 @@ function MnNotificationCenter({
           </div>
           <div className="flex items-center gap-1">
             {unreadCount > 0 && onMarkAllRead && (
-              <button type="button" onClick={onMarkAllRead} aria-label="Mark all as read"
+              <button type="button" onClick={onMarkAllRead} aria-label={t.markAllAsRead}
                 className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                 <CheckCircle className="size-4" />
               </button>
             )}
             {notifications.length > 0 && onClear && (
-              <button type="button" onClick={onClear} aria-label="Clear all notifications"
+              <button type="button" onClick={onClear} aria-label={t.clearAllNotifications}
                 className="rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                Clear
+                {t.clear}
               </button>
             )}
-            <button type="button" aria-label="Close notifications" onClick={() => onOpenChange(false)}
+            <button type="button" aria-label={t.closeNotifications} onClick={() => onOpenChange(false)}
               className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
               <X className="size-4" />
             </button>
@@ -194,13 +196,13 @@ function MnNotificationCenter({
         <div className="flex-1 overflow-y-auto" data-slot="mn-notification-center-body">
           {loading ? (
             <div className="flex flex-col items-center justify-center gap-2 py-16 text-muted-foreground">
-              <div className="size-6 animate-spin rounded-full border-2 border-current border-t-transparent" role="status" aria-label="Loading" />
-              <span className="text-sm">Loading notifications…</span>
+              <div className="size-6 animate-spin rounded-full border-2 border-current border-t-transparent" role="status" aria-label={t.loading} />
+              <span className="text-sm">{t.loadingNotifications}</span>
             </div>
           ) : notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
               <Bell className="size-10 opacity-30" />
-              <span className="text-sm">No notifications</span>
+              <span className="text-sm">{t.noNotifications}</span>
             </div>
           ) : (
             notifications.map((n) => <NotificationItem key={n.id} notification={n} onMarkRead={onMarkRead} onRemove={onRemove} />)

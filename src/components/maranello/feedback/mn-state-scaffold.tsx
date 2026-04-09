@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -83,6 +84,7 @@ function SkeletonBar({ className }: { className?: string }) {
 }
 
 function LoadingPanel() {
+  const t = useLocale("stateScaffold");
   return (
     <div
       className={panelVariants({ kind: "loading" })}
@@ -94,7 +96,7 @@ function LoadingPanel() {
         <SkeletonBar />
         <SkeletonBar className="w-1/2" />
       </div>
-      <span className="sr-only">Loading…</span>
+      <span className="sr-only">{t.loading}</span>
     </div>
   )
 }

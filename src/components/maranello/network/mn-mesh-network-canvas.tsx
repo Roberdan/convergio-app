@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef } from "react"
 import { type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import {
   type EdgeAnim,
   type NodePos,
@@ -43,6 +44,7 @@ export function MnMeshNetworkCanvas({
   nodes, edges, selected, onNodeClick, ariaLabel, maxParticles,
   size = "fluid", className, ...rest
 }: MnMeshNetworkCanvasProps) {
+  const t = useLocale("meshNetworkCanvas")
   const cvs = useRef<HTMLCanvasElement>(null)
   const wrap = useRef<HTMLDivElement>(null)
   const raf = useRef(0)
@@ -154,7 +156,7 @@ export function MnMeshNetworkCanvas({
         tabIndex={0}
         aria-hidden="true"
       />
-      <ul className="sr-only" aria-label="Mesh nodes">
+      <ul className="sr-only" aria-label={t.meshNodes}>
         {nodes.map((n) => (
           <li key={n.id}>
             {n.label}: {STATUS_LABELS[n.status] ?? n.status} ({n.type})

@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -85,6 +86,7 @@ export function MnSectionNav({
   className,
   ...props
 }: MnSectionNavProps) {
+  const t = useLocale("sectionNav")
   const idx = items.findIndex((item) => item.id === current)
   const prev = idx > 0 ? items[idx - 1] : null
   const next = idx < items.length - 1 ? items[idx + 1] : null
@@ -117,7 +119,7 @@ export function MnSectionNav({
   return (
     <nav
       role="navigation"
-      aria-label={props["aria-label"] ?? "Section navigation"}
+      aria-label={props["aria-label"] ?? t.sectionNavigation}
       className={cn(navBarVariants({ position: positionVariant }), className)}
       onKeyDown={handleKeyDown}
       {...props}

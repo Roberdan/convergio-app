@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 
 export interface Mission {
   id: string;
@@ -48,10 +49,12 @@ export function MnActiveMissions({
   ariaLabel = 'Active missions',
   className,
 }: MnActiveMissionsProps) {
+  const t = useLocale("activeMissions");
+
   if (!missions.length) {
     return (
       <div className={cn('rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground', className)}>
-        No active missions.
+        {t.noActiveMissions}
       </div>
     );
   }

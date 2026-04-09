@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { AlertCircle, RefreshCw } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* Types */
 type WidgetType = "kpi-strip" | "stat-card" | "chart" | "gauge" | "legend" | "table-summary" | "custom"
@@ -64,26 +65,26 @@ function resolveWidgetState(data: unknown): WidgetState {
 
 /* Default placeholders */
 
-function LoadingPlaceholder() {
+function LoadingPlaceholder({ label }: { label: string }) {
   return (
     <div className="flex flex-col gap-2 p-4" role="status" aria-live="polite">
       <div className="h-3 w-3/4 rounded bg-[var(--mn-border-subtle)]" />
       <div className="h-3 w-full rounded bg-[var(--mn-border-subtle)]" />
       <div className="h-3 w-1/2 rounded bg-[var(--mn-border-subtle)]" />
-      <span className="sr-only">Loading widget</span>
+      <span className="sr-only">{label}</span>
     </div>
   )
 }
 
-function EmptyPlaceholder() {
+function EmptyPlaceholder({ label }: { label: string }) {
   return (
     <div className="flex items-center justify-center p-6 text-sm text-[var(--mn-text-muted)]">
-      No data available
+      {label}
     </div>
   )
 }
 
-function ErrorPlaceholder({ message, onRetry }: { message: string; onRetry?: () => void }) {
+function ErrorPlaceholder({ message, onRetry, retryLabel }: { message: string; onRetry?: () => void; retryLabel: string }) {
   return (
     <div
       className="flex flex-col items-center justify-center gap-2 p-6 text-sm"
@@ -103,7 +104,7 @@ function ErrorPlaceholder({ message, onRetry }: { message: string; onRetry?: () 
           )}
         >
           <RefreshCw className="size-3" />
-          Retry
+          {retryLabel}
         </button>
       )}
     </div>
@@ -111,9 +112,10 @@ function ErrorPlaceholder({ message, onRetry }: { message: string; onRetry?: () 
 }
 
 /* Cell */
-function RendererCell({ widget, data, renderWidget, onRetry }: {
+function RendererCell({ widget, data, renderWidget, onRetry, labels }: {
   widget: RendererWidget; data: unknown
   renderWidget?: RenderWidgetFn; onRetry?: (dataKey: string) => void
+  labels: { loadingWidget: string; noData: string; retry: string }
 }) {
   const span = clampSpan(widget.span)
   const state = resolveWidgetState(data)
@@ -122,14 +124,15 @@ function RendererCell({ widget, data, renderWidget, onRetry }: {
     if (renderWidget) return renderWidget(widget, data, state)
     switch (state) {
       case "loading":
-        return <LoadingPlaceholder />
+        return <LoadingPlaceholder label={labels.loadingWidget} />
       case "empty":
-        return <EmptyPlaceholder />
+        return <EmptyPlaceholder label={labels.noData} />
       case "error":
         return (
           <ErrorPlaceholder
             message={data instanceof Error ? data.message : "Widget error"}
             onRetry={onRetry ? () => onRetry(widget.dataKey) : undefined}
+            retryLabel={labels.retry}
           />
         )
       case "ready":
@@ -142,7 +145,7 @@ function RendererCell({ widget, data, renderWidget, onRetry }: {
           </div>
         )
     }
-  }, [widget, data, state, renderWidget, onRetry])
+  }, [widget, data, state, renderWidget, onRetry, labels])
 
   return (
     <section
@@ -157,14 +160,15 @@ function RendererCell({ widget, data, renderWidget, onRetry }: {
 }
 
 /* Row */
-function DashboardRow({ row, data, renderWidget, onRetry }: {
+function DashboardRow({ row, data, renderWidget, onRetry, labels }: {
   row: RendererRow; data: Record<string, unknown>
   renderWidget?: RenderWidgetFn; onRetry?: (dataKey: string) => void
+  labels: { loadingWidget: string; noData: string; retry: string }
 }) {
   return (
     <div className="grid grid-cols-12 gap-4">
       {row.columns.map((w) => (
-        <RendererCell key={w.dataKey} widget={w} data={data[w.dataKey]} renderWidget={renderWidget} onRetry={onRetry} />
+        <RendererCell key={w.dataKey} widget={w} data={data[w.dataKey]} renderWidget={renderWidget} onRetry={onRetry} labels={labels} />
       ))}
     </div>
   )
@@ -197,6 +201,7 @@ function MnDashboardRenderer({
   children,
   ...props
 }: MnDashboardRendererProps) {
+  const t = useLocale("dashboardRenderer")
   return (
     <div
       {...props}
@@ -204,7 +209,7 @@ function MnDashboardRenderer({
       data-slot="mn-dashboard-renderer"
     >
       {schema.rows.map((row, idx) => (
-        <DashboardRow key={idx} row={row} data={data} renderWidget={renderWidget} onRetry={onRetry} />
+        <DashboardRow key={idx} row={row} data={data} renderWidget={renderWidget} onRetry={onRetry} labels={t} />
       ))}
       {children}
     </div>

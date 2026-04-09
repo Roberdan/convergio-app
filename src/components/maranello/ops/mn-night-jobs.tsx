@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { formatDateTime } from '../shared/mn-format';
 
 export interface NightJob {
@@ -54,10 +55,12 @@ export function MnNightJobs({
   ariaLabel = 'Scheduled jobs',
   className,
 }: MnNightJobsProps) {
+  const t = useLocale("nightJobs");
+
   if (!jobs.length) {
     return (
       <div className={cn('rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground', className)}>
-        No scheduled jobs.
+        {t.noScheduledJobs}
       </div>
     );
   }
@@ -106,19 +109,19 @@ export function MnNightJobs({
           <div className="mt-2 grid grid-cols-3 gap-2 text-xs text-muted-foreground">
             <div>
               <span className="block text-[10px] uppercase tracking-wide font-medium">
-                Schedule
+                {t.schedule}
               </span>
               <span className="font-mono">{job.schedule}</span>
             </div>
             <div>
               <span className="block text-[10px] uppercase tracking-wide font-medium">
-                Last run
+                {t.lastRun}
               </span>
               <span>{formatTs(job.lastRun)}</span>
             </div>
             <div>
               <span className="block text-[10px] uppercase tracking-wide font-medium">
-                Next run
+                {t.nextRun}
               </span>
               <span>{formatTs(job.nextRun)}</span>
             </div>

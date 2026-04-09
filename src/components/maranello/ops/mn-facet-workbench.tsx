@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Types ────────────────────────────────────────────────── */
 
@@ -48,6 +49,7 @@ interface FacetGroupSectionProps {
 }
 
 function FacetGroupSection({ group, selected, onToggle, onClearGroup }: FacetGroupSectionProps) {
+  const t = useLocale("facetWorkbench");
   const [collapsed, setCollapsed] = React.useState(group.defaultCollapsed ?? false)
   const activeCount = selected.length
   const isMulti = (group.type ?? "multi-select") === "multi-select"
@@ -132,7 +134,7 @@ function FacetGroupSection({ group, selected, onToggle, onClearGroup }: FacetGro
               className="mt-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors self-start"
               onClick={() => onClearGroup(group.id)}
             >
-              Clear
+              {t.clear}
             </button>
           )}
         </div>
@@ -147,12 +149,13 @@ export function MnFacetWorkbench({
   groups,
   filters: controlledFilters,
   onFilterChange,
-  clearAllLabel = "Clear all",
+  clearAllLabel,
   size,
   className,
   children,
   ...props
 }: MnFacetWorkbenchProps) {
+  const t = useLocale("facetWorkbench");
   const [internalFilters, setInternalFilters] = React.useState<FacetFilters>({})
 
   const isControlled = controlledFilters !== undefined
@@ -217,14 +220,14 @@ export function MnFacetWorkbench({
         <div data-slot="mn-facet-workbench-header"
           className="flex items-center justify-between px-3 py-2 border-b border-border">
           <span className="text-xs text-muted-foreground">
-            {totalActive} active {totalActive === 1 ? "filter" : "filters"}
+            {totalActive} {totalActive === 1 ? t.activeFilter : t.activeFilters}
           </span>
           <button
             type="button"
             className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
             onClick={clearAll}
           >
-            {clearAllLabel}
+            {clearAllLabel ?? t.clearAll}
           </button>
         </div>
       )}

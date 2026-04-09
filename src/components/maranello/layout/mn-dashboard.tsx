@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 // --- Types ---
 
@@ -100,11 +101,13 @@ function DashboardCell({
   data,
   onWidgetClick,
   renderWidget,
+  labels,
 }: {
   widget: DashboardWidget
   data: unknown
   onWidgetClick?: (dataKey: string, data: unknown) => void
   renderWidget?: (widget: DashboardWidget, data: unknown) => React.ReactNode
+  labels: { loading: string; widgetFailed: string }
 }) {
   const span = clampSpan(widget.span)
   const isInteractive = !!onWidgetClick
@@ -142,7 +145,7 @@ function DashboardCell({
         {renderWidget ? (
           renderWidget(widget, data)
         ) : (
-          <DefaultWidgetPlaceholder widget={widget} data={data} />
+          <DefaultWidgetPlaceholder widget={widget} data={data} labels={labels} />
         )}
       </div>
     </section>
@@ -152,14 +155,16 @@ function DashboardCell({
 function DefaultWidgetPlaceholder({
   widget,
   data,
+  labels,
 }: {
   widget: DashboardWidget
   data: unknown
+  labels: { loading: string; widgetFailed: string }
 }) {
   if (data === undefined || data === null) {
     return (
       <div className="flex items-center justify-center py-6 text-sm text-muted-foreground">
-        Loading…
+        {labels.loading}
       </div>
     )
   }
@@ -170,7 +175,7 @@ function DefaultWidgetPlaceholder({
         className="flex items-center justify-center py-6 text-sm text-destructive"
         role="alert"
       >
-        {data.message || "Widget failed to load."}
+        {data.message || labels.widgetFailed}
       </div>
     )
   }
@@ -188,11 +193,13 @@ function DashboardRowComponent({
   data,
   onWidgetClick,
   renderWidget,
+  labels,
 }: {
   row: DashboardRow
   data: Record<string, unknown>
   onWidgetClick?: (dataKey: string, data: unknown) => void
   renderWidget?: (widget: DashboardWidget, data: unknown) => React.ReactNode
+  labels: { loading: string; widgetFailed: string }
 }) {
   return (
     <div className="grid grid-cols-12 gap-4">
@@ -203,6 +210,7 @@ function DashboardRowComponent({
           data={data[widget.dataKey]}
           onWidgetClick={onWidgetClick}
           renderWidget={renderWidget}
+          labels={labels}
         />
       ))}
     </div>
@@ -229,6 +237,7 @@ export function MnDashboard({
   children,
   ...props
 }: MnDashboardProps) {
+  const t = useLocale("dashboard")
   return (
     <div
       {...props}
@@ -241,6 +250,7 @@ export function MnDashboard({
           data={data}
           onWidgetClick={onWidgetClick}
           renderWidget={renderWidget}
+          labels={t}
         />
       ))}
       {children}

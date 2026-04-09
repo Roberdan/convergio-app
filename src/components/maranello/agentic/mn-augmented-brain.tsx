@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Types ─────────────────────────────────────────────────── */
 export interface BrainNode {
@@ -150,6 +151,7 @@ export function MnAugmentedBrain({
   ariaLabel = "AI brain visualization",
   height = 400, size = "md", className, ...rest
 }: MnAugmentedBrainProps) {
+  const t = useLocale("augmentedBrain")
   const cvs = React.useRef<HTMLCanvasElement>(null)
   const wrap = React.useRef<HTMLDivElement>(null)
   const raf = React.useRef(0)
@@ -232,7 +234,7 @@ export function MnAugmentedBrain({
         onClick={handleClick} onMouseMove={handleMove} onMouseLeave={handleLeave}
         tabIndex={0}
       />
-      <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground" aria-label="Node type legend">
+      <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground" aria-label={t.nodeTypeLegend}>
         {LAYER_ORDER.map((type) => (
           <span key={type} className="flex items-center gap-1">
             <span

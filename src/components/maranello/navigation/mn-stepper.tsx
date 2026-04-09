@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/lib/i18n";
 
 type StepStatus = "done" | "current" | "pending";
 
@@ -25,8 +26,9 @@ function getStatus(index: number, current: number): StepStatus {
 
 /** Horizontal step wizard with labels and current/done/pending states. */
 function MnStepper({ steps, currentStep, className, onChange }: MnStepperProps) {
+  const t = useLocale("stepper");
   return (
-    <nav aria-label="Progress" className={cn("w-full", className)}>
+    <nav aria-label={t.progress} className={cn("w-full", className)}>
       <ol className="flex items-center">
         {steps.map((step, i) => {
           const status = getStatus(i, currentStep);

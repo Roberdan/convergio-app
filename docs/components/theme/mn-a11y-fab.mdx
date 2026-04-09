@@ -2,7 +2,7 @@
 title: MnA11yFab
 category: theme
 description: "Floating action button toggling accessibility overlays and settings"
-keywords: ["a11y", "fab", "accessibility", "accessibilità", "floating", "button", "pulsante"]
+keywords: ["a11y", "fab", "accessibility", "accessibilità", "floating", "button", "pulsante", "i18n"]
 ---
 
 # MnA11yFab
@@ -25,6 +25,38 @@ import { MnA11yFab } from "@/components/maranello"
 
 {/* Add once in your root layout */}
 <MnA11yFab />
+```
+
+## i18n
+
+All labels are translatable via `MnLocaleProvider` or the YAML `locale:` section.
+
+```tsx
+import { MnLocaleProvider } from "@/lib/i18n"
+
+const esLabels = {
+  a11yFab: {
+    accessibilitySettings: "Configuración de accesibilidad",
+    textSize: "Tamaño de texto",
+    reducedMotion: "Movimiento reducido",
+    highContrast: "Alto contraste",
+    focusIndicators: "Indicadores de enfoque",
+    resetToDefaults: "Restablecer valores predeterminados",
+  },
+};
+
+<MnLocaleProvider messages={esLabels}>
+  <MnA11yFab />
+</MnLocaleProvider>
+```
+
+Or via YAML config:
+
+```yaml
+locale:
+  a11yFab:
+    accessibilitySettings: "Configuración de accesibilidad"
+    textSize: "Tamaño de texto"
 ```
 
 ## Accessibility

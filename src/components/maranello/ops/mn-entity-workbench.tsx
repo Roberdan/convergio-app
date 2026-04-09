@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Types ────────────────────────────────────────────────── */
 export interface EntityTab { id: string; label: string }
@@ -65,6 +66,7 @@ export function MnEntityWorkbench({
   children,
   ...props
 }: MnEntityWorkbenchProps) {
+  const t = useLocale("entityWorkbench");
   const [internalActive, setInternalActive] = React.useState(tabs[0]?.id ?? "")
   const dragRef = React.useRef<string | null>(null)
 
@@ -160,7 +162,7 @@ export function MnEntityWorkbench({
               <span
                 data-slot="mn-entity-workbench-dirty"
                 className="size-1.5 rounded-full bg-[var(--mn-warning)] shrink-0"
-                aria-label="Unsaved changes"
+                aria-label={t.unsavedChanges}
               />
             )}
             <span className="truncate max-w-[140px]">{tab.label}</span>
@@ -187,7 +189,7 @@ export function MnEntityWorkbench({
           <button
             type="button"
             data-slot="mn-entity-workbench-add"
-            aria-label="New tab"
+            aria-label={t.newTab}
             className={cn(
               "px-2.5 py-2 text-muted-foreground hover:text-foreground",
               "text-sm transition-colors cursor-pointer",
@@ -216,7 +218,7 @@ export function MnEntityWorkbench({
         ))}
         {!tabs.length && (
           <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-            No entities open
+            {t.noEntitiesOpen}
           </div>
         )}
       </div>
@@ -237,7 +239,7 @@ export function MnEntityWorkbench({
             )}
             onClick={() => onSave(currentTab.id)}
           >
-            Save
+            {t.save}
           </button>
         </div>
       )}

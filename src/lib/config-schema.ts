@@ -63,6 +63,7 @@ export const rawConfigSchema = z.object({
     sections: z.array(navSectionSchema).optional(),
   }).optional(),
   pages: z.record(z.string(), pageSchema).optional(),
+  locale: z.record(z.string(), z.record(z.string(), z.unknown())).optional(),
 });
 
 export type ValidatedConfig = z.infer<typeof rawConfigSchema>;

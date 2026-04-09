@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import type {
   NeuralNodeData, NeuralConnection, InternalNode, InternalConnection,
   Particle, Wave, Activation, NeuralNodesController,
@@ -50,6 +51,7 @@ function MnNeuralNodes({
   interactive = true, labels: showLabels, forceLayout: useForceLayout,
   labelFont = "monospace", size = "md", className, onReady, ...rest
 }: MnNeuralNodesProps) {
+  const t = useLocale("neuralNodes")
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const wrapRef = React.useRef<HTMLDivElement>(null)
   const rafRef = React.useRef(0)
@@ -216,7 +218,7 @@ function MnNeuralNodes({
         ref={canvasRef}
         className="block h-full w-full"
         role="img"
-        aria-label="Neural nodes visualization"
+        aria-label={t.neuralNodesVisualization}
       />
     </div>
   )

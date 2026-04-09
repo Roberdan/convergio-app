@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { formatDateTime } from '../shared/mn-format';
 
@@ -35,6 +36,7 @@ export function MnAuditLog({
   ariaLabel = 'Audit log',
   className,
 }: MnAuditLogProps) {
+  const t = useLocale("auditLog");
   const [filter, setFilter] = useState('');
   const [visibleCount, setVisibleCount] = useState(maxVisible);
 
@@ -63,7 +65,7 @@ export function MnAuditLog({
   if (!entries.length) {
     return (
       <div className={cn('rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground', className)}>
-        No audit entries.
+        {t.noAuditEntries}
       </div>
     );
   }
@@ -76,7 +78,7 @@ export function MnAuditLog({
       {/* filter */}
       <div className="border-b px-4 py-2.5">
         <label className="sr-only" htmlFor="audit-filter">
-          Filter audit log
+          {t.filterAuditLog}
         </label>
         <input
           id="audit-filter"
@@ -86,7 +88,7 @@ export function MnAuditLog({
             setFilter(e.target.value);
             setVisibleCount(maxVisible);
           }}
-          placeholder="Filter by actor, action, or target..."
+          placeholder={t.filterPlaceholder}
           className="w-full rounded-md border bg-background px-3 py-1.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       </div>
@@ -129,7 +131,7 @@ export function MnAuditLog({
       {/* load more / count */}
       <div className="border-t px-4 py-2 flex items-center justify-between text-xs text-muted-foreground">
         <span>
-          {visible.length} of {filtered.length} entries
+          {visible.length} of {filtered.length} {t.entries}
           {filter && ` (filtered from ${entries.length})`}
         </span>
         {hasMore && (
@@ -138,7 +140,7 @@ export function MnAuditLog({
             onClick={handleLoadMore}
             className="text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none rounded px-2 py-1"
           >
-            Load more
+            {t.loadMore}
           </button>
         )}
       </div>

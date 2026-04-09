@@ -5,6 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { formatMonthYear } from "../shared/mn-format"
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react"
+import { useLocale } from "@/lib/i18n"
 import {
   dayVariants, daysIn, startDow, toIso, parseIso, WDAYS, navCls,
   type PresetKey, PRESETS, presetRange, formatDisplay,
@@ -72,6 +73,7 @@ function CalendarMonth({ year, month, today, rangeFrom, rangeTo, hoverDate, onSe
 /* ── Component ── */
 
 function MnDateRangePicker({ value, onChange, min, max, placeholder = "Select date range", disabled, size, className }: MnDateRangePickerProps) {
+  const t = useLocale("dateRangePicker")
   const today = React.useMemo(() => { const d = new Date(); return { y: d.getFullYear(), m: d.getMonth(), d: d.getDate() } }, [])
   const [open, setOpen] = React.useState(false)
   const [draft, setDraft] = React.useState<DateRange>({ from: value?.from ?? null, to: value?.to ?? null })
@@ -147,7 +149,7 @@ function MnDateRangePicker({ value, onChange, min, max, placeholder = "Select da
       </button>
 
       {open && (
-        <div role="dialog" aria-modal="true" aria-label="Date range picker" className={cn(
+        <div role="dialog" aria-modal="true" aria-label={t.dateRangePicker} className={cn(
           "absolute z-50 mt-1 rounded-[var(--radius-md)] border border-[var(--mn-border)]",
           "bg-[var(--mn-surface-raised)] p-4 shadow-[var(--shadow-deep)]",
         )}>
@@ -164,7 +166,7 @@ function MnDateRangePicker({ value, onChange, min, max, placeholder = "Select da
           <div className="flex gap-4">
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <button type="button" aria-label="Previous month" onClick={() => navLeft(-1)} className={navCls}>
+                <button type="button" aria-label={t.previousMonth} onClick={() => navLeft(-1)} className={navCls}>
                   <ChevronLeft className="size-4" aria-hidden="true" />
                 </button>
               </div>
@@ -172,7 +174,7 @@ function MnDateRangePicker({ value, onChange, min, max, placeholder = "Select da
             </div>
             <div>
               <div className="mb-2 flex items-center justify-end">
-                <button type="button" aria-label="Next month" onClick={() => navLeft(1)} className={navCls}>
+                <button type="button" aria-label={t.nextMonth} onClick={() => navLeft(1)} className={navCls}>
                   <ChevronRight className="size-4" aria-hidden="true" />
                 </button>
               </div>
@@ -183,7 +185,7 @@ function MnDateRangePicker({ value, onChange, min, max, placeholder = "Select da
           <div className="mt-3 flex items-center justify-end gap-2 border-t border-[var(--mn-border)] pt-3">
             <button type="button" onClick={handleCancel}
               className="rounded-[var(--radius-md)] px-3 py-1.5 text-sm text-[var(--mn-text-muted)] transition-colors hover:bg-[var(--mn-hover-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mn-accent)]">
-              Cancel
+              {t.cancel}
             </button>
             <button type="button" onClick={handleApply} disabled={!draft.from || !draft.to}
               className={cn(
@@ -191,7 +193,7 @@ function MnDateRangePicker({ value, onChange, min, max, placeholder = "Select da
                 "transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mn-accent)]",
               )}>
-              Apply
+              {t.apply}
             </button>
           </div>
         </div>

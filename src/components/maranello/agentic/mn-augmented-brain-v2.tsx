@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import { Pause, Play } from "lucide-react"
 import type {
   BrainV2Node, BrainV2Synapse, BrainV2Stats, BrainV2Palette,
@@ -39,6 +40,7 @@ function StatsBar({ title, stats, playing, onToggle, showControls }: {
   title: string; stats?: BrainV2Stats
   playing: boolean; onToggle: () => void; showControls: boolean
 }) {
+  const t = useLocale("augmentedBrainV2")
   const parts: string[] = []
   if (stats?.sessions != null) parts.push(`${stats.sessions} sessions`)
   if (stats?.plans != null) parts.push(`${stats.plans} plans`)
@@ -56,7 +58,7 @@ function StatsBar({ title, stats, playing, onToggle, showControls }: {
           <button
             type="button" onClick={onToggle}
             className="inline-flex items-center justify-center rounded p-0.5 hover:bg-muted"
-            aria-label={playing ? "Pause animation" : "Play animation"}
+            aria-label={playing ? t.pauseAnimation : t.playAnimation}
           >
             {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
           </button>

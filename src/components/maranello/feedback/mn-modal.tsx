@@ -5,6 +5,7 @@ import { createPortal } from "react-dom"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 // ---------------------------------------------------------------------------
 // Focusable selector
@@ -88,6 +89,7 @@ function MnModal({
 }: MnModalProps) {
   const modalRef = React.useRef<HTMLDivElement>(null)
   const previousFocusRef = React.useRef<HTMLElement | null>(null)
+  const t = useLocale("modal")
 
   const fallbackTitleId = React.useId()
   const fallbackBodyId = React.useId()
@@ -196,7 +198,7 @@ function MnModal({
             </span>
             <button
               type="button"
-              aria-label="Close"
+              aria-label={t.close}
               onClick={() => onOpenChange(false)}
               className="rounded-md px-2 py-1 text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >

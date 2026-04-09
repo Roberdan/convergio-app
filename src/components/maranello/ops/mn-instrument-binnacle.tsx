@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { MnBinnacle } from './mn-binnacle';
 import { MnDashboardStrip } from '../layout/mn-dashboard-strip';
 
@@ -29,6 +30,8 @@ export function MnInstrumentBinnacle({
   ariaLabel = 'Instrument panel',
   className,
 }: MnInstrumentBinnacleProps) {
+  const t = useLocale("instrumentBinnacle");
+
   return (
     <div
       className={cn('space-y-3', className)}
@@ -37,12 +40,12 @@ export function MnInstrumentBinnacle({
     >
       <MnDashboardStrip
         metrics={metrics}
-        ariaLabel="Key metrics"
+        ariaLabel={t.keyMetrics}
       />
       <MnBinnacle
         entries={entries}
         maxVisible={maxVisible}
-        ariaLabel="Event log"
+        ariaLabel={t.eventLog}
       />
     </div>
   );

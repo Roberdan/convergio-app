@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 const STORAGE_KEY = "mn-a11y"
 
@@ -80,6 +81,7 @@ export type MnA11yProps = React.HTMLAttributes<HTMLDivElement>
 
 /** Accessibility FAB with settings panel. Persists to localStorage. */
 export function MnA11y({ className, ...props }: MnA11yProps) {
+  const t = useLocale("a11y")
   const [open, setOpen] = React.useState(false)
   const [settings, setSettings] = React.useState<A11ySettings>(DEFAULTS)
   const panelRef = React.useRef<HTMLDivElement>(null)
@@ -118,7 +120,7 @@ export function MnA11y({ className, ...props }: MnA11yProps) {
     <div {...props} className={cn("fixed bottom-6 right-6 z-[8500]", className)}>
       <button
         ref={fabRef}
-        aria-label="Display settings"
+        aria-label={t.displaySettings}
         aria-expanded={open}
         aria-controls="mn-a11y-panel"
         onClick={() => setOpen((o) => !o)}
@@ -141,7 +143,7 @@ export function MnA11y({ className, ...props }: MnA11yProps) {
         ref={panelRef}
         id="mn-a11y-panel"
         role="dialog"
-        aria-label="Accessibility settings"
+        aria-label={t.accessibilitySettings}
         aria-modal="true"
         className={cn(
           "absolute bottom-16 right-0 w-[280px] rounded-xl border border-[var(--mn-border)] bg-[var(--mn-surface-raised)] p-4 font-[var(--font-body,sans-serif)] text-[var(--mn-text-tertiary)] shadow-[0_12px_32px_rgba(0,0,0,.5)]",
@@ -150,10 +152,10 @@ export function MnA11y({ className, ...props }: MnA11yProps) {
         )}
       >
         <div className="mb-3.5 flex items-center gap-1.5 text-[0.95rem] font-semibold text-[var(--mn-text)]">
-          ⚙ Display
+          {t.display}
         </div>
         <div className="mb-3">
-          <div className="mb-1.5 text-xs uppercase tracking-wider text-[var(--mn-text-muted)]">Text Size</div>
+          <div className="mb-1.5 text-xs uppercase tracking-wider text-[var(--mn-text-muted)]">{t.textSize}</div>
           <div className="flex gap-1">
             {FONT_KEYS.map((k) => (
               <button type="button" key={k} onClick={() => update({ fontSize: k })}
@@ -164,16 +166,16 @@ export function MnA11y({ className, ...props }: MnA11yProps) {
           </div>
         </div>
         <hr className="my-2.5 border-[var(--mn-border)]" />
-        <ToggleRow label="Reduced Motion" checked={settings.reducedMotion}
+        <ToggleRow label={t.reducedMotion} checked={settings.reducedMotion}
           onChange={() => update({ reducedMotion: !settings.reducedMotion })} />
-        <ToggleRow label="High Contrast" checked={settings.highContrast}
+        <ToggleRow label={t.highContrast} checked={settings.highContrast}
           onChange={() => update({ highContrast: !settings.highContrast })} />
-        <ToggleRow label="Focus Indicators" checked={settings.focusVisible}
+        <ToggleRow label={t.focusIndicators} checked={settings.focusVisible}
           onChange={() => update({ focusVisible: !settings.focusVisible })} />
         <hr className="my-2.5 border-[var(--mn-border)]" />
         <button type="button" onClick={() => setSettings({ ...DEFAULTS })}
           className="mt-2 w-full cursor-pointer rounded-md border border-[var(--mn-border)] bg-transparent px-2 py-2 text-xs text-[var(--mn-text-tertiary)] transition-colors duration-150 hover:bg-[var(--mn-border)]">
-          Reset to Defaults
+          {t.resetToDefaults}
         </button>
       </div>
     </div>

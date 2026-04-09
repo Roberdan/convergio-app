@@ -1,6 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Types ─────────────────────────────────────────────────── */
 export type MeshAction = "add-peer" | "discover" | "full-sync" | "push"
@@ -46,6 +47,7 @@ export function MnMeshNetworkToolbar({
   onAction,
   className,
 }: MnMeshNetworkToolbarProps) {
+  const t = useLocale("meshNetworkToolbar")
   return (
     <div
       className={cn(
@@ -56,15 +58,15 @@ export function MnMeshNetworkToolbar({
       {/* Title */}
       <div className="flex items-center gap-2 text-sm font-semibold text-[var(--mn-text)]">
         <span aria-hidden="true">◆</span>
-        MESH NETWORK
+        {t.meshNetwork}
       </div>
 
       {/* Legend */}
       <div className="flex items-center gap-2">
         <Dot color="var(--mn-success, #22c55e)" label="On" />
         <Dot color="var(--mn-error, #ef4444)" label="Off" />
-        <Dot color="var(--mn-info, #3b82f6)" label="Sync" />
-        <Dot color="var(--mn-warning, #f59e0b)" label="Drift" />
+        <Dot color="var(--mn-info, #3b82f6)" label={t.syncLabel} />
+        <Dot color="var(--mn-warning, #f59e0b)" label={t.drift} />
       </div>
 
       {/* Spacer */}
@@ -72,15 +74,15 @@ export function MnMeshNetworkToolbar({
 
       {/* Actions */}
       <div className="flex items-center gap-1.5">
-        <ActionBtn label="+ Add Peer" onClick={() => onAction?.("add-peer")} />
-        <ActionBtn label="Discover" onClick={() => onAction?.("discover")} />
-        <ActionBtn label="Full Sync" onClick={() => onAction?.("full-sync")} />
-        <ActionBtn label="Push" onClick={() => onAction?.("push")} />
+        <ActionBtn label={t.addPeer} onClick={() => onAction?.("add-peer")} />
+        <ActionBtn label={t.discover} onClick={() => onAction?.("discover")} />
+        <ActionBtn label={t.fullSync} onClick={() => onAction?.("full-sync")} />
+        <ActionBtn label={t.pushLabel} onClick={() => onAction?.("push")} />
       </div>
 
       {/* Counter */}
       <span className="text-[0.7rem] font-mono tabular-nums text-[var(--mn-text-muted)]">
-        {onlineCount}/{totalCount} online
+        {onlineCount}/{totalCount} {t.online}
       </span>
     </div>
   )

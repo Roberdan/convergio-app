@@ -3,13 +3,14 @@
 import * as React from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/lib/i18n";
 import {
   type A11ySettings,
+  type FontSize,
+  type LineSpacing,
   DEFAULTS,
   FONT_KEYS,
-  FONT_LABELS,
   LINE_KEYS,
-  LINE_LABELS,
   loadSettings,
   saveSettings,
   applySettings,
@@ -82,6 +83,7 @@ function MnA11yFab({
   className?: string;
   position?: "fixed" | "inline";
 }) {
+  const t = useLocale("a11yFab");
   const [open, setOpen] = React.useState(false);
   const [settings, setSettings] = React.useState<A11ySettings>(DEFAULTS);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -141,7 +143,7 @@ function MnA11yFab({
       {/* Panel */}
       <div
         role="dialog"
-        aria-label="Accessibility settings"
+        aria-label={t.accessibilitySettings}
         className={cn(
           position === "fixed" ? "absolute bottom-16 right-0" : "absolute left-0 top-14",
           "w-[280px] rounded-lg border border-border bg-card p-4 shadow-xl transition-all duration-200",
@@ -150,32 +152,32 @@ function MnA11yFab({
       >
         <div className="mb-3 flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--mn-text, currentColor)" }}>
           <SlidersHorizontal className="h-4 w-4" aria-hidden />
-          Accessibility
+          {t.accessibility}
         </div>
 
         {/* Font size */}
         <div className="mb-3">
           <div className="mb-1.5 text-xs uppercase tracking-wider" style={{ color: "var(--mn-text-muted, currentColor)" }}>
-            Text Size
+            {t.textSize}
           </div>
-          <BtnGroup keys={FONT_KEYS} labels={FONT_LABELS} active={settings.fontSize} onSelect={(k) => update({ fontSize: k })} />
+          <BtnGroup keys={FONT_KEYS} labels={t.fontSizeLabels as Record<FontSize, string>} active={settings.fontSize} onSelect={(k) => update({ fontSize: k })} />
         </div>
 
         {/* Line spacing */}
         <div className="mb-3">
           <div className="mb-1.5 text-xs uppercase tracking-wider" style={{ color: "var(--mn-text-muted, currentColor)" }}>
-            Line Spacing
+            {t.lineSpacing}
           </div>
-          <BtnGroup keys={LINE_KEYS} labels={LINE_LABELS} active={settings.lineSpacing} onSelect={(k) => update({ lineSpacing: k })} />
+          <BtnGroup keys={LINE_KEYS} labels={t.lineSpacingLabels as Record<LineSpacing, string>} active={settings.lineSpacing} onSelect={(k) => update({ lineSpacing: k })} />
         </div>
 
         <hr className="my-2.5 border-border" />
 
         {/* Toggles */}
-        <Toggle label="OpenDyslexic Font" checked={settings.dyslexiaFont} onChange={() => update({ dyslexiaFont: !settings.dyslexiaFont })} />
-        <Toggle label="Reduced Motion" checked={settings.reducedMotion} onChange={() => update({ reducedMotion: !settings.reducedMotion })} />
-        <Toggle label="High Contrast" checked={settings.highContrast} onChange={() => update({ highContrast: !settings.highContrast })} />
-        <Toggle label="Focus Indicators" checked={settings.focusVisible} onChange={() => update({ focusVisible: !settings.focusVisible })} />
+        <Toggle label={t.dyslexicFont} checked={settings.dyslexiaFont} onChange={() => update({ dyslexiaFont: !settings.dyslexiaFont })} />
+        <Toggle label={t.reducedMotion} checked={settings.reducedMotion} onChange={() => update({ reducedMotion: !settings.reducedMotion })} />
+        <Toggle label={t.highContrast} checked={settings.highContrast} onChange={() => update({ highContrast: !settings.highContrast })} />
+        <Toggle label={t.focusIndicators} checked={settings.focusVisible} onChange={() => update({ focusVisible: !settings.focusVisible })} />
 
         <hr className="my-2.5 border-border" />
 
@@ -186,7 +188,7 @@ function MnA11yFab({
           className="mt-1 w-full cursor-pointer rounded-md border border-border bg-transparent px-2 py-2 text-xs transition-colors duration-150 hover:bg-accent"
           style={{ color: "var(--mn-text-muted, currentColor)" }}
         >
-          Reset to Defaults
+          {t.resetToDefaults}
         </button>
       </div>
 
@@ -194,7 +196,7 @@ function MnA11yFab({
       <button
         type="button"
         ref={fabRef}
-        aria-label="Accessibility settings"
+        aria-label={t.accessibilitySettings}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring"

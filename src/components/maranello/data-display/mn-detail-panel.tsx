@@ -4,6 +4,7 @@ import * as React from "react"
 import { createPortal } from "react-dom"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 const panelVariants = cva(
   "fixed top-0 right-0 z-[9001] flex h-full flex-col border-l bg-background shadow-2xl transition-transform duration-300 ease-in-out",
@@ -67,6 +68,7 @@ function FieldView({ field }: { field: DetailField }) {
 }
 
 function FieldEditor({ field, value, onChange }: { field: DetailField; value: unknown; onChange: (k: string, v: unknown) => void }) {
+  const t = useLocale("detailPanel")
   if (field.readOnly || field.type === "readonly") return <FieldView field={{ ...field, value: value as string }} />
   const set = (v: unknown) => onChange(field.key, v)
   switch (field.type) {
@@ -80,7 +82,7 @@ function FieldEditor({ field, value, onChange }: { field: DetailField; value: un
     case "select":
       return (
         <select value={String(value ?? "")} onChange={(e) => set(e.target.value)} className={INPUT_CLS}>
-          <option value="">Select…</option>
+          <option value="">{t.selectPlaceholder}</option>
           {field.options?.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
       )
@@ -94,6 +96,7 @@ function FieldEditor({ field, value, onChange }: { field: DetailField; value: un
 }
 
 function MnDetailPanel({ open, onOpenChange, title, sections, size, defaultEditing = false, editable = true, onSave, className, children }: MnDetailPanelProps) {
+  const t = useLocale("detailPanel")
   const panelRef = React.useRef<HTMLDivElement>(null)
   const [editing, setEditing] = React.useState(defaultEditing)
   const [changes, setChanges] = React.useState<Record<string, unknown>>({})
@@ -137,15 +140,15 @@ function MnDetailPanel({ open, onOpenChange, title, sections, size, defaultEditi
           <h2 className="truncate text-lg font-semibold text-foreground">{title}</h2>
           <div className="flex items-center gap-2">
             {editable && !editing && (
-              <button type="button" onClick={() => setEditing(true)} className="rounded-md px-3 py-1 text-sm font-medium text-[var(--mn-primary)] transition-colors hover:bg-[var(--mn-primary)]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Edit</button>
+              <button type="button" onClick={() => setEditing(true)} className="rounded-md px-3 py-1 text-sm font-medium text-[var(--mn-primary)] transition-colors hover:bg-[var(--mn-primary)]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t.edit}</button>
             )}
             {editing && (
               <>
-                <button type="button" onClick={handleCancel} className="rounded-md px-3 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted">Cancel</button>
-                <button type="button" onClick={handleSave} className="rounded-md bg-[var(--mn-primary)] px-3 py-1 text-sm font-medium text-[var(--mn-primary-foreground)] transition-colors hover:opacity-90">Save</button>
+                <button type="button" onClick={handleCancel} className="rounded-md px-3 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted">{t.cancel}</button>
+                <button type="button" onClick={handleSave} className="rounded-md bg-[var(--mn-primary)] px-3 py-1 text-sm font-medium text-[var(--mn-primary-foreground)] transition-colors hover:opacity-90">{t.save}</button>
               </>
             )}
-            <button type="button" aria-label="Close" onClick={() => onOpenChange(false)} className="rounded-md px-2 py-1 text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">&#x2715;</button>
+            <button type="button" aria-label={t.close} onClick={() => onOpenChange(false)} className="rounded-md px-2 py-1 text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">&#x2715;</button>
           </div>
         </div>
         {/* Body */}

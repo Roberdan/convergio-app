@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { useCallback, useMemo, useState } from 'react';
 
 export interface Deployment {
@@ -47,6 +48,7 @@ export function MnDeploymentTable({
   ariaLabel = 'Deployments',
   className,
 }: MnDeploymentTableProps) {
+  const t = useLocale('deploymentTable');
   const [sortKey, setSortKey] = useState<SortKey>('timestamp');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
 
@@ -81,7 +83,7 @@ export function MnDeploymentTable({
   if (!deployments.length) {
     return (
       <div className={cn('rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground', className)}>
-        No deployments to display.
+        {t.noDeployments}
       </div>
     );
   }
@@ -130,7 +132,7 @@ export function MnDeploymentTable({
               scope="col"
               className="px-4 py-2.5 text-left font-medium text-muted-foreground"
             >
-              Hash
+              {t.hash}
             </th>
           </tr>
         </thead>

@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 export type ServiceStatus = "operational" | "degraded" | "outage"
 
@@ -134,6 +135,8 @@ export function MnSystemStatus({
   className,
   ...props
 }: MnSystemStatusProps) {
+  const t = useLocale("systemStatus")
+
   // Polling
   React.useEffect(() => {
     if (!onRefresh || refreshInterval <= 0) return
@@ -146,7 +149,7 @@ export function MnSystemStatus({
   return (
     <div
       role="status"
-      aria-label="System status"
+      aria-label={t.systemStatus}
       aria-live="polite"
       {...props}
       className={cn(
@@ -170,7 +173,7 @@ export function MnSystemStatus({
             <button
               type="button"
               onClick={onRefresh}
-              aria-label="Refresh status"
+              aria-label={t.refreshStatus}
               className="ml-1 rounded p-1 transition-colors hover:bg-[var(--mn-border)]"
             >
               <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -188,7 +191,7 @@ export function MnSystemStatus({
         ))}
         {services.length === 0 && (
           <p className="py-6 text-center text-sm text-[var(--mn-text-muted)]">
-            No services configured.
+            {t.noServices}
           </p>
         )}
       </div>
@@ -198,7 +201,7 @@ export function MnSystemStatus({
         <div className="border-t border-[var(--mn-border)]">
           <div className="px-4 pt-3 pb-1">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--mn-text-muted)]">
-              Recent Incidents
+              {t.recentIncidents}
             </h3>
           </div>
           <div className="divide-y divide-[var(--mn-border)]">

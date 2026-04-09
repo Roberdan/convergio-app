@@ -4,6 +4,7 @@ import * as React from "react"
 import { useEffect, useRef, useState } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Markdown-lite parser ─────────────────────────────── */
 
@@ -128,6 +129,7 @@ export function MnStreamingText({
   const prevStreamingRef = useRef(streaming)
   const prevAnnouncedRef = useRef("")
   const [srAnnouncement, setSrAnnouncement] = useState("")
+  const t = useLocale("streamingText")
 
   const initialLen = speed != null ? 0 : text.length
   const [displayLen, setDisplayLen] = useState(initialLen)
@@ -194,7 +196,7 @@ export function MnStreamingText({
       role="log"
       aria-live="polite"
       aria-atomic={false}
-      aria-label="Streaming response"
+      aria-label={t.streamingResponse}
     >
       <span>
         {content}

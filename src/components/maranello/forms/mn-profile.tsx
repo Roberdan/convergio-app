@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Variants ── */
 
@@ -48,6 +49,7 @@ const avatarBase = "inline-flex items-center justify-center rounded-full border-
 /* ── Component ── */
 
 function MnProfile({ name, email, avatarUrl, sections = [], trigger, size, className }: MnProfileProps) {
+  const t = useLocale("profile")
   const [open, setOpen] = React.useState(false)
   const [imgErr, setImgErr] = React.useState(false)
   const [focusIdx, setFocusIdx] = React.useState(-1)
@@ -107,7 +109,7 @@ function MnProfile({ name, email, avatarUrl, sections = [], trigger, size, class
         {trigger ?? renderAvatar("size-9 text-xs")}
       </button>
 
-      <div role="menu" aria-label="Profile menu" className={menuVariants({ open })}>
+      <div role="menu" aria-label={t.profileMenu} className={menuVariants({ open })}>
         <div className="flex items-center gap-3 border-b border-[var(--mn-border)] p-4">
           {renderAvatar("size-14 text-sm")}
           <div className="min-w-0 flex-1">

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/lib/i18n";
 import {
   PanelLeftClose,
   PanelLeftOpen,
@@ -60,10 +61,10 @@ function useIsMobile(breakpoint = 768) {
 
 /* ── Footer section (empty — available for downstream apps) ── */
 
-const footerSection: NavSection = {
-  label: "Support",
-  items: [],
-};
+function useFooterSection(): NavSection {
+  const t = useLocale("sidebar");
+  return React.useMemo(() => ({ label: t.support, items: [] }), [t.support]);
+}
 
 /* ── Shared sidebar content (brand + nav + footer) ── */
 
@@ -78,6 +79,7 @@ function SidebarInner({
   brandName: string;
   brandLogo?: string;
 }) {
+  const footerSection = useFooterSection();
   return (
     <>
       <div
@@ -119,8 +121,9 @@ function CollapseToggle({
   collapsed: boolean;
   onToggle: () => void;
 }) {
+  const t = useLocale("sidebar");
   const Icon = collapsed ? PanelLeftOpen : PanelLeftClose;
-  const label = collapsed ? "Expand sidebar" : "Collapse sidebar";
+  const label = collapsed ? t.expandSidebar : t.collapseSidebar;
   const classes = cn(
     "flex items-center justify-center rounded-md p-2",
     "text-sidebar-foreground hover:bg-sidebar-accent",
@@ -169,10 +172,12 @@ export function Sidebar({
   sections,
   collapsed,
   onToggle,
-  brandName = "Convergio",
+  brandName,
   brandLogo,
 }: SidebarProps) {
+  const t = useLocale("sidebar");
   const isMobile = useIsMobile();
+  const resolvedBrand = brandName ?? t.brandFallback;
 
   return (
     <>
@@ -190,7 +195,7 @@ export function Sidebar({
         <SidebarInner
           sections={sections}
           collapsed={collapsed}
-          brandName={brandName}
+          brandName={resolvedBrand}
           brandLogo={brandLogo}
         />
         <div
@@ -216,12 +221,12 @@ export function Sidebar({
             className="gap-0 bg-sidebar p-0 text-sidebar-foreground"
           >
             <SheetHeader className="sr-only">
-              <SheetTitle>{brandName}</SheetTitle>
+              <SheetTitle>{resolvedBrand}</SheetTitle>
             </SheetHeader>
             <SidebarInner
               sections={sections}
               collapsed={false}
-              brandName={brandName}
+              brandName={resolvedBrand}
             />
           </SheetContent>
         </Sheet>

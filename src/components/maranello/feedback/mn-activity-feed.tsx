@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { formatTime } from '../shared/mn-format';
 
@@ -76,6 +77,7 @@ export function MnActivityFeed({
   ariaLabel = 'Activity feed',
   className,
 }: MnActivityFeedProps) {
+  const t = useLocale("activityFeed");
   const [refreshing, setRefreshing] = useState(false);
 
   const grouped = useMemo(() => groupByDay(items), [items]);
@@ -102,7 +104,7 @@ export function MnActivityFeed({
   if (!items.length) {
     return (
       <div className={cn('rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground', className)}>
-        No activity to display.
+        {t.noActivity}
       </div>
     );
   }
@@ -123,9 +125,9 @@ export function MnActivityFeed({
             type="button"
             onClick={handleManualRefresh}
             className="text-xs text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none rounded px-2 py-1"
-            aria-label="Refresh feed"
+            aria-label={t.refreshFeed}
           >
-            Refresh
+            {t.refresh}
           </button>
         </div>
       )}

@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 export interface SocialGraphNode { id: string; label: string; group?: string; detail?: string; size?: number }
 export interface SocialGraphEdge { source: string; target: string; weight?: number }
@@ -118,6 +119,7 @@ function MnSocialGraph({
   nodes: inputNodes, edges: inputEdges, groups = NO_GROUPS, animate = true,
   showLabels = true, onNodeClick, onNodeHover, size = "md", className, ...rest
 }: MnSocialGraphProps) {
+  const t = useLocale("socialGraph")
   const wrapRef = React.useRef<HTMLDivElement>(null)
   const cvsRef = React.useRef<HTMLCanvasElement>(null)
   const simRef = React.useRef<SimState>({
@@ -220,7 +222,7 @@ function MnSocialGraph({
           {tip.detail && <div className="text-muted-foreground">{tip.detail}</div>}
         </div>
       )}
-      <ul className="sr-only" aria-label="Graph nodes">
+      <ul className="sr-only" aria-label={t.graphNodes}>
         {inputNodes.map((n) => (<li key={n.id}>{n.label}{n.group ? ` (${n.group})` : ""}</li>))}
       </ul>
     </div>

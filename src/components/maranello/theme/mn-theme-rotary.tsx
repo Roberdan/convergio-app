@@ -4,6 +4,7 @@ import { useCallback, useRef } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import { useTheme, type Theme } from "@/components/theme/theme-provider"
 
 // ---------------------------------------------------------------------------
@@ -68,6 +69,7 @@ export function MnThemeRotary({
   ...props
 }: MnThemeRotaryProps) {
   const { theme, setTheme } = useTheme()
+  const t = useLocale("themeRotary")
   const labelsRef = useRef<Map<Theme, HTMLDivElement>>(new Map())
 
   const dialSize = DIAL_SIZES[size ?? "md"] ?? 140
@@ -124,7 +126,7 @@ export function MnThemeRotary({
   return (
     <div
       role="radiogroup"
-      aria-label="Theme selector"
+      aria-label={t.themeSelector}
       onKeyDown={handleKeyDown}
       {...props}
       className={cn(mnThemeRotaryVariants({ size }), className)}

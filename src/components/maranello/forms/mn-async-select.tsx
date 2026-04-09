@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Variants ── */
 
@@ -56,6 +57,7 @@ function MnAsyncSelect({
   provider, placeholder = "Search…", minChars = 1, debounce: debounceMs = 300,
   onSelect, disabled, size, className,
 }: MnAsyncSelectProps) {
+  const t = useLocale("asyncSelect")
   const [query, setQuery] = React.useState("")
   const [items, setItems] = React.useState<AsyncSelectItem[]>([])
   const [activeIndex, setActiveIndex] = React.useState(-1)
@@ -135,12 +137,12 @@ function MnAsyncSelect({
           {loading && (
             <li className="flex items-center gap-2 px-3 py-2 text-[var(--mn-text-muted)]">
               <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              Loading…
+              {t.loading}
             </li>
           )}
           {error && <li className="px-3 py-2 text-[var(--mn-error)]">{error}</li>}
           {!loading && !error && items.length === 0 && (
-            <li className="px-3 py-2 text-[var(--mn-text-muted)]">No results</li>
+            <li className="px-3 py-2 text-[var(--mn-text-muted)]">{t.noResults}</li>
           )}
           {!loading && !error && items.map((item, i) => (
             <li

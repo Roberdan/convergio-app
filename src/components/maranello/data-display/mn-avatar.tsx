@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Variant definitions ── */
 
@@ -98,6 +99,7 @@ function MnAvatar({
   status,
   ...props
 }: MnAvatarProps) {
+  const t = useLocale("avatar")
   const [imgError, setImgError] = React.useState(false)
 
   // Reset error state when src changes
@@ -111,7 +113,7 @@ function MnAvatar({
   return (
     <span
       role="img"
-      aria-label={alt || displayInitials || "Avatar"}
+      aria-label={alt || displayInitials || t.avatar}
       data-slot="mn-avatar"
       className={cn(avatarVariants({ size }), className)}
       {...props}

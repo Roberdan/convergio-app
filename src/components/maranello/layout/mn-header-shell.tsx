@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Types ─────────────────────────────────────────────── */
 
@@ -141,9 +142,11 @@ function ShellActions({
 function ShellSearch({
   section,
   onSearch,
+  searchLabel,
 }: {
   section: Extract<HeaderShellSectionDef, { type: "search" }>
   onSearch?: (payload: { query: string }) => void
+  searchLabel: string
 }) {
   const handleInput = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => { onSearch?.({ query: e.target.value }) },
@@ -153,7 +156,7 @@ function ShellSearch({
     <div className="relative flex items-center flex-1 min-w-0 max-w-md">
       <input
         type="search"
-        placeholder={section.placeholder ?? "Search"}
+        placeholder={section.placeholder ?? searchLabel}
         className={cn(
           "w-full rounded-md border border-[var(--mn-border)] bg-[var(--mn-hover-bg)]/40",
           "px-3 py-1.5 text-sm text-[var(--mn-text)] placeholder:text-[var(--mn-text-secondary)]",
@@ -187,6 +190,7 @@ export function MnHeaderShell({
   children,
   ...props
 }: MnHeaderShellProps) {
+  const t = useLocale("headerShell")
   const [activeActionId, setActiveActionId] = React.useState(() => {
     if (!sections) return ""
     for (const s of sections) {
@@ -212,7 +216,7 @@ export function MnHeaderShell({
   // Slot-based usage (no sections config)
   if (!sections) {
     return (
-      <nav role="navigation" aria-label={props["aria-label"] ?? "Header"} className={cn(shellVariants(), className)} {...props}>
+      <nav role="navigation" aria-label={props["aria-label"] ?? t.header} className={cn(shellVariants(), className)} {...props}>
         {brand && <div className="flex items-center gap-2 flex-shrink-0">{brand}</div>}
         {nav && <div className="flex items-center gap-2 flex-1 min-w-0 justify-center">{nav}</div>}
         {actions && <div className="flex items-center gap-2 flex-shrink-0 ml-auto">{actions}</div>}
@@ -223,7 +227,7 @@ export function MnHeaderShell({
 
   // Config-driven usage
   return (
-    <nav role="navigation" aria-label={props["aria-label"] ?? "Header"} className={cn(shellVariants(), className)} {...props}>
+    <nav role="navigation" aria-label={props["aria-label"] ?? t.header} className={cn(shellVariants(), className)} {...props}>
       {sections.map((section, i) => {
         switch (section.type) {
           case "brand":
@@ -235,7 +239,7 @@ export function MnHeaderShell({
           case "actions":
             return <ShellActions key={`actions-${i}`} section={section} activeId={activeActionId} onAction={handleAction} />
           case "search":
-            return <ShellSearch key={`search-${i}`} section={section} onSearch={callbacks?.onSearch} />
+            return <ShellSearch key={`search-${i}`} section={section} onSearch={callbacks?.onSearch} searchLabel={t.search} />
           default:
             return null
         }

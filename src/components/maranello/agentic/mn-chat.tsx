@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef } from "react"
 import { cva } from "class-variance-authority"
 import { Mic, Send, Copy, Check, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Types ─────────────────────────────────────────────── */
 
@@ -70,6 +71,7 @@ function InlineText({ text }: { text: string }) {
 }
 
 function CodeBlock({ lang, code }: { lang?: string; code: string }) {
+  const t = useLocale("chat")
   const [copied, setCopied] = React.useState(false)
   const copy = useCallback(() => {
     navigator.clipboard.writeText(code).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500) })
@@ -77,10 +79,10 @@ function CodeBlock({ lang, code }: { lang?: string; code: string }) {
   return (
     <div className="my-2 overflow-hidden rounded-lg border border-[var(--mn-border)] bg-[var(--mn-surface-sunken)]">
       <div className="flex items-center justify-between px-3 py-1.5 text-xs text-[var(--mn-text-muted)]">
-        <span>{lang || "code"}</span>
+        <span>{lang || t.code}</span>
         <button type="button" onClick={copy} className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 hover:bg-[var(--mn-hover-bg)]">
           {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
-          {copied ? "Copied" : "Copy"}
+          {copied ? t.copied : t.copy}
         </button>
       </div>
       <pre className="overflow-x-auto px-3 py-2 text-xs leading-snug font-mono"><code>{code}</code></pre>
@@ -121,6 +123,7 @@ export function MnChat({
   messages, loading = false, quickActions, placeholder = "Type a message\u2026",
   onSend, onVoiceStart, onQuickAction, className,
 }: MnChatProps) {
+  const t = useLocale("chat")
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [input, setInput] = React.useState("")
@@ -155,7 +158,7 @@ export function MnChat({
         {messages.map((m) => <MessageBubble key={m.id} message={m} />)}
         {loading && !messages.some((m) => m.streaming) && (
           <div className="flex items-center gap-2 text-sm text-[var(--mn-text-muted)]">
-            <Loader2 className="size-4 animate-spin" /><span>Thinking&hellip;</span>
+            <Loader2 className="size-4 animate-spin" /><span>{t.thinking}</span>
           </div>
         )}
         <div ref={bottomRef} />
@@ -174,7 +177,7 @@ export function MnChat({
       {/* Input area */}
       <div className="flex items-end gap-2 border-t border-[var(--mn-border)] px-3 py-2">
         {onVoiceStart && (
-          <button type="button" onClick={onVoiceStart} aria-label="Voice input"
+          <button type="button" onClick={onVoiceStart} aria-label={t.voiceInput}
             className="shrink-0 rounded-lg p-2 text-[var(--mn-text-muted)] hover:bg-[var(--mn-hover-bg)] transition-colors">
             <Mic className="size-4" />
           </button>
@@ -182,7 +185,7 @@ export function MnChat({
         <textarea ref={textareaRef} value={input} onChange={handleInput} onKeyDown={handleKeyDown}
           placeholder={placeholder} rows={1}
           className="flex-1 resize-none bg-transparent py-1.5 text-sm text-[var(--mn-text)] placeholder:text-[var(--mn-text-muted)] outline-none" />
-        <button type="button" onClick={handleSend} disabled={!input.trim() || loading} aria-label="Send message"
+        <button type="button" onClick={handleSend} disabled={!input.trim() || loading} aria-label={t.sendMessage}
           className={cn("shrink-0 rounded-lg p-2 transition-colors", input.trim() ? "bg-[var(--mn-accent)] text-[var(--mn-text-inverse)] hover:opacity-90" : "text-[var(--mn-text-tertiary)]")}>
           <Send className="size-4" />
         </button>

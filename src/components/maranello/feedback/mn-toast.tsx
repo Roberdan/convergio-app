@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Types ─────────────────────────────────────────────── */
 
@@ -118,6 +119,7 @@ function ToastItem({
 }) {
   const [removing, setRemoving] = useState(false)
   const isUrgent = data.variant === "error" || data.variant === "warning"
+  const t = useLocale("toast")
 
   const handleDismiss = useCallback(() => {
     setRemoving(true)
@@ -154,7 +156,7 @@ function ToastItem({
         type="button"
         onClick={handleDismiss}
         className="shrink-0 cursor-pointer rounded px-1.5 py-0.5 text-neutral-400 hover:bg-neutral-700 hover:text-neutral-200"
-        aria-label="Close"
+        aria-label={t.close}
       >
         ✕
       </button>
@@ -166,12 +168,13 @@ function ToastItem({
 
 function MnToast({ className }: { className?: string }) {
   const items = useToasts()
+  const t = useLocale("toast")
 
   if (items.length === 0) return null
 
   return (
     <div
-      aria-label="Notifications"
+      aria-label={t.notifications}
       className={cn(
         "pointer-events-none fixed inset-x-0 top-4 z-[9999] flex flex-col items-end gap-2 px-4",
         className,

@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { useCallback, useId, useMemo, useState } from 'react';
 
 export interface OrgNode {
@@ -25,7 +26,7 @@ const STATUS_COLORS: Record<OrgNode['status'], string> = {
   error: 'bg-status-error',
 };
 
-const STATUS_LABEL: Record<OrgNode['status'], string> = {
+const STATUS_LABEL_DEFAULTS: Record<OrgNode['status'], string> = {
   active: 'Active',
   inactive: 'Inactive',
   busy: 'Busy',
@@ -67,6 +68,9 @@ function NodeCard({
   onClick,
   id,
   focused,
+  statusLabels,
+  collapseLabel,
+  expandLabel,
 }: {
   node: OrgNode;
   isExpanded: boolean;
@@ -75,6 +79,9 @@ function NodeCard({
   onClick: () => void;
   id: string;
   focused: boolean;
+  statusLabels: Record<OrgNode['status'], string>;
+  collapseLabel: string;
+  expandLabel: string;
 }) {
   return (
     <div
@@ -101,7 +108,7 @@ function NodeCard({
             e.stopPropagation();
             onToggle();
           }}
-          aria-label={isExpanded ? 'Collapse' : 'Expand'}
+          aria-label={isExpanded ? collapseLabel : expandLabel}
           tabIndex={-1}
         >
           {isExpanded ? '\u25BC' : '\u25B6'}
@@ -111,7 +118,7 @@ function NodeCard({
       {/* status badge */}
       <span
         className={cn('h-2.5 w-2.5 shrink-0 rounded-full', STATUS_COLORS[node.status])}
-        aria-label={`Status: ${STATUS_LABEL[node.status]}`}
+        aria-label={`Status: ${statusLabels[node.status]}`}
       />
 
       <div className="min-w-0">
@@ -132,9 +139,17 @@ function NodeCard({
 export function MnOrgChart({
   tree,
   onNodeClick,
-  ariaLabel = 'Organization chart',
+  ariaLabel,
   className,
 }: MnOrgChartProps) {
+  const t = useLocale('orgChart');
+  const resolvedAriaLabel = ariaLabel ?? t.organizationChart;
+  const statusLabels: Record<OrgNode['status'], string> = {
+    active: t.active,
+    inactive: t.inactive,
+    busy: t.busy,
+    error: t.error,
+  };
   const baseId = useId();
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(['0']));
   const [focusIdx, setFocusIdx] = useState(0);
@@ -192,7 +207,7 @@ export function MnOrgChart({
   return (
     <div
       role="tree"
-      aria-label={ariaLabel}
+      aria-label={resolvedAriaLabel}
       className={cn('rounded-lg border bg-card p-4', className)}
       onKeyDown={handleKeyDown}
     >
@@ -221,6 +236,9 @@ export function MnOrgChart({
               }}
               id={`${baseId}-${i}`}
               focused={i === focusIdx}
+              statusLabels={statusLabels}
+              collapseLabel={t.collapse}
+              expandLabel={t.expand}
             />
           </div>
         </div>

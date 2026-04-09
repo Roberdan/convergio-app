@@ -4,6 +4,7 @@ import * as React from "react"
 import { createPortal } from "react-dom"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import {
   backdropVariants,
   type CommandItem,
@@ -19,6 +20,7 @@ function MnCommandPalette({
   globalHotkey = true,
   className,
 }: MnCommandPaletteProps) {
+  const t = useLocale("commandPalette")
   const inputRef = React.useRef<HTMLInputElement>(null)
   const listRef = React.useRef<HTMLDivElement>(null)
   const [query, setQuery] = React.useState("")
@@ -210,7 +212,7 @@ function MnCommandPalette({
             rows
           ) : (
             <div className="px-4 py-5 text-center text-sm text-muted-foreground">
-              No commands found
+              {t.noCommandsFound}
             </div>
           )}
         </div>

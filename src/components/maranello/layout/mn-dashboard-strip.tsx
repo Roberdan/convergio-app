@@ -2,6 +2,7 @@
 
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 
 export interface StripMetric {
   label: string;
@@ -36,11 +37,13 @@ export interface MnDashboardStripProps {
   className?: string;
 }
 
-const TREND_INDICATORS: Record<string, { char: string; cls: string; label: string }> = {
-  up: { char: '\u2191', cls: 'text-status-success', label: 'trending up' },
-  down: { char: '\u2193', cls: 'text-status-error', label: 'trending down' },
-  flat: { char: '\u2192', cls: 'text-muted-foreground', label: 'stable' },
-};
+function getTrendIndicators(t: { trendingUp: string; trendingDown: string; stable: string }): Record<string, { char: string; cls: string; label: string }> {
+  return {
+    up: { char: '\u2191', cls: 'text-status-success', label: t.trendingUp },
+    down: { char: '\u2193', cls: 'text-status-error', label: t.trendingDown },
+    flat: { char: '\u2192', cls: 'text-muted-foreground', label: t.stable },
+  };
+}
 
 const stripVariants = cva(
   'flex flex-wrap items-center gap-4 rounded-lg border bg-card px-4 py-2',
@@ -99,11 +102,11 @@ function Sparkline({ data }: { data: number[] }) {
   );
 }
 
-function PipelineZone({ title, rows, maxValue, footer }: StripPipelineZone) {
+function PipelineZone({ title, rows, maxValue, footer, fallbackTitle }: StripPipelineZone & { fallbackTitle: string }) {
   const peak = maxValue ?? Math.max(...rows.map((r) => r.value), 1);
   return (
     <div className="flex min-w-[10rem] flex-col gap-1"
-      role="group" aria-label={title ?? 'Pipeline'}>
+      role="group" aria-label={title ?? fallbackTitle}>
       <SectionTitle text={title} />
       {rows.map((row, i) => {
         const pct = Math.min((row.value / peak) * 100, 100);
@@ -130,9 +133,9 @@ function PipelineZone({ title, rows, maxValue, footer }: StripPipelineZone) {
   );
 }
 
-function TrendZone({ title, items }: StripTrendZone) {
+function TrendZone({ title, items, fallbackTitle }: StripTrendZone & { fallbackTitle: string }) {
   return (
-    <div className="flex flex-col gap-1" role="group" aria-label={title ?? 'Trends'}>
+    <div className="flex flex-col gap-1" role="group" aria-label={title ?? fallbackTitle}>
       <SectionTitle text={title} />
       <div className="flex flex-wrap gap-3">
         {items.map((item, i) => (
@@ -149,9 +152,9 @@ function TrendZone({ title, items }: StripTrendZone) {
   );
 }
 
-function BoardZone({ title, stats }: StripBoardZone) {
+function BoardZone({ title, stats, fallbackTitle }: StripBoardZone & { fallbackTitle: string }) {
   return (
-    <div className="flex flex-col gap-1" role="group" aria-label={title ?? 'Board'}>
+    <div className="flex flex-col gap-1" role="group" aria-label={title ?? fallbackTitle}>
       <SectionTitle text={title} />
       <div className="grid auto-cols-fr grid-flow-col gap-3">
         {stats.map((s, i) => (
@@ -166,23 +169,25 @@ function BoardZone({ title, stats }: StripBoardZone) {
   );
 }
 
-function ZoneRenderer({ zone }: { zone: StripZone }) {
+function ZoneRenderer({ zone, labels }: { zone: StripZone; labels: { pipeline: string; trends: string; board: string } }) {
   switch (zone.type) {
     case 'gauge': return <GaugeZone {...zone} />;
-    case 'pipeline': return <PipelineZone {...zone} />;
-    case 'trend': return <TrendZone {...zone} />;
-    case 'board': return <BoardZone {...zone} />;
+    case 'pipeline': return <PipelineZone {...zone} fallbackTitle={labels.pipeline} />;
+    case 'trend': return <TrendZone {...zone} fallbackTitle={labels.trends} />;
+    case 'board': return <BoardZone {...zone} fallbackTitle={labels.board} />;
   }
 }
 
 /** Compact horizontal metric strip with optional zone renderers. */
 export function MnDashboardStrip({
-  metrics, zones, ariaLabel = 'Dashboard metrics', className,
+  metrics, zones, ariaLabel, className,
 }: MnDashboardStripProps) {
+  const t = useLocale('dashboardStrip');
+  const TREND_INDICATORS = getTrendIndicators(t);
   const hasContent = (metrics?.length ?? 0) > 0 || (zones?.length ?? 0) > 0;
   if (!hasContent) return null;
   return (
-    <div className={cn(stripVariants(), className)} role="list" aria-label={ariaLabel}>
+    <div className={cn(stripVariants(), className)} role="list" aria-label={ariaLabel ?? t.dashboardMetrics}>
       {metrics?.map((metric, i) => {
         const trend = metric.trend ? TREND_INDICATORS[metric.trend] : null;
         return (
@@ -206,7 +211,7 @@ export function MnDashboardStrip({
       ) : null}
       {zones?.map((zone, i) => (
         <div key={`z-${zone.type}-${i}`} role="listitem" className="flex items-center">
-          <ZoneRenderer zone={zone} />
+          <ZoneRenderer zone={zone} labels={t} />
           {i < zones.length - 1 && (
             <span className="ml-3 text-border" aria-hidden="true">|</span>
           )}

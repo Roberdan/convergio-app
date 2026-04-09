@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/lib/i18n";
 import {
   type KpiStatus, type KpiRow,
   STATUS_LABELS, HEADERS,
@@ -67,16 +68,18 @@ export function MnKpiScorecard({
   rows,
   currency = "$",
   onSelect,
-  ariaLabel = "KPI Scorecard",
+  ariaLabel,
   className,
 }: MnKpiScorecardProps) {
+  const t = useLocale("kpiScorecard")
   if (!rows.length) return null;
 
   const interactive = !!onSelect;
+  const resolvedAriaLabel = ariaLabel ?? t.kpiScorecard;
 
   return (
     <div className={cn("overflow-x-auto rounded-lg border bg-card", className)}>
-      <table className="w-full text-sm" role="table" aria-label={ariaLabel}>
+      <table className="w-full text-sm" role="table" aria-label={resolvedAriaLabel}>
         <thead>
           <tr className="border-b bg-muted/50">
             {HEADERS.map((h) => (

@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import { controlBase, type ControlBase, LBL, DIAL, useStep } from "./mn-ferrari-control.helpers"
 
 /* ── Manettino ─────────────────────────────────────────────── */
@@ -12,6 +13,7 @@ interface MnManettinoProps extends ControlBase {
 }
 
 function MnManettino({ positions = ["WET", "COMFORT", "SPORT", "RACE", "ESC OFF"], value: controlled, defaultValue = 2, onChange, label, size, className }: MnManettinoProps) {
+  const t = useLocale("ferrariControl")
   const count = positions.length
   const { idx, go, onKey } = useStep(controlled, defaultValue, count - 1, positions, onChange)
   const ARC = 240, START = -120
@@ -25,7 +27,7 @@ function MnManettino({ positions = ["WET", "COMFORT", "SPORT", "RACE", "ESC OFF"
         <div className="absolute rounded-full border-2 border-[var(--mn-border)] pointer-events-none"
           style={{ width: 80, height: 80, top: 40, left: 40 }} />
         {/* Knob: 64×64 centered, rotated */}
-        <div role="slider" aria-label={label ?? "Manettino selector"} aria-valuemin={0} aria-valuemax={count - 1}
+        <div role="slider" aria-label={label ?? t.manettinoSelector} aria-valuemin={0} aria-valuemax={count - 1}
           aria-valuenow={idx} aria-valuetext={positions[idx]} tabIndex={0} onKeyDown={onKey}
           className={cn(DIAL, "absolute focus-visible:ring-2 focus-visible:ring-[var(--mn-focus-ring)] focus-visible:outline-none")}
           style={{ width: 64, height: 64, top: 48, left: 48, transform: `rotate(${angle}deg)` }}
@@ -63,6 +65,7 @@ interface MnCruiseLeverProps extends ControlBase {
 }
 
 function MnCruiseLever({ positions = ["OFF", "SET", "RES", "ACC"], value: controlled, defaultValue = 0, onChange, label, size, className }: MnCruiseLeverProps) {
+  const t = useLocale("ferrariControl")
   const count = positions.length
   const { idx, go, onKey } = useStep(controlled, defaultValue, count - 1, positions, onChange)
   const pct = count > 1 ? (idx / (count - 1)) * 100 : 0
@@ -119,7 +122,7 @@ function MnCruiseLever({ positions = ["OFF", "SET", "RES", "ACC"], value: contro
               className="absolute left-1/2 h-1 w-3 -translate-x-1/2 rounded-full bg-[var(--mn-text-muted)] opacity-50"
               style={{ top: `${(i / (count - 1)) * 100}%` }} onClick={() => go(i)} />
           ))}
-          <div role="slider" tabIndex={0} aria-label={label ?? "Cruise lever"} aria-valuemin={0}
+          <div role="slider" tabIndex={0} aria-label={label ?? t.cruiseLever} aria-valuemin={0}
             aria-valuemax={count - 1} aria-valuenow={idx} aria-valuetext={positions[idx]} onKeyDown={onKey}
             onMouseDown={onPointerStart} onTouchStart={onPointerStart}
             className={cn(
@@ -142,6 +145,7 @@ interface MnToggleLeverProps extends ControlBase {
 }
 
 function MnToggleLever({ pressed: controlled, defaultPressed = false, onChange, label, size, className }: MnToggleLeverProps) {
+  const t = useLocale("ferrariControl")
   const [internal, setInternal] = React.useState(defaultPressed)
   const on = controlled ?? internal
   function toggle() { const next = !on; if (controlled === undefined) setInternal(next); onChange?.(next) }
@@ -149,7 +153,7 @@ function MnToggleLever({ pressed: controlled, defaultPressed = false, onChange, 
   return (
     <div className={cn(controlBase({ size }), className)}>
       {label && <span className={LBL}>{label}</span>}
-      <div role="switch" aria-checked={on} aria-label={label ?? "Toggle lever"} tabIndex={0}
+      <div role="switch" aria-checked={on} aria-label={label ?? t.toggleLever} tabIndex={0}
         onClick={toggle} onKeyDown={onKey}
         className={cn(
           "relative h-7 w-[52px] cursor-pointer rounded-full transition-shadow duration-150",
@@ -171,7 +175,7 @@ function MnToggleLever({ pressed: controlled, defaultPressed = false, onChange, 
           on ? "bg-[var(--mn-accent)] shadow-[0_0_4px_var(--mn-accent)]" : "bg-[var(--mn-border)]",
         )} />
       </div>
-      <span className="text-[0.6rem] font-semibold uppercase text-[var(--mn-text-secondary)]">{on ? "ON" : "OFF"}</span>
+      <span className="text-[0.6rem] font-semibold uppercase text-[var(--mn-text-secondary)]">{on ? t.on : t.off}</span>
     </div>
   )
 }
@@ -184,6 +188,7 @@ interface MnSteppedRotaryProps extends ControlBase {
 }
 
 function MnSteppedRotary({ positions = ["1", "2", "3", "4", "5"], value: controlled, defaultValue = 0, onChange, label, size, className }: MnSteppedRotaryProps) {
+  const t = useLocale("ferrariControl")
   const count = positions.length
   const { idx, go, onKey } = useStep(controlled, defaultValue, count - 1, positions, onChange)
   const ARC = 180, START = -90
@@ -207,7 +212,7 @@ function MnSteppedRotary({ positions = ["1", "2", "3", "4", "5"], value: control
           )
         })}
         {/* Knob */}
-        <div role="slider" aria-label={label ?? "Stepped rotary"} aria-valuemin={0} aria-valuemax={count - 1}
+        <div role="slider" aria-label={label ?? t.steppedRotary} aria-valuemin={0} aria-valuemax={count - 1}
           aria-valuenow={idx} aria-valuetext={positions[idx]} tabIndex={0} onKeyDown={onKey}
           className={cn(DIAL, "absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2",
             "shadow-[0_2px_6px_rgba(0,0,0,.5),inset_0_1px_0_rgba(255,255,255,.15)]",

@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import { MnMeshNetworkToolbar, type MeshAction } from "./mn-mesh-network-toolbar"
 import { MnMeshNetworkCard } from "./mn-mesh-network-card"
 import { MnMeshNetworkCanvas } from "./mn-mesh-network-canvas"
@@ -79,6 +80,7 @@ export function MnMeshNetwork({
   className,
   ...rest
 }: MnMeshNetworkProps) {
+  const t = useLocale("meshNetwork")
   const [selected, setSelected] = useState<string | null>(null)
 
   const handleSelect = useCallback(
@@ -95,7 +97,7 @@ export function MnMeshNetwork({
   if (!nodes?.length) {
     return (
       <div className={cn("rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground", className)}>
-        No mesh nodes to display.
+        {t.noMeshNodes}
       </div>
     )
   }
@@ -124,7 +126,7 @@ export function MnMeshNetwork({
             />
           ))}
         </div>
-        <ul className="sr-only" aria-label="Mesh nodes">
+        <ul className="sr-only" aria-label={t.meshNodes}>
           {nodes.map((n) => (
             <li key={n.id}>
               {n.label}: {STATUS_LABELS[n.status] ?? n.status} ({n.type})

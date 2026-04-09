@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -47,6 +48,7 @@ export interface MnKanbanBoardProps extends React.HTMLAttributes<HTMLDivElement>
 function MnKanbanBoard({
   columns, cards, onCardMove, onCardClick, onAddCard, className, ...props
 }: MnKanbanBoardProps) {
+  const t = useLocale("kanbanBoard");
   const [dragCardId, setDragCardId] = React.useState<string | null>(null)
   const [dragOverCol, setDragOverCol] = React.useState<string | null>(null)
   const [grabbedCardId, setGrabbedCardId] = React.useState<string | null>(null)
@@ -102,7 +104,7 @@ function MnKanbanBoard({
   return (
     <div
       role="region"
-      aria-label="Kanban board"
+      aria-label={t.kanbanBoard}
       className={cn("flex gap-4 overflow-x-auto p-4", className)}
       {...props}
     >
@@ -197,7 +199,7 @@ function MnKanbanBoard({
                 className="flex w-full items-center justify-center gap-1 border-t border-[var(--mn-border)] px-3 py-2 text-xs font-medium text-[var(--mn-text-muted)] hover:bg-[var(--mn-muted)] hover:text-[var(--mn-text)] transition-colors rounded-b-lg"
                 onClick={() => onAddCard(col.id)}
               >
-                <span aria-hidden="true">+</span> Add card
+                <span aria-hidden="true">+</span> {t.addCard}
               </button>
             )}
           </div>

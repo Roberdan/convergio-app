@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/lib/i18n";
 import { cva } from "class-variance-authority";
 import { Check, X, Clock, User, SkipForward } from "lucide-react";
 
@@ -182,12 +183,13 @@ function MnApprovalChain({
   onAction,
   className,
 }: MnApprovalChainProps) {
+  const t = useLocale("approvalChain");
   const isVertical = orientation === "vertical";
 
   return (
     <div
       role="list"
-      aria-label="Approval chain"
+      aria-label={t.approvalChain}
       className={cn(
         "flex items-center gap-1",
         isVertical && "flex-col",

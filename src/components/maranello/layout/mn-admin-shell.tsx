@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva } from "class-variance-authority"
 import { Menu, X, ChevronRight, Home } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Types ─────────────────────────────────────────────── */
 
@@ -131,6 +132,7 @@ export function MnAdminShell({
   topBar = true, breadcrumbs, pageTitle, contentId = "main-content",
   className, children, ...props
 }: MnAdminShellProps) {
+  const t = useLocale("adminShell")
   const [internalCollapsed, setInternalCollapsed] = React.useState(defaultCollapsed)
   const isCollapsed = controlledCollapsed ?? internalCollapsed
 
@@ -162,10 +164,10 @@ export function MnAdminShell({
         href={`#${contentId}`}
         className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:rounded focus:bg-[var(--mn-accent)] focus:px-4 focus:py-2 focus:text-[var(--mn-text-on-accent)]"
       >
-        Skip to content
+        {t.skipToContent}
       </a>
 
-      <nav className={sidebarVariants()} role="navigation" aria-label="Admin navigation">
+      <nav className={sidebarVariants()} role="navigation" aria-label={t.adminNavigation}>
         <div className={cn("flex items-center gap-2 px-3 h-12 border-b border-[var(--mn-border)]", isCollapsed && "justify-center px-0")}>
           {!isCollapsed && sidebarHeader}
           <button

@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Mic, Square, AlertCircle, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import { useVoiceInput, type VoiceState } from "./mn-voice-input.helpers"
 
 export { useVoiceInput } from "./mn-voice-input.helpers"
@@ -97,18 +98,19 @@ function MnVoiceInput({
     onError: onVoiceError,
   })
 
+  const t = useLocale("voiceInput")
   const isListening = state === "listening"
   const isProcessing = state === "processing"
   const isError = state === "error"
   const iconClass = ICON_SIZE[size ?? "md"]
 
   const label = isListening
-    ? "Stop listening"
+    ? t.stopListening
     : isProcessing
-      ? "Processing speech"
+      ? t.processingSpeech
       : isError
-        ? "Voice input error, click to retry"
-        : "Start voice input"
+        ? t.voiceError
+        : t.startVoiceInput
 
   return (
     <div className="inline-flex items-center gap-2">

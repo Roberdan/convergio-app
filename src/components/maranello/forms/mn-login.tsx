@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Eye, EyeOff, Lock, Mail, LogIn } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 const loginVariants = cva(
   "mx-auto flex min-h-[540px] w-full flex-col items-center justify-center rounded-2xl border border-border bg-background p-8",
@@ -76,6 +77,7 @@ function MnLogin({
   onSubmit, socialProviders, onSocialLogin, checks,
   loading = false, size, className, ...props
 }: MnLoginProps) {
+  const t = useLocale("login")
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
   const [showPassword, setShowPassword] = React.useState(false)
@@ -91,7 +93,7 @@ function MnLogin({
 
   return (
     <section
-      aria-label="Sign in"
+      aria-label={t.signIn}
       data-slot="mn-login"
       className={cn(loginVariants({ size }), className)}
       {...props}
@@ -116,19 +118,19 @@ function MnLogin({
       <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4" aria-describedby={error ? errorId : undefined} noValidate>
         {/* Email */}
         <div className="grid gap-1.5">
-          <label htmlFor={`${formId}-email`} className="text-sm font-medium text-foreground">Email</label>
+          <label htmlFor={`${formId}-email`} className="text-sm font-medium text-foreground">{t.email}</label>
           <div className="relative">
             <Mail className={ICON_CLS} aria-hidden="true" />
             <input
               id={`${formId}-email`} type="email" name="email" autoComplete="email" required
-              value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com"
+              value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.emailPlaceholder}
               className={cn(INPUT_CLS, "pl-10 pr-3")}
             />
           </div>
         </div>
         {/* Password */}
         <div className="grid gap-1.5">
-          <label htmlFor={`${formId}-password`} className="text-sm font-medium text-foreground">Password</label>
+          <label htmlFor={`${formId}-password`} className="text-sm font-medium text-foreground">{t.password}</label>
           <div className="relative">
             <Lock className={ICON_CLS} aria-hidden="true" />
             <input
@@ -139,7 +141,7 @@ function MnLogin({
             />
             <button
               type="button" onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-label={showPassword ? t.hidePassword : t.showPassword}
               className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {showPassword
@@ -152,8 +154,8 @@ function MnLogin({
         {forgotLink && (
           <div className="text-right">
             {onForgotPassword
-              ? <button type="button" onClick={onForgotPassword} className={LINK_CLS}>Forgot password?</button>
-              : <a href={forgotPasswordHref} className={LINK_CLS}>Forgot password?</a>}
+              ? <button type="button" onClick={onForgotPassword} className={LINK_CLS}>{t.forgotPassword}</button>
+              : <a href={forgotPasswordHref} className={LINK_CLS}>{t.forgotPassword}</a>}
           </div>
         )}
 
@@ -183,7 +185,7 @@ function MnLogin({
       )}
 
       {checks && checks.length > 0 && (
-        <div className="mt-6 w-full space-y-1 text-xs text-muted-foreground" data-slot="mn-login-status" role="status" aria-label="Service status">
+        <div className="mt-6 w-full space-y-1 text-xs text-muted-foreground" data-slot="mn-login-status" role="status" aria-label={t.serviceStatus}>
           {checks.map((c) => (
             <div key={c.name} className="flex items-center justify-between">
               <span>{c.name}</span>

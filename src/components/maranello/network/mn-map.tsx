@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 export type MapMarkerColor = "active" | "warning" | "danger"
 
@@ -68,6 +69,7 @@ export function MnMap({
   markers = [], zoom: initialZoom = 1, center, enableZoom = true,
   enablePan = true, onMarkerClick, className, ...props
 }: MnMapProps) {
+  const t = useLocale("map")
   const wrapRef = React.useRef<HTMLDivElement>(null)
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
   const tipRef = React.useRef<HTMLDivElement>(null)
@@ -127,14 +129,14 @@ export function MnMap({
     const tip = tipRef.current
     if (!tip) return
     tip.textContent = ""
-    const lbl = document.createElement("div"); lbl.style.fontWeight = "600"; lbl.textContent = m.label || "Marker"; tip.appendChild(lbl)
+    const lbl = document.createElement("div"); lbl.style.fontWeight = "600"; lbl.textContent = m.label || t.marker; tip.appendChild(lbl)
     if (m.detail) { const d = document.createElement("div"); d.style.cssText = "font-size:0.65rem;opacity:0.7"; d.textContent = m.detail; tip.appendChild(d) }
     tip.style.opacity = "1"
     const tw = tip.offsetWidth || 120
     let left = m._x - tw / 2; if (left < 4) left = 4; if (left + tw > rect.width - 4) left = rect.width - tw - 4
     let top = m._y - (tip.offsetHeight || 32) - 12; if (top < 4) top = m._y + 12
     tip.style.left = left + "px"; tip.style.top = top + "px"
-  }, [])
+  }, [t.marker])
 
   const hideTip = React.useCallback(() => { if (tipRef.current) tipRef.current.style.opacity = "0" }, [])
 
@@ -171,7 +173,7 @@ export function MnMap({
   }, [center, render])
 
   return (
-    <div ref={wrapRef} role="img" aria-label="Interactive map" {...props} className={cn("relative block min-h-[300px] overflow-hidden", className)}>
+    <div ref={wrapRef} role="img" aria-label={t.interactiveMap} {...props} className={cn("relative block min-h-[300px] overflow-hidden", className)}>
       <canvas ref={canvasRef} className="block h-full w-full" />
       <div ref={tipRef} className="pointer-events-none absolute rounded bg-[var(--mn-surface-raised,#222)] px-2 py-1 text-xs text-[var(--mn-text,#eee)] shadow-lg opacity-0 transition-opacity" />
       <div className="absolute bottom-2 left-2 flex gap-2 text-[0.65rem]">

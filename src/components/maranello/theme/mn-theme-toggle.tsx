@@ -4,6 +4,7 @@ import { useCallback } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import { useTheme, type Theme } from "@/components/theme/theme-provider"
 
 // ---------------------------------------------------------------------------
@@ -74,6 +75,7 @@ export function MnThemeToggle({
   ...props
 }: MnThemeToggleProps) {
   const { theme, setTheme, themes } = useTheme()
+  const t = useLocale("themeToggle")
 
   const cycle = useCallback(() => {
     const idx = themes.indexOf(theme)
@@ -82,14 +84,16 @@ export function MnThemeToggle({
   }, [theme, setTheme, themes])
 
   const meta = THEME_META[theme]
+  const themeLabels: Record<Theme, string> = { light: t.light, dark: t.dark, navy: t.navy, colorblind: t.colorblind }
+  const label = themeLabels[theme]
 
   if (showLabel) {
     return (
       <button
         {...props}
         type="button"
-        aria-label={`Current theme: ${meta.label}. Click to switch.`}
-        title={meta.label}
+        aria-label={t.switchTheme.replace("{theme}", label)}
+        title={label}
         onClick={cycle}
         className={cn(
           "inline-flex items-center gap-2 rounded-full px-3 py-1.5",
@@ -106,7 +110,7 @@ export function MnThemeToggle({
         <span className="text-lg" aria-hidden="true">
           {meta.icon}
         </span>
-        <span>{meta.label}</span>
+        <span>{label}</span>
       </button>
     )
   }
@@ -115,8 +119,8 @@ export function MnThemeToggle({
     <button
       {...props}
       type="button"
-      aria-label={`Current theme: ${meta.label}. Click to switch.`}
-      title={meta.label}
+      aria-label={t.switchTheme.replace("{theme}", label)}
+      title={label}
       onClick={cycle}
       className={cn(mnThemeToggleVariants({ size }), className)}
     >

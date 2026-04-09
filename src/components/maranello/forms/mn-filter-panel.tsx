@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Filter, X, ChevronDown, ChevronUp, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 export interface FilterOption { id: string; label: string; count?: number }
 export interface RangeConfig { min: number; max: number; step?: number }
@@ -36,6 +37,7 @@ interface SectionBlockProps {
 }
 
 function FilterSectionBlock({ section, value, onUpdate, onClear }: SectionBlockProps) {
+  const t = useLocale("filterPanel")
   const [collapsed, setCollapsed] = React.useState(section.defaultCollapsed ?? false)
   const [query, setQuery] = React.useState("")
   const type = section.type ?? "checkbox"
@@ -89,7 +91,7 @@ function FilterSectionBlock({ section, value, onUpdate, onClear }: SectionBlockP
             <div className="relative mb-1">
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" aria-hidden="true" />
               <input type="text" value={query} onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search\u2026" aria-label={`Search ${section.label}`}
+                placeholder={t.searchPlaceholder} aria-label={`Search ${section.label}`}
                 className={cn(
                   "w-full rounded-md border border-border bg-background pl-7 pr-2 py-1.5 text-sm",
                   "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
@@ -135,7 +137,7 @@ function FilterSectionBlock({ section, value, onUpdate, onClear }: SectionBlockP
           {hasActive && (
             <button type="button" onClick={() => onClear(section.id)}
               className="mt-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md px-1">
-              Clear
+              {t.clear}
             </button>
           )}
         </div>
@@ -149,6 +151,7 @@ export function MnFilterPanel({
   clearAllLabel = "Clear all", applyLabel = "Apply filters",
   size, className, ...props
 }: MnFilterPanelProps) {
+  const t = useLocale("filterPanel")
   const [internal, setInternal] = React.useState<ActiveFilters>({})
   const isControlled = controlledFilters !== undefined
   const filters = isControlled ? controlledFilters : internal
@@ -194,7 +197,7 @@ export function MnFilterPanel({
         className="flex items-center justify-between px-3 py-2.5 border-b border-border">
         <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
           <Filter className="size-4" aria-hidden="true" />
-          Filters
+          {t.filters}
           {chips.length > 0 && (
             <span className="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-xs font-semibold bg-primary text-primary-foreground">
               {chips.length}

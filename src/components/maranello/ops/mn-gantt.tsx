@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import {
   type GanttTask, type GanttDependency,
   BAR_RADIUS, STATUS_CFG, ZOOM_MIN, ZOOM_MAX, ZOOM_STEP,
@@ -44,12 +45,12 @@ function TimelineHeader({ months, ppd }: { months: { date: Date; label: string; 
   )
 }
 
-function TodayMarker({ left }: { left: number }) {
+function TodayMarker({ left, label }: { left: number; label: string }) {
   return (
     <div className="absolute top-0 bottom-0 z-20 pointer-events-none" style={{ left }}>
       <div className="absolute inset-y-0 w-0.5 bg-[var(--mn-info,#3b82f6)]" />
       <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 rounded bg-[var(--mn-info,#3b82f6)] px-1.5 py-0.5 text-[9px] font-bold text-white whitespace-nowrap shadow-sm">
-        TODAY
+        {label}
       </span>
     </div>
   )
@@ -124,17 +125,17 @@ function DepArrows({ deps, pos }: { deps: GanttDependency[]; pos: Map<string, { 
 
 /* ── Zoom controls ─────────────────────────────────────────── */
 
-function ZoomControls({ zoom, onZoom }: { zoom: number; onZoom: (z: number) => void }) {
+function ZoomControls({ zoom, onZoom, labels }: { zoom: number; onZoom: (z: number) => void; labels: { zoomIn: string; zoomOut: string; fitTimeline: string } }) {
   return (
     <div className="inline-flex items-center gap-1 rounded border border-[var(--mn-border)] bg-[var(--mn-surface)]">
-      <button type="button" aria-label="Zoom in (more detail)"
+      <button type="button" aria-label={labels.zoomIn}
         className="px-2 py-0.5 text-xs font-bold text-[var(--mn-text-muted)] hover:text-[var(--mn-text)] disabled:opacity-40"
         disabled={zoom <= ZOOM_MIN} onClick={() => onZoom(Math.max(ZOOM_MIN, zoom - ZOOM_STEP))}>{"\u2212"}</button>
       <span className="min-w-[3ch] text-center text-[10px] tabular-nums text-[var(--mn-text-muted)]">{Math.round((1 / zoom) * 100)}%</span>
-      <button type="button" aria-label="Zoom out (overview)"
+      <button type="button" aria-label={labels.zoomOut}
         className="px-2 py-0.5 text-xs font-bold text-[var(--mn-text-muted)] hover:text-[var(--mn-text)] disabled:opacity-40"
         disabled={zoom >= ZOOM_MAX} onClick={() => onZoom(Math.min(ZOOM_MAX, zoom + ZOOM_STEP))}>+</button>
-      <button type="button" aria-label="Fit timeline to view"
+      <button type="button" aria-label={labels.fitTimeline}
         className="border-l border-[var(--mn-border)] px-2 py-0.5 text-[10px] font-medium text-[var(--mn-text-muted)] hover:text-[var(--mn-text)]"
         onClick={() => onZoom(1)}>Fit</button>
     </div>
@@ -144,6 +145,7 @@ function ZoomControls({ zoom, onZoom }: { zoom: number; onZoom: (z: number) => v
 /* ── Main component ────────────────────────────────────────── */
 
 function MnGantt({ tasks, dependencies, labelWidth = 240, rowHeight = 38, showToday = true, className, ...props }: MnGanttProps) {
+  const t = useLocale("gantt");
   const scrollRef = React.useRef<HTMLDivElement>(null)
   const [collapsed, setCollapsed] = React.useState<Set<string>>(new Set())
   const [zoom, setZoom] = React.useState(1)
@@ -166,31 +168,31 @@ function MnGantt({ tasks, dependencies, labelWidth = 240, rowHeight = 38, showTo
   })
 
   return (
-    <div className={cn(ganttRoot(), className)} role="figure" aria-label="Gantt timeline" {...props}>
+    <div className={cn(ganttRoot(), className)} role="figure" aria-label={t.ganttTimeline} {...props}>
       {/* Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--mn-border,theme(colors.border))] px-3 py-1.5">
-        <ZoomControls zoom={zoom} onZoom={setZoom} />
+        <ZoomControls zoom={zoom} onZoom={setZoom} labels={{ zoomIn: t.zoomIn, zoomOut: t.zoomOut, fitTimeline: t.fitTimeline }} />
         <div className="flex flex-wrap items-center gap-3 text-[10px] text-[var(--mn-text-muted,theme(colors.muted-foreground))]">
           {Object.entries(STATUS_CFG).map(([k, v]) => (
             <span key={k} className="flex items-center gap-1 capitalize">
               <span className="inline-block h-2 w-2 rounded-full" style={{ background: v.bar }} />{k}
             </span>
           ))}
-          {showToday && <span className="flex items-center gap-1"><span className="inline-block h-2 w-0.5 bg-[var(--mn-info,#3b82f6)]" />Today</span>}
+          {showToday && <span className="flex items-center gap-1"><span className="inline-block h-2 w-0.5 bg-[var(--mn-info,#3b82f6)]" />{t.todayMarker}</span>}
         </div>
       </div>
 
       <div className="flex">
         {/* Sidebar */}
         <div className="shrink-0 border-r border-[var(--mn-border,theme(colors.border))] bg-[var(--mn-surface-raised,theme(colors.muted))]" style={{ width: labelWidth }}>
-          <div className="flex h-14 items-center px-3 border-b border-[var(--mn-border,theme(colors.border))] text-sm font-semibold text-[var(--mn-text-muted,theme(colors.muted-foreground))]">Task</div>
+          <div className="flex h-14 items-center px-3 border-b border-[var(--mn-border,theme(colors.border))] text-sm font-semibold text-[var(--mn-text-muted,theme(colors.muted-foreground))]">{t.task}</div>
           {rows.map((r) => (
             <div key={r.task.id} className="flex items-center gap-2 border-b border-[var(--mn-border,theme(colors.border))] px-3 text-sm"
               style={{ height: rowHeight, paddingLeft: r.depth > 0 ? 28 : undefined }}>
               {r.isParent ? (
                 <button type="button" onClick={() => toggle(r.task.id)}
                   className="w-4 shrink-0 text-[var(--mn-text-muted,theme(colors.muted-foreground))] hover:text-[var(--mn-text,theme(colors.foreground))] text-xs transition-transform"
-                  aria-label={collapsed.has(r.task.id) ? "Expand" : "Collapse"}>
+                  aria-label={collapsed.has(r.task.id) ? t.expand : t.collapse}>
                   <span className={cn("inline-block transition-transform", !collapsed.has(r.task.id) && "rotate-90")}>{"\u25B6"}</span>
                 </button>
               ) : r.depth === 0 ? <span className="w-4 shrink-0" /> : null}
@@ -208,7 +210,7 @@ function MnGantt({ tasks, dependencies, labelWidth = 240, rowHeight = 38, showTo
               {range.months.map((m, i) => (
                 <div key={i} className="absolute top-0 bottom-0 w-px bg-[var(--mn-border,theme(colors.border))] opacity-30" style={{ left: daysBetween(range.min, m.date) * ppd }} />
               ))}
-              {showToday && todayL >= 0 && todayL <= tlW && <TodayMarker left={todayL} />}
+              {showToday && todayL >= 0 && todayL <= tlW && <TodayMarker left={todayL} label={t.today} />}
               {allDeps.length > 0 && <DepArrows deps={allDeps} pos={pos} />}
               {rows.map((r, i) => {
                 const hasSummary = !!r.summary

@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useLocale } from "@/lib/i18n";
 import { Sidebar, type NavSection } from "./sidebar";
 import { Header } from "./header";
 import { MnA11yFab } from "@/components/maranello";
@@ -14,13 +15,14 @@ export interface AppShellProps {
 }
 
 export function AppShell({ children, sections, brandName, brandLogo }: AppShellProps) {
+  const t = useLocale("shell");
   const pathname = usePathname();
   // Start collapsed so mobile Sheet is closed on initial render
   const [collapsed, setCollapsed] = useState(true);
 
   const toggleSidebar = useCallback(() => setCollapsed((c) => !c), []);
 
-  const breadcrumb = buildBreadcrumb(brandName ?? "Maranello", pathname, sections);
+  const breadcrumb = buildBreadcrumb(brandName ?? t.brandFallback, pathname, sections, t.dashboard);
 
   return (
     <>
@@ -28,7 +30,7 @@ export function AppShell({ children, sections, brandName, brandLogo }: AppShellP
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground"
       >
-        Skip to main content
+        {t.skipToContent}
       </a>
       <Header
         onMenuToggle={toggleSidebar}
@@ -53,8 +55,8 @@ export function AppShell({ children, sections, brandName, brandLogo }: AppShellP
   );
 }
 
-function buildBreadcrumb(brand: string, pathname: string, sections: NavSection[]): string[] {
-  if (pathname === "/") return [brand, "Dashboard"];
+function buildBreadcrumb(brand: string, pathname: string, sections: NavSection[], dashboard = "Dashboard"): string[] {
+  if (pathname === "/") return [brand, dashboard];
   for (const section of sections) {
     for (const item of section.items) {
       if (item.href === pathname) return [brand, item.label];

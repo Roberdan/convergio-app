@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -133,10 +134,11 @@ function MnBreadcrumb({
   className,
   ...props
 }: MnBreadcrumbProps) {
+  const t = useLocale("breadcrumb")
   if (!items || items.length === 0) return null
 
   return (
-    <nav aria-label="Breadcrumb" data-slot="mn-breadcrumb" {...props}>
+    <nav aria-label={t.breadcrumb} data-slot="mn-breadcrumb" {...props}>
       <ol className={cn(breadcrumbVariants({ size, className }))}>
         {items.map((item, index) => {
           const isLast = index === items.length - 1

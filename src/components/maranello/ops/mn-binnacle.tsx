@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import { formatDateTime } from '../shared/mn-format';
 
@@ -50,6 +51,7 @@ export function MnBinnacle({
   ariaLabel = 'Event log',
   className,
 }: MnBinnacleProps) {
+  const t = useLocale("binnacle");
   const [filter, setFilter] = useState<SeverityFilter>('all');
 
   const sorted = useMemo(
@@ -68,7 +70,7 @@ export function MnBinnacle({
   if (!entries.length) {
     return (
       <div className={cn('rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground', className)}>
-        No log entries.
+        {t.noLogEntries}
       </div>
     );
   }
@@ -81,15 +83,15 @@ export function MnBinnacle({
       {/* filter bar */}
       <div className="flex items-center justify-between border-b px-4 py-2">
         <span className="text-xs font-medium text-muted-foreground">
-          {sorted.length} of {entries.length} entries
+          {sorted.length} of {entries.length} {t.entries}
         </span>
         <label className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span>Filter:</span>
+          <span>{t.filter}</span>
           <select
             value={filter}
             onChange={handleFilterChange}
             className="rounded border bg-background px-2 py-1 text-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            aria-label="Filter by severity"
+            aria-label={t.filterBySeverity}
           >
             <option value="all">All</option>
             {Object.entries(SEVERITY_LABEL).map(([key, label]) => (

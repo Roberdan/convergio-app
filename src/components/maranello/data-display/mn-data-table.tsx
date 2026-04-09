@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import {
   type StatusBadgeMeta, STATUS_MAP,
   type MetricValue, type PersonValue, type ProgressValue,
@@ -104,6 +105,7 @@ function MnDataTable<T extends Record<string, unknown>>({
   columns, data, pageSize = 0, groupBy, selectable, compact = false, loading = false,
   emptyMessage = "No data found", onRowClick, onSort, onFilter, onSelectionChange, onAction, className, ...rest
 }: MnDataTableProps<T>) {
+  const t = useLocale("dataTable")
   const [sortKey, setSortKey] = React.useState<string | null>(null)
   const [sortDir, setSortDir] = React.useState(1)
   const [filters, setFilters] = React.useState<Record<string, string>>({})
@@ -168,7 +170,7 @@ function MnDataTable<T extends Record<string, unknown>>({
   }
 
   function renderBody() {
-    if (loading) return <tr><td colSpan={colSpan} className="py-8 text-center text-[var(--mn-text-muted)]">Loading...</td></tr>
+    if (loading) return <tr><td colSpan={colSpan} className="py-8 text-center text-[var(--mn-text-muted)]">{t.loading}</td></tr>
     if (sorted.length === 0) return <tr><td colSpan={colSpan} className="py-8 text-center text-[var(--mn-text-muted)]">{emptyMessage}</td></tr>
     if (groupBy) return groupRows(sorted, groupBy).flatMap((g) => {
       const hide = collapsed.has(g.name)
@@ -193,11 +195,11 @@ function MnDataTable<T extends Record<string, unknown>>({
 
   return (
     <div className={cn(tableWrap({ compact }), className)} {...rest}>
-      <table role="grid" aria-label={rest["aria-label"] ?? "Data table"} className="w-full border-collapse text-sm">
+      <table role="grid" aria-label={rest["aria-label"] ?? t.dataTable} className="w-full border-collapse text-sm">
         <thead>
           <tr role="row">
             {selectable && <th role="columnheader" className="w-10 px-2 py-2 text-center">
-              {selectable === "multi" && <input type="checkbox" aria-label="Select all rows" checked={data.length > 0 && selected.size === data.length} onChange={toggleAll} />}
+              {selectable === "multi" && <input type="checkbox" aria-label={t.selectAllRows} checked={data.length > 0 && selected.size === data.length} onChange={toggleAll} />}
             </th>}
             {columns.map((col) => (
               <th key={col.key} role="columnheader" scope="col" aria-sort={ariaSortFor(col)}
@@ -214,7 +216,7 @@ function MnDataTable<T extends Record<string, unknown>>({
             {selectable && <th />}
             {columns.map((col) => (
               <th key={`f-${col.key}`} className="px-3 pb-2">
-                {col.filterable && <input type="text" placeholder="Filter..." aria-label={`Filter ${col.label ?? col.key}`}
+                {col.filterable && <input type="text" placeholder={t.filterPlaceholder} aria-label={`Filter ${col.label ?? col.key}`}
                   className="w-full rounded border border-[var(--mn-border)] bg-[var(--mn-surface)] px-2 py-1 text-xs text-[var(--mn-text)]"
                   onChange={(e) => doFilter(col.key, e.target.value)} />}
               </th>
@@ -224,18 +226,18 @@ function MnDataTable<T extends Record<string, unknown>>({
         <tbody role="rowgroup">{renderBody()}</tbody>
       </table>
       {pageSize > 0 && totalPages > 1 && (
-        <nav aria-label="Table pagination" className="flex items-center justify-center gap-1 border-t border-[var(--mn-border)] px-3 py-2">
-          <button disabled={page === 0} aria-label="Previous page" className="rounded px-2 py-1 text-sm disabled:opacity-40" onClick={() => setPage((p) => p - 1)}>{"\u2190"}</button>
+        <nav aria-label={t.tablePagination} className="flex items-center justify-center gap-1 border-t border-[var(--mn-border)] px-3 py-2">
+          <button disabled={page === 0} aria-label={t.previousPage} className="rounded px-2 py-1 text-sm disabled:opacity-40" onClick={() => setPage((p) => p - 1)}>{"\u2190"}</button>
           {Array.from({ length: totalPages }, (_, i) => (
             <button key={i} aria-label={`Page ${i + 1}`} aria-current={i === page ? "page" : undefined} disabled={i === page}
               className={cn("rounded px-2 py-1 text-sm", i === page ? "bg-[var(--mn-primary)] text-[var(--mn-on-primary)] font-semibold" : "hover:bg-[var(--mn-surface-raised)]")}
               onClick={() => setPage(i)}>{i + 1}</button>
           ))}
-          <button disabled={page >= totalPages - 1} aria-label="Next page" className="rounded px-2 py-1 text-sm disabled:opacity-40" onClick={() => setPage((p) => p + 1)}>{"\u2192"}</button>
+          <button disabled={page >= totalPages - 1} aria-label={t.nextPage} className="rounded px-2 py-1 text-sm disabled:opacity-40" onClick={() => setPage((p) => p + 1)}>{"\u2192"}</button>
         </nav>
       )}
       <div role="status" aria-live="polite" className="sr-only">
-        {sorted.length} of {data.length} rows{pageSize > 0 ? `, page ${page + 1} of ${totalPages}` : ""}
+        {sorted.length} of {data.length} {t.rows}{pageSize > 0 ? `, page ${page + 1} of ${totalPages}` : ""}
       </div>
     </div>
   )

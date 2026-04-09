@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { type VariantProps } from 'class-variance-authority'
 import { ExternalLink, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useLocale } from '@/lib/i18n'
 import {
   type SourceCard,
   type SourceCardLayout,
@@ -164,6 +165,7 @@ export function MnSourceCards({
   ariaLabel = 'Source citations',
   className,
 }: MnSourceCardsProps) {
+  const t = useLocale("sourceCards")
   const [expanded, setExpanded] = useState(false)
 
   const isList = layout === 'list'
@@ -182,7 +184,7 @@ export function MnSourceCards({
           className,
         )}
       >
-        No sources available.
+        {t.noSources}
       </div>
     )
   }
@@ -217,7 +219,7 @@ export function MnSourceCards({
             )}
             aria-label={`Show ${remaining} more source citations`}
           >
-            Show {remaining} more
+            {t.show} {remaining} {t.more}
           </button>
         </div>
       )}

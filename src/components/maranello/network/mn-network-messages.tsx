@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import { type ActiveMsg, type Flash, drawFrame, setupCanvas } from "./mn-network-messages.helpers"
 
 /* ── CVA wrapper ───────────────────────────────────────────── */
@@ -57,6 +58,7 @@ function MnNetworkMessages({
   labelColor, bgOverlay = "rgba(3,7,12,0.36)",
   size = "fluid", className, ...rest
 }: MnNetworkMessagesProps) {
+  const t = useLocale("networkMessages")
   const cvs = React.useRef<HTMLCanvasElement>(null)
   const wrap = React.useRef<HTMLDivElement>(null)
   const raf = React.useRef(0)
@@ -137,7 +139,7 @@ function MnNetworkMessages({
 
   return (
     <div
-      ref={wrap} role="img" aria-label="Network message flow"
+      ref={wrap} role="img" aria-label={t.networkMessageFlow}
       className={cn(networkWrap({ size: size as WrapSize }), className)}
       {...rest}
     >

@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { formatMonthYear } from "../shared/mn-format"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Variants ── */
 
@@ -53,6 +54,7 @@ function MnDatePicker({
   value, onChange, min, max, disabledDates, placeholder = "Select date",
   disabled, size, className,
 }: MnDatePickerProps) {
+  const t = useLocale("datePicker")
   const today = React.useMemo(() => { const d = new Date(); return { y: d.getFullYear(), m: d.getMonth(), d: d.getDate() } }, [])
   const sel = value ? parseIso(value) : null
   const [viewY, setViewY] = React.useState(sel?.y ?? today.y)
@@ -139,14 +141,14 @@ function MnDatePicker({
       </button>
 
       {open && (
-        <div role="dialog" aria-modal="true" aria-label="Date picker" className={cn(
+        <div role="dialog" aria-modal="true" aria-label={t.datePicker} className={cn(
           "absolute z-50 mt-1 rounded-[var(--radius-md)] border border-[var(--mn-border)]",
           "bg-[var(--mn-surface-raised)] p-3 shadow-[var(--shadow-deep)]",
         )}>
           <div className="mb-2 flex items-center justify-between">
-            <button type="button" aria-label="Previous month" onClick={() => nav(-1)} className={navBtn}>◀</button>
+            <button type="button" aria-label={t.previousMonth} onClick={() => nav(-1)} className={navBtn}>◀</button>
             <span className="font-semibold text-[var(--mn-text)] font-[var(--font-display)]">{monthLabel}</span>
-            <button type="button" aria-label="Next month" onClick={() => nav(1)} className={navBtn}>▶</button>
+            <button type="button" aria-label={t.nextMonth} onClick={() => nav(1)} className={navBtn}>▶</button>
           </div>
           <div className="mb-1 grid grid-cols-7 text-center text-xs text-[var(--mn-text-muted)]">
             {WDAYS.map((d) => <span key={d} className="py-1">{d}</span>)}
@@ -168,7 +170,7 @@ function MnDatePicker({
           </div>
           <button type="button" onClick={() => { setViewY(today.y); setViewM(today.m); setFocusDay(today.d) }}
             className="mt-2 w-full rounded-[var(--radius-md)] px-2 py-1 text-center text-xs font-medium text-[var(--mn-accent)] hover:bg-[var(--mn-hover-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--mn-accent)]">
-            Today
+            {t.today}
           </button>
         </div>
       )}

@@ -8,11 +8,12 @@ import {
   Search, Settings, Shield, Sun, Table, Target,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import { useTheme } from "@/components/theme/theme-provider"
 import { searchCatalog } from "@/lib/component-catalog"
 
-const NAV_ITEMS = [
-  { label: "Home", href: "/", icon: Home },
+const NAV_ICONS = [
+  { key: "home" as const, href: "/", icon: Home },
 ] as const
 
 const CATEGORY_ITEMS = [
@@ -29,11 +30,11 @@ const CATEGORY_ITEMS = [
   { label: "Strategy", href: "/showcase/strategy", icon: Target },
 ] as const
 
-const THEME_ITEMS = [
-  { label: "Light", value: "light" as const, icon: Sun },
-  { label: "Dark", value: "dark" as const, icon: Moon },
-  { label: "Navy", value: "navy" as const, icon: Monitor },
-  { label: "Colorblind", value: "colorblind" as const, icon: Shield },
+const THEME_ICONS = [
+  { key: "light" as const, value: "light" as const, icon: Sun },
+  { key: "dark" as const, value: "dark" as const, icon: Moon },
+  { key: "navy" as const, value: "navy" as const, icon: Monitor },
+  { key: "colorblind" as const, value: "colorblind" as const, icon: Shield },
 ] as const
 
 const ITEM_CLS = "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm cursor-pointer transition-colors text-[var(--mn-text)] hover:bg-[var(--mn-hover-bg)]"
@@ -43,11 +44,15 @@ const GROUP_CLS = "px-3 py-1 text-[0.65rem] uppercase tracking-wider text-[var(-
 export function SearchCombobox() {
   const router = useRouter()
   const { setTheme } = useTheme()
+  const t = useLocale("searchCombobox")
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
   const [activeIdx, setActiveIdx] = useState(0)
   const rootRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const NAV_ITEMS = NAV_ICONS.map((i) => ({ ...i, label: t[i.key] }))
+  const THEME_ITEMS = THEME_ICONS.map((i) => ({ ...i, label: t[i.key] }))
 
   const results = query.length >= 2 ? searchCatalog(query).slice(0, 8) : []
 
@@ -116,8 +121,8 @@ export function SearchCombobox() {
           ref={inputRef}
           type="text"
           role="searchbox"
-          aria-label="Search components, navigate, or switch theme"
-          placeholder="Search..."
+          aria-label={t.placeholder}
+          placeholder={t.searchPlaceholder}
           value={query}
           onChange={(e) => { setQuery(e.target.value); setActiveIdx(0); setOpen(true) }}
           onFocus={() => setOpen(true)}
@@ -134,12 +139,12 @@ export function SearchCombobox() {
         <div
           id="search-combobox-listbox"
           role="listbox"
-          aria-label="Search results"
+          aria-label={t.searchResults}
           className="absolute top-[calc(100%+4px)] left-0 w-full max-h-80 overflow-y-auto rounded-lg border border-[var(--mn-border)] bg-popover text-popover-foreground shadow-xl ring-1 ring-foreground/10 z-50"
         >
           {results.length > 0 ? (
             <>
-              <div className={GROUP_CLS}>Components</div>
+              <div className={GROUP_CLS}>{t.components}</div>
               {results.map((entry, i) => (
                 <div key={entry.slug} role="option" aria-selected={i === activeIdx}
                   className={cn(ITEM_CLS, i === activeIdx && ITEM_ACTIVE_CLS)}
@@ -153,7 +158,7 @@ export function SearchCombobox() {
             </>
           ) : (
             <>
-              <div className={GROUP_CLS}>Navigation</div>
+              <div className={GROUP_CLS}>{t.navigation}</div>
               {NAV_ITEMS.map((item, i) => {
                 const Icon = item.icon
                 return (
@@ -167,7 +172,7 @@ export function SearchCombobox() {
                 )
               })}
               <div className="mx-2 my-1 h-px bg-[var(--mn-border-subtle)]" />
-              <div className={GROUP_CLS}>Categories</div>
+              <div className={GROUP_CLS}>{t.categories}</div>
               {CATEGORY_ITEMS.map((item, ci) => {
                 const idx = navEnd + ci
                 const Icon = item.icon
@@ -182,7 +187,7 @@ export function SearchCombobox() {
                 )
               })}
               <div className="mx-2 my-1 h-px bg-[var(--mn-border-subtle)]" />
-              <div className={GROUP_CLS}>Theme</div>
+              <div className={GROUP_CLS}>{t.theme}</div>
               {THEME_ITEMS.map((item, ti) => {
                 const idx = catEnd + ti
                 const Icon = item.icon
@@ -199,7 +204,7 @@ export function SearchCombobox() {
             </>
           )}
           {query.length >= 2 && results.length === 0 && (
-            <div className="px-3 py-4 text-center text-sm text-muted-foreground">No results found.</div>
+            <div className="px-3 py-4 text-center text-sm text-muted-foreground">{t.noResults}</div>
           )}
         </div>
       )}

@@ -3,6 +3,7 @@ import { join } from "path";
 import YAML from "yaml";
 import type { AppConfig, NavSection, PageConfig, PageRow } from "@/types";
 import type { AIConfig } from "@/types";
+import type { PartialLocaleMessages } from "@/lib/i18n";
 import { rawConfigSchema, type ValidatedConfig } from "./config-schema";
 
 /**
@@ -155,4 +156,11 @@ export function loadAIConfig(): AIConfig {
 export function loadPageRoutes(): string[] {
   const raw = loadRaw();
   return Object.keys(raw.pages ?? {});
+}
+
+/** Load locale overrides from the config file. */
+export function loadLocaleOverrides(): PartialLocaleMessages | undefined {
+  const raw = loadRaw();
+  if (!raw.locale) return undefined;
+  return raw.locale as PartialLocaleMessages;
 }

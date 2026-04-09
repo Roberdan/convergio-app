@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
+import { useLocale } from "@/lib/i18n";
 
 /**
  * Dashboard-level error boundary.
@@ -17,6 +18,8 @@ export default function DashboardError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useLocale("errorPage");
+
   useEffect(() => {
     console.error("[dashboard] Unhandled error:", error);
   }, [error]);
@@ -24,9 +27,9 @@ export default function DashboardError({
   return (
     <div className="flex flex-col items-center justify-center py-24">
       <AlertTriangle className="h-12 w-12 text-destructive mb-4" />
-      <h2 className="text-xl font-semibold">Something went wrong</h2>
+      <h2 className="text-xl font-semibold">{t.somethingWentWrong}</h2>
       <p className="text-caption mt-1 max-w-sm text-center">
-        {error.message || "An unexpected error occurred in this section."}
+        {error.message || t.sectionError}
       </p>
       {error.digest && (
         <p className="text-xs text-muted-foreground mt-2">
@@ -34,12 +37,12 @@ export default function DashboardError({
         </p>
       )}
       <div className="flex gap-3 mt-6">
-        <Button onClick={reset}>Try Again</Button>
+        <Button onClick={reset}>{t.tryAgain}</Button>
         <Link
           href="/"
           className="inline-flex items-center rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
         >
-          Go to dashboard
+          {t.goToDashboard}
         </Link>
       </div>
     </div>

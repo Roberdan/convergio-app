@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { cva } from 'class-variance-authority';
 import { useCallback, useRef, useState } from 'react';
 
@@ -73,6 +74,7 @@ function truncate(text: string | undefined): string {
 }
 
 function StepBody({ step }: { step: TraceStep }) {
+  const t = useLocale("agentTrace");
   const hasContent = step.input || step.output;
   if (!hasContent) return null;
 
@@ -81,7 +83,7 @@ function StepBody({ step }: { step: TraceStep }) {
       {step.input && (
         <div className="mb-2">
           <span className="mb-1 block font-semibold text-muted-foreground">
-            Input
+            {t.input}
           </span>
           <pre className="whitespace-pre-wrap break-words rounded bg-muted/50 p-2 font-mono text-card-foreground">
             {truncate(step.input)}
@@ -91,7 +93,7 @@ function StepBody({ step }: { step: TraceStep }) {
       {step.output && (
         <div>
           <span className="mb-1 block font-semibold text-muted-foreground">
-            Output
+            {t.output}
           </span>
           <pre className="whitespace-pre-wrap break-words rounded bg-muted/50 p-2 font-mono text-card-foreground">
             {truncate(step.output)}
@@ -191,6 +193,7 @@ export function MnAgentTrace({
   ariaLabel = 'Agent trace',
   className,
 }: MnAgentTraceProps) {
+  const t = useLocale("agentTrace");
   const [expandedSet, setExpandedSet] = useState<Set<string>>(new Set());
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -219,7 +222,7 @@ export function MnAgentTrace({
           className,
         )}
       >
-        No trace steps to display.
+        {t.noTraceSteps}
       </div>
     );
   }

@@ -3,6 +3,7 @@
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import type { MeshNode } from "./mn-mesh-network"
 
 /* ── CVA variants ──────────────────────────────────────────── */
@@ -85,6 +86,7 @@ export interface MnMeshNetworkCardProps {
 }
 
 export function MnMeshNetworkCard({ node, selected, onSelect, onAction }: MnMeshNetworkCardProps) {
+  const t = useLocale("meshNetworkCard")
   const location = (node.location ?? "local").toUpperCase()
   const typeLabel = TYPE_LABEL[node.type] ?? node.type.toUpperCase()
   const hasResources = node.cpu != null || node.ram != null
@@ -160,9 +162,9 @@ export function MnMeshNetworkCard({ node, selected, onSelect, onAction }: MnMesh
 
       {/* Action buttons row */}
       <div className="flex items-center gap-1 border-t border-[var(--mn-border)] pt-1.5 -mx-1">
-        <CardAction icon="⟲" title="Sync" onClick={() => onAction?.(node, "sync")} />
-        <CardAction icon="↑" title="Push" onClick={() => onAction?.(node, "push")} />
-        <CardAction icon="⏻" title="Toggle" onClick={() => onAction?.(node, "toggle")} />
+        <CardAction icon="⟲" title={t.sync} onClick={() => onAction?.(node, "sync")} />
+        <CardAction icon="↑" title={t.push} onClick={() => onAction?.(node, "push")} />
+        <CardAction icon="⏻" title={t.toggle} onClick={() => onAction?.(node, "toggle")} />
       </div>
     </div>
   )

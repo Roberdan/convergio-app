@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva } from "class-variance-authority"
 import { Search, MoreHorizontal, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Types ───────────────────────────────────────────────── */
 
@@ -97,6 +98,7 @@ function MnUserTable({
   users, searchable = true, selectable = true, loading = false,
   emptyMessage = "No users found", onSelect, onAction, onSelectionChange, className, ...rest
 }: MnUserTableProps) {
+  const t = useLocale("userTable")
   const [query, setQuery] = React.useState("")
   const [selected, setSelected] = React.useState<Set<string>>(new Set())
 
@@ -202,7 +204,7 @@ function MnUserTable({
   }
 
   function renderBody() {
-    if (loading) return <tr><td colSpan={colSpan} className="py-8 text-center text-[var(--mn-text-muted)]">Loading&#8230;</td></tr>
+    if (loading) return <tr><td colSpan={colSpan} className="py-8 text-center text-[var(--mn-text-muted)]">{t.loading}</td></tr>
     if (filtered.length === 0) return <tr><td colSpan={colSpan} className="py-8 text-center text-[var(--mn-text-muted)]">{emptyMessage}</td></tr>
     return filtered.map(renderRow)
   }
@@ -212,34 +214,34 @@ function MnUserTable({
       {searchable && (
         <div className="flex items-center gap-2 border-b border-[var(--mn-border)] px-3 py-2">
           <Search className="h-4 w-4 text-[var(--mn-text-muted)]" aria-hidden="true" />
-          <input type="search" placeholder="Search users\u2026" aria-label="Search users"
+          <input type="search" placeholder={t.searchPlaceholder} aria-label="Search users"
             className="flex-1 bg-transparent text-sm text-[var(--mn-text)] placeholder:text-[var(--mn-text-muted)] outline-none"
             value={query} onChange={(e) => setQuery(e.target.value)} />
           <span className="text-xs text-[var(--mn-text-muted)]">{filtered.length} user{filtered.length !== 1 ? "s" : ""}</span>
         </div>
       )}
-      <table role="grid" aria-label={rest["aria-label"] ?? "User table"} className="w-full border-collapse text-sm">
+      <table role="grid" aria-label={rest["aria-label"] ?? t.userTable} className="w-full border-collapse text-sm">
         <thead>
           <tr role="row">
             {selectable && (
               <th role="columnheader" className="w-10 px-2 py-2 text-center">
-                <input type="checkbox" aria-label="Select all users"
+                <input type="checkbox" aria-label={t.selectAllUsers}
                   checked={filtered.length > 0 && selected.size === filtered.length}
                   onChange={toggleAll} />
               </th>
             )}
-            <th role="columnheader" scope="col" className={thCls}>User</th>
-            <th role="columnheader" scope="col" className={thCls}>Status</th>
-            <th role="columnheader" scope="col" className={thCls}>Role</th>
-            <th role="columnheader" scope="col" className={thCls}>Teams</th>
-            <th role="columnheader" scope="col" className={thCls}>Last active</th>
-            <th role="columnheader" scope="col" className={cn(thCls, "text-right")}><span className="sr-only">Actions</span></th>
+            <th role="columnheader" scope="col" className={thCls}>{t.user}</th>
+            <th role="columnheader" scope="col" className={thCls}>{t.status}</th>
+            <th role="columnheader" scope="col" className={thCls}>{t.role}</th>
+            <th role="columnheader" scope="col" className={thCls}>{t.teams}</th>
+            <th role="columnheader" scope="col" className={thCls}>{t.lastActive}</th>
+            <th role="columnheader" scope="col" className={cn(thCls, "text-right")}><span className="sr-only">{t.actions}</span></th>
           </tr>
         </thead>
         <tbody role="rowgroup">{renderBody()}</tbody>
       </table>
       <div role="status" aria-live="polite" className="sr-only">
-        {filtered.length} of {users.length} users
+        {filtered.length} of {users.length} {t.users}
       </div>
     </div>
   )

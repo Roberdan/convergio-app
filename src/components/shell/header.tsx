@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu, Bell } from "lucide-react";
+import { useLocale } from "@/lib/i18n";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SearchCombobox } from "./search-combobox";
@@ -11,6 +12,7 @@ export interface HeaderProps {
 }
 
 export function Header({ onMenuToggle, breadcrumb }: HeaderProps) {
+  const t = useLocale("header");
   return (
     <header className="fixed top-0 left-0 z-50 flex h-[52px] w-full items-center border-b border-sidebar-border bg-sidebar text-sidebar-foreground">
       {/* Left zone */}
@@ -18,14 +20,14 @@ export function Header({ onMenuToggle, breadcrumb }: HeaderProps) {
         <button
           type="button"
           onClick={onMenuToggle}
-          aria-label="Toggle menu"
+          aria-label={t.toggleMenu}
           className="inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Menu className="h-4 w-4" />
         </button>
 
         {breadcrumb.length > 0 && (
-          <nav aria-label="Breadcrumb" className="flex items-center text-sm">
+          <nav aria-label={t.breadcrumb} className="flex items-center text-sm">
             <ol className="flex items-center list-none m-0 p-0">
               {breadcrumb.map((segment, i) => (
                 <li key={i} className="flex items-center">
@@ -61,7 +63,7 @@ export function Header({ onMenuToggle, breadcrumb }: HeaderProps) {
 
         <button
           type="button"
-          aria-label="Notifications"
+          aria-label={t.notifications}
           className="inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Bell className="h-4 w-4" />
