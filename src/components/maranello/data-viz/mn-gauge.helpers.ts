@@ -76,10 +76,7 @@ export function render(
   cvs.width = px * dpr; cvs.height = px * dpr
   cvs.style.width = `${px}px`; cvs.style.height = `${px}px`
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-  const cx = px / 2, cy = px / 2, r = px * 0.40
-  // Canvas arc() origin is 3 o'clock; gauge convention is 6 o'clock → rotate -90°
-  const angleOffset = -90
-  const aSa = sa + angleOffset, aEa = ea + angleOffset, sw = aEa - aSa
+  const cx = px / 2, cy = px / 2, r = px * 0.40, sw = ea - sa
   const dn = px <= 140 ? "sm" : px <= 260 ? "md" : "lg"
   ctx.clearRect(0, 0, px, px)
 
@@ -95,9 +92,9 @@ export function render(
   // Inner ring
   if (ir) {
     const irR = r * 0.48
-    ctx.beginPath(); ctx.arc(cx, cy, irR, R(aSa), R(aSa + sw)); ctx.strokeStyle = pal.trackAlpha; ctx.lineWidth = 3; ctx.lineCap = "round"; ctx.stroke()
+    ctx.beginPath(); ctx.arc(cx, cy, irR, R(sa), R(sa + sw)); ctx.strokeStyle = pal.trackAlpha; ctx.lineWidth = 3; ctx.lineCap = "round"; ctx.stroke()
     const irV = (ir.value / ir.max) * sw * prog
-    ctx.beginPath(); ctx.arc(cx, cy, irR, R(aSa), R(aSa + irV)); ctx.strokeStyle = ir.color; ctx.lineWidth = 3; ctx.lineCap = "round"; ctx.stroke()
+    ctx.beginPath(); ctx.arc(cx, cy, irR, R(sa), R(sa + irV)); ctx.strokeStyle = ir.color; ctx.lineWidth = 3; ctx.lineCap = "round"; ctx.stroke()
     ctx.font = `500 ${Math.max(7, px * 0.04)}px 'Barlow Condensed','Outfit',sans-serif`; ctx.fillStyle = ir.color; ctx.textAlign = "center"; ctx.textBaseline = "middle"
     ctx.fillText(ir.label, cx, cy + r * 0.50)
   }
@@ -106,7 +103,7 @@ export function render(
   if (tk > 0) {
     const tot = tk * stk
     for (let i = 0; i <= tot; i++) {
-      const a = R(aSa + (i / tot) * sw), maj = i % stk === 0
+      const a = R(sa + (i / tot) * sw), maj = i % stk === 0
       const half = stk > 1 && i % Math.floor(stk / 2) === 0 && !maj
       if (dn === "sm" && !maj && !half) continue
       const [iR, oR, lw, tc] = maj ? [0.70, 0.92, 2.2, pal.tickMajor] : half ? [0.78, 0.92, 1, pal.tickHalf] : [0.84, 0.92, 0.6, pal.tickMinor]
@@ -121,18 +118,18 @@ export function render(
     ctx.font = `500 ${fs}px 'Barlow Condensed','Outfit',sans-serif`
     ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillStyle = pal.numbers
     const step = dn === "sm" && nums.length > 5 ? 2 : 1
-    nums.forEach((n, i) => { if (step > 1 && i % step !== 0 && i !== nums.length - 1) return; const a = R(aSa + (n / (mx - mn)) * sw); ctx.fillText(n.toString(), cx + Math.cos(a) * r * 0.56, cy + Math.sin(a) * r * 0.56) })
+    nums.forEach((n, i) => { if (step > 1 && i % step !== 0 && i !== nums.length - 1) return; const a = R(sa + (n / (mx - mn)) * sw); ctx.fillText(n.toString(), cx + Math.cos(a) * r * 0.56, cy + Math.sin(a) * r * 0.56) })
   }
 
   // Arc bar
   if (ab) {
     const ar = r * 0.96
-    ctx.beginPath(); ctx.arc(cx, cy, ar, R(aSa), R(aSa + sw)); ctx.strokeStyle = pal.trackAlpha; ctx.lineWidth = 5; ctx.lineCap = "round"; ctx.stroke()
+    ctx.beginPath(); ctx.arc(cx, cy, ar, R(sa), R(sa + sw)); ctx.strokeStyle = pal.trackAlpha; ctx.lineWidth = 5; ctx.lineCap = "round"; ctx.stroke()
     const v = (ab.value / ab.max) * sw * prog, stops = ab.colorStops ?? [pal.signalDanger, pal.signalWarn, pal.signalOk], frac = sw / 360
-    const cg = ctx.createConicGradient(R(aSa), cx, cy)
+    const cg = ctx.createConicGradient(R(sa), cx, cy)
     stops.forEach((c, i) => cg.addColorStop((i / (stops.length - 1)) * frac, c))
-    ctx.beginPath(); ctx.arc(cx, cy, ar, R(aSa), R(aSa + v)); ctx.strokeStyle = cg; ctx.lineWidth = 5; ctx.lineCap = "round"; ctx.stroke()
-    const na = R(aSa + v); circ(ctx, cx + Math.cos(na) * ar, cy + Math.sin(na) * ar, 3); ctx.fillStyle = pal.arcDot; ctx.fill()
+    ctx.beginPath(); ctx.arc(cx, cy, ar, R(sa), R(sa + v)); ctx.strokeStyle = cg; ctx.lineWidth = 5; ctx.lineCap = "round"; ctx.stroke()
+    const na = R(sa + v); circ(ctx, cx + Math.cos(na) * ar, cy + Math.sin(na) * ar, 3); ctx.fillStyle = pal.arcDot; ctx.fill()
     const afs = Math.max(7, px * 0.04)
     if (ab.labelCenter) { ctx.font = `600 ${afs}px 'Barlow Condensed',sans-serif`; ctx.fillStyle = pal.signalOk; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(ab.labelCenter, cx, cy + r * 0.78) }
     if (ab.labelLeft) { ctx.font = `400 ${Math.max(6, px * 0.03)}px 'Inter',sans-serif`; ctx.fillStyle = pal.muted; ctx.textAlign = "left"; ctx.fillText(ab.labelLeft, cx - r * 0.65, cy + r * 0.92) }
@@ -142,7 +139,7 @@ export function render(
   // Needle
   const norm = val - mn, range = mx - mn || 1
   if (tk > 0) {
-    const cur = norm * prog, a = R(aSa + (cur / range) * sw)
+    const cur = norm * prog, a = R(sa + (cur / range) * sw)
     const len = r * 0.82, tl = r * 0.18, tipX = cx + Math.cos(a) * len, tipY = cy + Math.sin(a) * len
     const pa = a + Math.PI / 2, bw = Math.max(1.8, px * 0.012), tX = cx - Math.cos(a) * tl, tY = cy - Math.sin(a) * tl, tw = bw * 1.5
     ctx.save(); ctx.shadowColor = color; ctx.shadowBlur = 22
