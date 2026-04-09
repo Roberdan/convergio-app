@@ -32,6 +32,7 @@ export interface BrainSceneOpts {
   onNodeClick?: (node: Brain3DNode) => void
   onNodeHover?: (node: Brain3DNode | null) => void
   particleSize?: number
+  showTraffic?: boolean
 }
 
 export interface BrainSceneHandle {
@@ -43,7 +44,7 @@ export interface BrainSceneHandle {
 const BG = 0x080810
 
 export function createBrainScene(opts: BrainSceneOpts): BrainSceneHandle {
-  const { canvas, nodes, edges, palette, showLabels, reducedMotion, particleSize } = opts
+  const { canvas, nodes, edges, palette, showLabels, reducedMotion, particleSize, showTraffic } = opts
   let { width, height } = opts
 
   /* ── Core setup ─────────────────────────────────────────── */
@@ -117,14 +118,15 @@ export function createBrainScene(opts: BrainSceneOpts): BrainSceneHandle {
     const { tube, curve } = createConnectionCurve(from, to, edge, palette, src)
     scene.add(tube)
     if (reducedMotion) continue
-    const pCount = edge.particles ?? (edge.active ? 4 : 0)
+    const pCount = showTraffic ? (edge.particles ?? (edge.active ? 4 : 0)) : (edge.active ? 4 : 0)
     if (pCount <= 0) continue
     const pColor = edge.particleColor
       ? new Color(edge.particleColor)
       : new Color(nodeColor(src, palette))
     const speedBase = 0.001 + (edge.particleSpeed ?? 0.5) * 0.005
-    const count = Math.min(pCount, 20)
-    for (let p = 0; p < count; p++) {
+    // Cap total particles per edge at 20, split evenly if bidirectional
+    const perDir = edge.bidirectional ? Math.min(pCount, 10) : Math.min(pCount, 20)
+    for (let p = 0; p < perDir; p++) {
       const m = createTravelParticle(pColor, particleSize)
       scene.add(m)
       travelers.push({ mesh: m, curve, t: Math.random(), speed: speedBase + Math.random() * 0.002 })
@@ -132,7 +134,7 @@ export function createBrainScene(opts: BrainSceneOpts): BrainSceneHandle {
     if (edge.bidirectional) {
       const pts = curve.points
       const rev = new CatmullRomCurve3([pts[pts.length - 1].clone(), pts[1].clone(), pts[0].clone()])
-      for (let p = 0; p < count; p++) {
+      for (let p = 0; p < perDir; p++) {
         const m = createTravelParticle(pColor, particleSize)
         scene.add(m)
         travelers.push({ mesh: m, curve: rev, t: Math.random(), speed: speedBase + Math.random() * 0.002 })

@@ -27,6 +27,7 @@ export function useEventSource<T>(
   const [error, setError] = useState<string | null>(null);
   const onMessageRef = useRef(onMessage);
   const retryRef = useRef(1000);
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const connectRef = useRef<(() => (() => void) | undefined) | null>(null);
 
   useEffect(() => {
@@ -61,14 +62,17 @@ export function useEventSource<T>(
         setError("Connection lost");
         const delay = Math.min(retryRef.current, 30000);
         retryRef.current = delay * 2;
-        setTimeout(() => connectRef.current?.(), delay);
+        retryTimerRef.current = setTimeout(() => connectRef.current?.(), delay);
       };
 
       return () => source.close();
     };
 
     const cleanup = connectRef.current();
-    return cleanup;
+    return () => {
+      if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
+      cleanup?.();
+    };
   }, [url, enabled]);
 
   return { data, connected, error };
