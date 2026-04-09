@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { useCallback, useId, useMemo } from 'react';
 import { formatNumber } from '../shared/mn-format';
@@ -124,6 +125,7 @@ export function MnCohortGrid({
   ...rest
 }: MnCohortGridProps) {
   const id = useId();
+  const t = useLocale("cohortGrid");
   const periods = useMemo(() => maxPeriods(rows), [rows]);
   const colorHigh = useMemo(() => parseHex(resolveSignalHex('--mn-signal-ok', FALLBACK_HIGH)), []);
   const colorLow = useMemo(() => parseHex(resolveSignalHex('--mn-signal-error', FALLBACK_LOW)), []);
@@ -149,7 +151,7 @@ export function MnCohortGrid({
     <div className={cn(cohortGridVariants({ size }), className)} {...rest}>
       <table
         role="table"
-        aria-label="Cohort retention grid"
+        aria-label={t.cohortRetentionGrid}
         className="w-full border-collapse"
       >
         <thead>
@@ -159,7 +161,7 @@ export function MnCohortGrid({
               role="columnheader"
               className="sticky left-0 z-10 bg-[var(--mn-surface-raised)] px-3 py-2 text-left font-semibold text-[var(--mn-text-muted)]"
             >
-              Cohort
+              {t.cohort}
             </th>
             {Array.from({ length: periods }, (_, i) => (
               <th

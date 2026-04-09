@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 const costTimelineWrap = cva("relative block", {
   variants: { size: { sm: "h-40", md: "h-52", lg: "h-72", fluid: "h-full w-full" } },
@@ -153,6 +154,7 @@ function MnCostTimeline({
   labels, series, stacked = true, animate = true, unit = "$",
   size = "md", onHover, className, ...rest
 }: MnCostTimelineProps) {
+  const t = useLocale("costTimeline")
   const cvs = React.useRef<HTMLCanvasElement>(null)
   const wrap = React.useRef<HTMLDivElement>(null)
   const raf = React.useRef(0)
@@ -201,13 +203,13 @@ function MnCostTimeline({
     <div ref={wrap} className={cn(costTimelineWrap({ size: size as TimelineSize }), className)} {...rest}>
       <canvas
         ref={cvs} role="img"
-        aria-label={`Cost timeline: ${series.length} series over ${labels.length} periods`}
+        aria-label={`${t.costTimeline}: ${series.length} series over ${labels.length} periods`}
         className="block h-full w-full" onMouseMove={handleMove} onMouseLeave={handleLeave}
       />
       <div className="sr-only">
         <table>
-          <caption>Cost timeline</caption>
-          <thead><tr><th>Period</th>{series.map((s) => <th key={s.id}>{s.label}</th>)}</tr></thead>
+          <caption>{t.costTimeline}</caption>
+          <thead><tr><th>{t.period}</th>{series.map((s) => <th key={s.id}>{s.label}</th>)}</tr></thead>
           <tbody>
             {labels.map((lbl, i) => (
               <tr key={lbl}>

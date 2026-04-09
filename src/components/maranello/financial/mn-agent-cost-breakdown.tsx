@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { cva } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import { formatNumber } from "../shared/mn-format"
 import { ArrowDown, ArrowUp, ArrowUpDown, TrendingDown, TrendingUp } from "lucide-react"
 
@@ -134,6 +135,7 @@ export function MnAgentCostBreakdown({
   rows, currency = "USD", period = "This period", sortable = true,
   onSelect, onBudgetAlert, className,
 }: MnAgentCostBreakdownProps) {
+  const t = useLocale("agentCostBreakdown")
   const [sortKey, setSortKey] = useState("cost")
   const [sortDir, setSortDir] = useState<SortDir>("desc")
   const fmt = useMemo(() => currencyFmt(currency), [currency])
@@ -172,12 +174,12 @@ export function MnAgentCostBreakdown({
     <div className={cn(wrapCva(), className)}>
       <div className="flex items-center justify-between border-b border-[var(--mn-border)] px-4 py-3">
         <div>
-          <h3 className="text-sm font-semibold text-[var(--mn-text)]">Agent Cost Breakdown</h3>
+          <h3 className="text-sm font-semibold text-[var(--mn-text)]">{t.agentCostBreakdown}</h3>
           <span className="text-xs text-[var(--mn-text-muted)]">{period}</span>
         </div>
         <span className="text-lg font-bold tabular-nums text-[var(--mn-text)]">{fmt.format(totals.cost)}</span>
       </div>
-      <table role="grid" aria-label="Agent cost breakdown" className="w-full border-collapse text-sm">
+      <table role="grid" aria-label={t.agentCostBreakdownAria} className="w-full border-collapse text-sm">
         <thead>
           <tr role="row">
             {COLS.map((c) => (
@@ -218,7 +220,7 @@ export function MnAgentCostBreakdown({
         </tbody>
         <tfoot>
           <tr className="border-t border-[var(--mn-border)] bg-[var(--mn-surface-raised)]">
-            <td className={TD} colSpan={2}><strong>Total</strong></td>
+            <td className={TD} colSpan={2}><strong>{t.total}</strong></td>
             <td className={cn(TD, "text-right tabular-nums")}><strong>{COMPACT.format(totals.tokens)}</strong></td>
             <td className={TD} />
             <td className={cn(TD, "text-right tabular-nums")}><strong>{fmt.format(totals.cost)}</strong></td>
@@ -229,7 +231,7 @@ export function MnAgentCostBreakdown({
         </tfoot>
       </table>
       <div role="status" aria-live="polite" className="sr-only">
-        {rows.length} agents, total cost {fmt.format(totals.cost)}
+        {rows.length} {t.agentsTotalCost} {fmt.format(totals.cost)}
       </div>
     </div>
   )

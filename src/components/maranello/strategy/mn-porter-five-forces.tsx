@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 
 export type ForceLevel = 'low' | 'medium' | 'high';
 
@@ -24,12 +25,6 @@ const levelColor: Record<ForceLevel, string> = {
   high: 'border-red-500 bg-red-500/10 text-red-700 dark:text-red-400',
 };
 
-const levelLabel: Record<ForceLevel, string> = {
-  low: 'Low',
-  medium: 'Medium',
-  high: 'High',
-};
-
 /**
  * Porter's Five Forces diagram.
  *
@@ -38,9 +33,10 @@ const levelLabel: Record<ForceLevel, string> = {
  */
 export function MnPorterFiveForces({
   forces,
-  ariaLabel = "Porter's Five Forces",
+  ariaLabel,
   className,
 }: MnPorterFiveForcesProps) {
+  const t = useLocale("porterFiveForces");
   if (forces.length < 5) return null;
 
   /* Canonical order: [0]=rivalry(center), [1]=top, [2]=right, [3]=bottom, [4]=left */
@@ -49,7 +45,7 @@ export function MnPorterFiveForces({
   return (
     <div
       role="region"
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? t.porterFiveForces}
       className={cn('relative w-full max-w-lg mx-auto', className)}
     >
       {/* SVG connectors */}
@@ -92,6 +88,12 @@ function ForceCard({
   position: string;
   isCenter?: boolean;
 }) {
+  const t = useLocale("porterFiveForces");
+  const localizedLevel: Record<ForceLevel, string> = {
+    low: t.low,
+    medium: t.medium,
+    high: t.high,
+  };
   return (
     <div
       className={cn(
@@ -100,7 +102,7 @@ function ForceCard({
         isCenter && 'shadow-md ring-1 ring-border',
       )}
       role="group"
-      aria-label={`${force.name}: ${levelLabel[force.level]} threat`}
+      aria-label={`${force.name}: ${localizedLevel[force.level]} threat`}
     >
       <span className="text-xs font-bold uppercase tracking-wider leading-tight">
         {force.name}
@@ -113,7 +115,7 @@ function ForceCard({
           force.level === 'low' && 'bg-emerald-500/20',
         )}
       >
-        {levelLabel[force.level]}
+        {localizedLevel[force.level]}
       </span>
       {force.notes && (
         <span className="mt-1 text-[10px] opacity-70 leading-tight">

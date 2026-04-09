@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { useMemo } from 'react';
 import { formatNumber } from '../shared/mn-format';
 
@@ -46,6 +47,7 @@ export function MnFinOps({
   ariaLabel = 'Financial Operations',
   className,
 }: MnFinOpsProps) {
+  const t = useLocale("finOps");
   const fmt = useMemo(
     () => formatValue ?? formatNumber,
     [formatValue],
@@ -111,8 +113,8 @@ export function MnFinOps({
               </div>
 
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Actual: {fmt(m.value)}</span>
-                <span>Budget: {fmt(m.budget)}</span>
+                <span>{t.actual} {fmt(m.value)}</span>
+                <span>{t.budget} {fmt(m.budget)}</span>
               </div>
             </div>
           );

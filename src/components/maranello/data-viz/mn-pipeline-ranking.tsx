@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { useMemo } from 'react';
 import { formatNumber } from '../shared/mn-format';
 
@@ -37,6 +38,7 @@ export function MnPipelineRanking({
   ariaLabel = 'Pipeline funnel',
   className,
 }: MnPipelineRankingProps) {
+  const t = useLocale("pipelineRanking");
   const maxCount = useMemo(
     () => Math.max(...stages.map((s) => s.count), 1),
     [stages],
@@ -70,7 +72,7 @@ export function MnPipelineRanking({
                 <span className="ml-2" aria-hidden="true">
                   \u2193
                 </span>
-                <span>{convRate}% conversion</span>
+                <span>{convRate}{t.conversion}</span>
               </div>
             )}
 

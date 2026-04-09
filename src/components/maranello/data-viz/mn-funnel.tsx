@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 export interface FunnelStage {
   label: string; count: number; color?: string
@@ -107,10 +108,11 @@ function StageRow({ stage, i, next, barW, barX, y, total, reach, rows, animate, 
 }
 
 export function MnFunnel({ data, animate = true, size, onStageClick, className, ...props }: MnFunnelProps) {
+  const t = useLocale("funnel")
   if (!data?.pipeline?.length) {
     return (
-      <div {...props} className={cn(funnelVariants({ size }), className)} role="img" aria-label="Pipeline funnel">
-        <p className="py-6 text-center text-sm text-[var(--mn-text-muted,_#9ca3af)]">No pipeline stages available.</p>
+      <div {...props} className={cn(funnelVariants({ size }), className)} role="img" aria-label={t.pipelineFunnel}>
+        <p className="py-6 text-center text-sm text-[var(--mn-text-muted,_#9ca3af)]">{t.noStages}</p>
       </div>
     )
   }
@@ -122,7 +124,7 @@ export function MnFunnel({ data, animate = true, size, onStageClick, className, 
   const hc = resColor(data.onHold?.color, "var(--mn-warning, #ea580c)"), wc = resColor(data.withdrawn?.color, "var(--mn-text-muted, #666666)")
 
   return (
-    <div {...props} className={cn(funnelVariants({ size }), className)} role="img" aria-label="Pipeline funnel">
+    <div {...props} className={cn(funnelVariants({ size }), className)} role="img" aria-label={t.pipelineFunnel}>
       <svg viewBox={`0 0 ${VB_W} ${svgH}`} preserveAspectRatio="xMidYMid meet" className="h-auto w-full">
         {pipe.map((stage, i) => {
           const barW = Math.max(PIPE_W * MIN_BAR, (stage.count / maxC) * PIPE_W)
@@ -136,13 +138,13 @@ export function MnFunnel({ data, animate = true, size, onStageClick, className, 
         {data.onHold && data.onHold.count > 0 && (
           <g>
             <circle cx={PIPE_L} cy={svgH - 4} r={4} fill={hc} opacity={0.8} />
-            <text x={PIPE_L + 8} y={svgH - 1} fontSize={9} fill={MUTED} fontWeight={500} style={{ fontFamily: FONT_B }}>⏸ On Hold: {data.onHold.count}</text>
+            <text x={PIPE_L + 8} y={svgH - 1} fontSize={9} fill={MUTED} fontWeight={500} style={{ fontFamily: FONT_B }}>⏸ {t.onHold} {data.onHold.count}</text>
           </g>
         )}
         {data.withdrawn && data.withdrawn.count > 0 && (
           <g>
             <circle cx={PIPE_L + PIPE_W / 2 + 20} cy={svgH - 4} r={4} fill={wc} opacity={0.8} />
-            <text x={PIPE_L + PIPE_W / 2 + 28} y={svgH - 1} fontSize={9} fill={MUTED} fontWeight={500} style={{ fontFamily: FONT_B }}>✕ Withdrawn: {data.withdrawn.count}</text>
+            <text x={PIPE_L + PIPE_W / 2 + 28} y={svgH - 1} fontSize={9} fill={MUTED} fontWeight={500} style={{ fontFamily: FONT_B }}>✕ {t.withdrawn} {data.withdrawn.count}</text>
           </g>
         )}
       </svg>

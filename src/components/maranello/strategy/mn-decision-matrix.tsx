@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { useCallback, useMemo, useState } from 'react';
 
 export interface DecisionCriterion {
@@ -41,6 +42,7 @@ export function MnDecisionMatrix({
   ariaLabel = 'Decision matrix',
   className,
 }: MnDecisionMatrixProps) {
+  const t = useLocale("decisionMatrix");
   const [sortAsc, setSortAsc] = useState(false);
 
   const scored = useMemo((): ScoredOption[] => {
@@ -78,7 +80,7 @@ export function MnDecisionMatrix({
         <thead>
           <tr className="border-b text-left text-muted-foreground">
             <th scope="col" className="p-3 font-medium">
-              Option
+              {t.option}
             </th>
             {criteria.map((c) => (
               <th
@@ -100,7 +102,7 @@ export function MnDecisionMatrix({
                 className="inline-flex items-center gap-1 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none rounded px-1"
                 aria-label={`Sort by total ${sortAsc ? 'descending' : 'ascending'}`}
               >
-                Total
+                {t.total}
                 <span aria-hidden="true">{sortAsc ? '\u25B2' : '\u25BC'}</span>
               </button>
             </th>
@@ -120,8 +122,8 @@ export function MnDecisionMatrix({
               <td className="p-3">
                 {row.option.name}
                 {row.isWinner && (
-                  <span className="ml-2 text-[10px] text-primary" aria-label="Winner">
-                    BEST
+                  <span className="ml-2 text-[10px] text-primary" aria-label={t.winner}>
+                    {t.best}
                   </span>
                 )}
               </td>

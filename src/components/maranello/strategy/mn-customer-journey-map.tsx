@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 
 export type Sentiment = 'positive' | 'neutral' | 'negative';
 
@@ -44,6 +45,7 @@ export function MnCustomerJourneyMap({
   ariaLabel = 'Customer Journey Map',
   className,
 }: MnCustomerJourneyMapProps) {
+  const t = useLocale("customerJourneyMap");
   if (!stages.length) return null;
 
   return (
@@ -98,7 +100,7 @@ export function MnCustomerJourneyMap({
               ))}
               {stage.touchpoints.length === 0 && (
                 <span className="text-xs text-muted-foreground italic">
-                  No touchpoints
+                  {t.noTouchpoints}
                 </span>
               )}
             </div>

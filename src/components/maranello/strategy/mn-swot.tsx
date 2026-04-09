@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 /* ── Types ─────────────────────────────────────────────────── */
 export type SwotQuadrant = "strengths" | "weaknesses" | "opportunities" | "threats"
@@ -60,6 +61,7 @@ export function MnSwot({
   editable = false, onChange,
   ariaLabel = "SWOT Analysis", size, className,
 }: MnSwotProps) {
+  const t = useLocale("swot")
   /* Editable internal store (initialised from props) */
   const [store, setStore] = React.useState<Record<SwotQuadrant, SwotEntry[]>>(() => ({
     strengths: toEntries(strengths), weaknesses: toEntries(weaknesses),
@@ -191,7 +193,7 @@ export function MnSwot({
                 </li>
               ))}
               {items.length === 0 && (
-                <li className="text-xs italic opacity-50">No items</li>
+                <li className="text-xs italic opacity-50">{t.noItems}</li>
               )}
             </ul>
 

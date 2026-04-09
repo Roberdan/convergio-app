@@ -8,6 +8,7 @@ import {
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -107,6 +108,7 @@ function MnBusinessModelCanvasBlock({
   onAdd: (blockId: BmcBlockId, text: string) => void
   onRemove: (blockId: BmcBlockId, idx: number) => void
 }) {
+  const t = useLocale("businessModelCanvas")
   const [adding, setAdding] = React.useState(false)
   const [draft, setDraft] = React.useState("")
   const inputRef = React.useRef<HTMLInputElement>(null)
@@ -173,7 +175,7 @@ function MnBusinessModelCanvasBlock({
             value={draft}
             aria-label={`New ${block.label.toLowerCase()}`}
             className="flex-1 rounded border border-[var(--mn-border)] bg-[var(--mn-surface)] px-2 py-1 text-xs text-[var(--mn-text)] placeholder:text-[var(--mn-text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--mn-accent)]"
-            placeholder="Enter item…"
+            placeholder={t.enterItem}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") { e.preventDefault(); commit() }
@@ -182,7 +184,7 @@ function MnBusinessModelCanvasBlock({
           />
           <button
             type="button"
-            aria-label="Confirm"
+            aria-label={t.confirm}
             className="rounded bg-[var(--mn-accent)] px-2 py-1 text-xs font-medium text-[var(--mn-accent-text,#fff)] hover:opacity-90 transition-opacity"
             onClick={commit}
           >
@@ -197,6 +199,7 @@ function MnBusinessModelCanvasBlock({
 function MnBusinessModelCanvas({
   blocks: controlledBlocks, editable = true, onChange, className, ...props
 }: MnBusinessModelCanvasProps) {
+  const t = useLocale("businessModelCanvas")
   const blocks = controlledBlocks ?? defaultBlocks()
 
   function handleAdd(blockId: BmcBlockId, text: string) {
@@ -220,7 +223,7 @@ function MnBusinessModelCanvas({
   return (
     <div
       role="region"
-      aria-label="Business Model Canvas"
+      aria-label={t.businessModelCanvas}
       className={cn(
         "grid gap-3 [grid-template-areas:'kp_ka_vp_cr_cs''kp_ka_vp_cr_cs''kp_kr_vp_ch_cs''kp_kr_vp_ch_cs''co_co_co_rs_rs'] [grid-template-columns:repeat(5,1fr)] [grid-template-rows:repeat(5,1fr)]",
         className,

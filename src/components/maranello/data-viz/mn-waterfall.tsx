@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { useMemo } from 'react';
 
 export interface WaterfallStep {
@@ -38,9 +39,10 @@ const COLORS = {
  */
 export function MnWaterfall({
   steps,
-  ariaLabel = 'Waterfall chart',
+  ariaLabel,
   className,
 }: MnWaterfallProps) {
+  const t = useLocale("waterfall");
   const bars = useMemo(() => {
     const result: BarLayout[] = [];
     let running = 0;
@@ -86,7 +88,7 @@ export function MnWaterfall({
   return (
     <div
       role="img"
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? t.waterfallChart}
       className={cn('overflow-x-auto rounded-lg border bg-card p-4', className)}
     >
       <svg

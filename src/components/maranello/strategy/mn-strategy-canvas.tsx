@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { useCallback, useState } from 'react';
 
 export interface CanvasSegment {
@@ -30,6 +31,7 @@ export function MnStrategyCanvas({
   ariaLabel = 'Strategy Canvas',
   className,
 }: MnStrategyCanvasProps) {
+  const t = useLocale("strategyCanvas");
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [draft, setDraft] = useState('');
 
@@ -116,7 +118,7 @@ export function MnStrategyCanvas({
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
                     className="flex-1 rounded border bg-background px-2 py-0.5 text-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-                    placeholder="New item..."
+                    placeholder={t.newItem}
                     aria-label={`Add item to ${seg.label}`}
                     autoFocus
                   />
@@ -131,7 +133,7 @@ export function MnStrategyCanvas({
                     onClick={() => { setEditingIdx(null); setDraft(''); }}
                     className="text-xs text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none rounded px-1"
                   >
-                    Cancel
+                    {t.cancel}
                   </button>
                 </form>
               ) : (
@@ -141,7 +143,7 @@ export function MnStrategyCanvas({
                   className="mt-auto self-start text-xs text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none rounded px-1"
                   aria-label={`Add item to ${seg.label}`}
                 >
-                  + Add
+                  {t.add}
                 </button>
               )
             )}

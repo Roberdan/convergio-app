@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 // --- Types ---
 
@@ -223,6 +224,7 @@ export function MnCustomerJourney({
   className,
   ...props
 }: MnCustomerJourneyProps) {
+  const t = useLocale("customerJourney")
   const handleSelect = React.useCallback(
     (engagement: JourneyEngagement) => {
       onSelect?.(engagement)
@@ -234,7 +236,7 @@ export function MnCustomerJourney({
     <div
       {...props}
       role="list"
-      aria-label="Customer journey"
+      aria-label={t.customerJourney}
       className={cn(journeyVariants({ orientation, compact }), className)}
     >
       {phases.map((phase) => (

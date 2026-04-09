@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useLocale } from '@/lib/i18n';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { useCallback, useId, useMemo, useState } from 'react';
 
@@ -87,6 +88,7 @@ export function MnRiskMatrix({
   className,
 }: MnRiskMatrixProps) {
   const uid = useId();
+  const t = useLocale("riskMatrix");
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const cellGroups = useMemo(() => {
@@ -172,12 +174,12 @@ export function MnRiskMatrix({
         ))}
 
         {/* Axis titles */}
-        <text x={ML + GW / 2} y={H - 4} textAnchor="middle" fontSize={11} fill="var(--foreground)">Impact</text>
-        <text x={12} y={MT + GH / 2} textAnchor="middle" fontSize={11} fill="var(--foreground)" transform={`rotate(-90,12,${MT + GH / 2})`}>Probability</text>
+        <text x={ML + GW / 2} y={H - 4} textAnchor="middle" fontSize={11} fill="var(--foreground)">{t.impact}</text>
+        <text x={12} y={MT + GH / 2} textAnchor="middle" fontSize={11} fill="var(--foreground)" transform={`rotate(-90,12,${MT + GH / 2})`}>{t.probability}</text>
 
         {/* Corner labels */}
         <text x={ML + 4} y={MT + GH - 4} fontSize={9} fill="var(--muted-foreground)" opacity={0.6}>Low</text>
-        <text x={ML + GW - 4} y={MT + 12} textAnchor="end" fontSize={9} fill="var(--muted-foreground)" opacity={0.6}>Critical</text>
+        <text x={ML + GW - 4} y={MT + 12} textAnchor="end" fontSize={9} fill="var(--muted-foreground)" opacity={0.6}>{t.critical}</text>
 
         {/* Item circles */}
         {Array.from(cellGroups.entries()).flatMap(([, group]) =>

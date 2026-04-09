@@ -3,6 +3,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 export interface HBarItem { label: string; value: number; color?: string }
 export interface MnHbarProps
@@ -87,6 +88,7 @@ function Axis({ max, unit }: { max: number; unit: string }) {
 
 export function MnHbar({ bars, title, unit = "", maxValue: mvp, showValues = true, showGrid = true,
   sortDescending = true, animate = true, barHeight = 28, size, onBarClick, className, ...props }: MnHbarProps) {
+  const t = useLocale("hbar")
   const maxValue = mvp && mvp > 0 ? mvp : 100
   const norm = React.useMemo(() => {
     const m = bars.map((b, i) => ({ ...b, label: b.label ?? `Item ${i + 1}`, value: Number(b.value ?? 0), _c: normHex(b.color) }))
@@ -94,7 +96,7 @@ export function MnHbar({ bars, title, unit = "", maxValue: mvp, showValues = tru
     return m
   }, [bars, sortDescending])
   const top = norm.length > 0 ? norm.reduce((a, b) => (b.value > a.value ? b : a), norm[0]) : null
-  const ariaLabel = top ? `Bar chart: ${norm.length} categories, highest ${top.label} at ${top.value}` : (title || "Horizontal bar chart")
+  const ariaLabel = top ? `Bar chart: ${norm.length} categories, highest ${top.label} at ${top.value}` : (title || t.horizontalBarChart)
 
   return (
     <div {...props} className={cn(hbarVariants({ size }), className)} role="img" aria-label={ariaLabel}>

@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react"
 import { cva } from "class-variance-authority"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 export interface NineBoxItem {
   id: string
@@ -56,11 +57,16 @@ const cellVariants = cva(
 /* ── Component ─────────────────────────────────────────────── */
 
 export function MnNineBoxMatrix({
-  items, xLabel = "Performance", yLabel = "Potential",
-  xAxisLabels = ["Low", "Medium", "High"],
-  yAxisLabels = ["Low", "Medium", "High"],
+  items, xLabel, yLabel,
+  xAxisLabels,
+  yAxisLabels,
   onSelect, onMove, ariaLabel, className,
 }: MnNineBoxMatrixProps) {
+  const t = useLocale("nineBoxMatrix")
+  const resolvedXLabel = xLabel ?? t.performance
+  const resolvedYLabel = yLabel ?? t.potential
+  const resolvedXAxisLabels = xAxisLabels ?? [t.low, t.medium, t.high]
+  const resolvedYAxisLabels = yAxisLabels ?? [t.low, t.medium, t.high]
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
   const itemsByCell = useMemo(() => {
@@ -113,7 +119,7 @@ export function MnNineBoxMatrix({
     }
   }, [selectedId, handleCellClick])
 
-  const gridLabel = ariaLabel ?? `${yLabel} vs ${xLabel} matrix`
+  const gridLabel = ariaLabel ?? `${resolvedYLabel} vs ${resolvedXLabel} matrix`
   const rows: Level[] = [2, 1, 0]
   const cols: Level[] = [0, 1, 2]
 
@@ -121,7 +127,7 @@ export function MnNineBoxMatrix({
     <div className={cn("flex gap-2", className)}>
       {/* Y-axis label (rotated) */}
       <div className="flex items-center shrink-0" aria-hidden="true">
-        <span className="text-xs font-medium text-muted-foreground [writing-mode:vertical-lr] rotate-180">{yLabel}</span>
+        <span className="text-xs font-medium text-muted-foreground [writing-mode:vertical-lr] rotate-180">{resolvedYLabel}</span>
       </div>
 
       <div className="flex-1 min-w-0">
@@ -129,7 +135,7 @@ export function MnNineBoxMatrix({
           {/* Y-axis tick labels */}
           <div className="flex flex-col justify-around shrink-0 w-14 text-right" aria-hidden="true">
             {rows.map((pot) => (
-              <span key={pot} className="text-xs text-muted-foreground">{yAxisLabels[pot]}</span>
+              <span key={pot} className="text-xs text-muted-foreground">{resolvedYAxisLabels[pot]}</span>
             ))}
           </div>
 
@@ -145,7 +151,7 @@ export function MnNineBoxMatrix({
                       key={`${perf},${pot}`}
                       role="gridcell"
                       tabIndex={0}
-                      aria-label={`${yLabel}: ${yAxisLabels[pot]}, ${xLabel}: ${xAxisLabels[perf]}`}
+                      aria-label={`${resolvedYLabel}: ${resolvedYAxisLabels[pot]}, ${resolvedXLabel}: ${resolvedXAxisLabels[perf]}`}
                       className={cn(
                         cellVariants({ tier }),
                         selectedId && "cursor-pointer",
@@ -189,14 +195,14 @@ export function MnNineBoxMatrix({
         <div className="flex gap-2 mt-1" aria-hidden="true">
           <div className="w-14 shrink-0" />
           <div className="grid flex-1 grid-cols-3 gap-1">
-            {xAxisLabels.map((label) => (
+            {resolvedXAxisLabels.map((label) => (
               <span key={label} className="text-center text-xs text-muted-foreground">{label}</span>
             ))}
           </div>
         </div>
         {/* X-axis label */}
         <div className="text-center mt-0.5" aria-hidden="true">
-          <span className="text-xs font-medium text-muted-foreground">{xLabel}</span>
+          <span className="text-xs font-medium text-muted-foreground">{resolvedXLabel}</span>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import * as React from "react"
 import { cva } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 
 export type OkrStatus = "on-track" | "at-risk" | "behind"
 
@@ -165,6 +166,7 @@ export function MnOkr({
   className,
   ...props
 }: MnOkrProps) {
+  const t = useLocale("okr")
   const overallProgress =
     objectives.length > 0
       ? Math.round(
@@ -223,7 +225,7 @@ export function MnOkr({
         ))}
         {objectives.length === 0 && (
           <p className="py-8 text-center text-sm text-[var(--mn-text-muted)]">
-            No objectives defined.
+            {t.noObjectives}
           </p>
         )}
       </div>

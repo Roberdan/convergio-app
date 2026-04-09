@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { useLocale } from "@/lib/i18n"
 import {
   ResponsiveContainer, AreaChart, Area, BarChart, Bar, LineChart, Line,
   PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis,
@@ -64,6 +65,7 @@ export function MnChart({
   type, series = [], segments = [], points = [], radarData = [],
   labels = [], showLegend = false, animate = true, className, ...props
 }: MnChartProps) {
+  const t = useLocale("chart")
   const anim = animate
     ? { isAnimationActive: true, animationDuration: 600, animationEasing: "ease-out" as const }
     : { isAnimationActive: false }
@@ -120,7 +122,7 @@ export function MnChart({
     }
 
     if (type === "donut") {
-      const data = segments.map(s => ({ name: s.label ?? "Segment", value: s.value }))
+      const data = segments.map(s => ({ name: s.label ?? t.segment, value: s.value }))
       return (
         <PieChart>
           <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%"
@@ -139,7 +141,7 @@ export function MnChart({
         <RadarChart data={data} cx="50%" cy="50%" outerRadius="70%">
           <PolarGrid stroke="var(--mn-border)" />
           <PolarAngleAxis dataKey="subject" tick={AXIS} />
-          <Radar name="Value" dataKey="value" stroke="var(--mn-accent)"
+          <Radar name={t.value} dataKey="value" stroke="var(--mn-accent)"
             fill="var(--mn-accent)" fillOpacity={0.2} strokeWidth={2} {...anim} />
           <Tooltip content={<MnTooltip />} />
         </RadarChart>
@@ -150,9 +152,9 @@ export function MnChart({
       return (
         <ScatterChart margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
           <CartesianGrid {...GRID} />
-          <XAxis dataKey="x" type="number" tick={AXIS} axisLine={false} tickLine={false} name="X" />
-          <YAxis dataKey="y" type="number" tick={AXIS} axisLine={false} tickLine={false} name="Y" />
-          <ZAxis dataKey="z" type="number" range={[60, 400]} name="Size" />
+          <XAxis dataKey="x" type="number" tick={AXIS} axisLine={false} tickLine={false} name={t.x} />
+          <YAxis dataKey="y" type="number" tick={AXIS} axisLine={false} tickLine={false} name={t.y} />
+          <ZAxis dataKey="z" type="number" range={[60, 400]} name={t.size} />
           <Tooltip content={<MnTooltip />} cursor={{ strokeDasharray: "3 3" }} />
           {showLegend && <Legend wrapperStyle={legendStyle} />}
           {points.map((p, i) => (
