@@ -60,6 +60,12 @@ export interface ProcessTimelineLabels {
   noSteps: string;
 }
 
+export interface WorkflowOrchestratorLabels {
+  workflowVisualization: string;
+  phase: string;
+  noNodes: string;
+}
+
 /* ── Network ── */
 
 export interface DeploymentTableLabels {

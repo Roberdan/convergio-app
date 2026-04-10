@@ -67,9 +67,9 @@ import type {
   ChatLabels,
   HubSpokeLabels,
   NeuralNodesLabels,
+  WorkflowOrchestratorLabels,
   ProcessTimelineLabels,
-  DeploymentTableLabels,
-  MapLabels,
+  DeploymentTableLabels,  MapLabels,
   MeshNetworkCanvasLabels,
   MeshNetworkCardLabels,
   MeshNetworkToolbarLabels,
@@ -167,6 +167,7 @@ export interface LocaleMessages {
   hubSpoke: HubSpokeLabels;
   neuralNodes: NeuralNodesLabels;
   processTimeline: ProcessTimelineLabels;
+  workflowOrchestrator: WorkflowOrchestratorLabels;
   deploymentTable: DeploymentTableLabels;
   map: MapLabels;
   meshNetworkCanvas: MeshNetworkCanvasLabels;
