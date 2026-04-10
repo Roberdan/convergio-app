@@ -9,6 +9,7 @@ import {
   MnDashboardStrip,
   MnInstrumentBinnacle,
   MnOrgChart,
+  MnWorkflowOrchestrator,
 } from '@/components/maranello';
 import { CATALOG } from '@/lib/component-catalog';
 import { ComponentDoc } from './component-doc';
@@ -136,6 +137,27 @@ export function ShowcaseAgentic() {
           />
         </ComponentDoc>
       </div>
+
+      <ComponentDoc entry={entry('mn-workflow-orchestrator')} example={`<MnWorkflowOrchestrator nodes={nodes} edges={edges} layout="circular" />`}>
+        <MnWorkflowOrchestrator
+          nodes={[
+            { id: 'ingest', label: 'Ingest', status: 'done', color: 'var(--mn-success)' },
+            { id: 'validate', label: 'Validate', status: 'active', color: 'var(--mn-accent)' },
+            { id: 'transform', label: 'Transform', status: 'idle' },
+            { id: 'load', label: 'Load', status: 'idle' },
+            { id: 'notify', label: 'Notify', status: 'idle' },
+          ]}
+          edges={[
+            { from: 'ingest', to: 'validate', active: true },
+            { from: 'validate', to: 'transform' },
+            { from: 'transform', to: 'load' },
+            { from: 'load', to: 'notify' },
+          ]}
+          layout="circular"
+          phase={{ current: 2, total: 5, label: 'Validation', agent: 'validator-01' }}
+          size="fluid"
+        />
+      </ComponentDoc>
     </section>
   );
 }
