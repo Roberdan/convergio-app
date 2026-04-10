@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "test:e2e:ci": "CI=true playwright test --reporter=github,html",
+    "test:e2e:ci": "CI=true playwright test",
     "test:e2e:update-snapshots": "playwright test --update-snapshots",
     "test:e2e:chromium": "playwright test --project=chromium",
     "test:e2e:firefox": "playwright test --project=firefox",

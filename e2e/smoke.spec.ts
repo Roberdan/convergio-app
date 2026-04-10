@@ -35,7 +35,7 @@ test.describe("Smoke — App bootstrap", () => {
 });
 
 test.describe("Smoke — Theme switching", () => {
-  test.beforeEach(async ({ authenticatedPage, apiMock }) => {
+  test.beforeEach(async ({ apiMock }) => {
     await apiMock.mockDefaults();
   });
 
@@ -66,7 +66,6 @@ test.describe("Smoke — Theme switching", () => {
 
   test("theme switcher dropdown works via UI", async ({
     authenticatedPage,
-    apiMock,
   }) => {
     const page = authenticatedPage;
     await page.goto("/");
@@ -90,7 +89,7 @@ test.describe("Smoke — Theme switching", () => {
 });
 
 test.describe("Smoke — Visual regression", () => {
-  test.beforeEach(async ({ authenticatedPage, apiMock }) => {
+  test.beforeEach(async ({ apiMock }) => {
     await apiMock.mockDefaults();
   });
 
@@ -162,7 +161,7 @@ test.describe("Smoke — Visual regression", () => {
 });
 
 test.describe("Smoke — Locale labels", () => {
-  test.beforeEach(async ({ authenticatedPage, apiMock }) => {
+  test.beforeEach(async ({ apiMock }) => {
     await apiMock.mockDefaults();
   });
 

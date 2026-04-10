@@ -2,15 +2,13 @@
  * Login flow helper for Convergio E2E tests.
  *
  * Provides a full browser login flow (form submission) and
- * a fast cookie-based authentication for tests that don't test login itself.
+ * re-exports the fast cookie-based authentication from helpers.
  */
-import type { Page, BrowserContext } from "@playwright/test";
-import { SESSION_COOKIE } from "./helpers";
+import type { Page } from "@playwright/test";
+import { authenticate } from "./helpers";
 
 /** Authenticate via cookie injection (fast, no UI interaction). */
-export async function authenticateViaCookie(context: BrowserContext): Promise<void> {
-  await context.addCookies([SESSION_COOKIE]);
-}
+export const authenticateViaCookie = authenticate;
 
 /** Perform full login flow through the UI. */
 export async function loginViaUI(

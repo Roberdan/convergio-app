@@ -1,7 +1,7 @@
 /**
  * Playwright custom fixtures for Convergio E2E tests.
  *
- * Provides: authenticatedPage, apiMock, themeHelper, localeHelper.
+ * Provides: authenticatedPage, apiMock, themeHelper.
  * Import `test` and `expect` from this file instead of @playwright/test.
  */
 import { test as base, expect, type Page, type Route } from "@playwright/test";
@@ -12,14 +12,10 @@ import { SESSION_COOKIE } from "./helpers";
 type Theme = "light" | "dark" | "navy" | "colorblind";
 
 interface ThemeHelper {
+  /** Set theme via localStorage + page reload (goes through ThemeProvider). */
   set(theme: Theme): Promise<void>;
   get(): Promise<Theme>;
   waitFor(theme: Theme): Promise<void>;
-}
-
-interface LocaleHelper {
-  /** Override a locale namespace key for testing. */
-  override(ns: string, key: string, value: string): Promise<void>;
 }
 
 interface ApiMock {
@@ -34,7 +30,6 @@ interface ApiMock {
 export const test = base.extend<{
   authenticatedPage: Page;
   themeHelper: ThemeHelper;
-  localeHelper: LocaleHelper;
   apiMock: ApiMock;
 }>({
   authenticatedPage: async ({ page, context }, use) => {
@@ -47,14 +42,9 @@ export const test = base.extend<{
       async set(theme: Theme) {
         await page.evaluate((t) => {
           localStorage.setItem("convergio-theme", t);
-          const html = document.documentElement;
-          html.setAttribute("data-theme", t);
-          if (t === "dark" || t === "navy" || t === "colorblind") {
-            html.classList.add("dark");
-          } else {
-            html.classList.remove("dark");
-          }
         }, theme);
+        await page.reload();
+        await helper.waitFor(theme);
       },
 
       async get(): Promise<Theme> {
@@ -67,28 +57,6 @@ export const test = base.extend<{
         await expect(page.locator(`html[data-theme="${theme}"]`)).toBeAttached({
           timeout: 5_000,
         });
-      },
-    };
-    await use(helper);
-  },
-
-  localeHelper: async ({ page }, use) => {
-    const helper: LocaleHelper = {
-      async override(ns: string, key: string, value: string) {
-        await page.evaluate(
-          ({ ns, key, value }) => {
-            const existing = JSON.parse(
-              localStorage.getItem("__test_locale_overrides__") || "{}"
-            );
-            if (!existing[ns]) existing[ns] = {};
-            existing[ns][key] = value;
-            localStorage.setItem(
-              "__test_locale_overrides__",
-              JSON.stringify(existing)
-            );
-          },
-          { ns, key, value }
-        );
       },
     };
     await use(helper);
@@ -109,17 +77,16 @@ export const test = base.extend<{
       },
 
       async mockDefaults() {
-        await helper.mockRoute("/api/health", { status: "ok", version: "test" });
-        await helper.mockRoute("/api/agents/catalog", []);
-        await helper.mockRoute("/api/plan-db/json/*", { plans: [] });
+        await helper.mockRoute("/api/health", { status: "ok", timestamp: new Date().toISOString() });
+        await helper.mockRoute("/api/health/deep", { status: "ok", components: [] });
+        await helper.mockRoute("/api/agents/runtime", { active_agents: [], discovered_agents: [], queue_depth: 0, total_spent_usd: 0, total_budget_usd: 0, delegations_active: 0, stale_count: 0 });
+        await helper.mockRoute("/api/agents/catalog", { agents: [], ok: true });
+        await helper.mockRoute("/api/agents**", []);
         await helper.mockRoute("/api/orgs", []);
-        await helper.mockRoute("/api/mesh/status", { peers: [] });
-        await helper.mockRoute("/api/inference/status", { models: [] });
-        await helper.mockRoute("/api/observatory/timeline", { events: [] });
-        await helper.mockRoute("/api/billing/overview", { total: 0 });
+        await helper.mockRoute("/api/inference/costs**", { costs: [] });
+        await helper.mockRoute("/api/metrics", { metrics: [] });
+        await helper.mockRoute("/api/observatory/timeline**", []);
         await helper.mockRoute("/api/night-agents", []);
-        await helper.mockRoute("/api/prompts", []);
-        await helper.mockRoute("/api/metrics", {});
       },
     };
     await use(helper);

@@ -41,7 +41,7 @@ export default defineConfig({
 
   webServer: {
     command: process.env.CI
-      ? "pnpm start -p 3015"
+      ? "pnpm build && pnpm start -p 3015"
       : "pnpm build && pnpm start -p 3015",
     url: "http://127.0.0.1:3015",
     reuseExistingServer: !process.env.CI,
