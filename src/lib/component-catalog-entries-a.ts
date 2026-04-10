@@ -47,6 +47,10 @@ export const CATALOG_A: CatalogEntry[] = [
     "2D canvas brain visualization with hub-satellite layout, synapse particles, and stats bar",
     "Use for an augmented brain panel showing a central hub connected to task and agent nodes",
     ["brain", "augmented", "cervello", "aumentato", "hub", "synapse", "sinapsi", "canvas"]),
+  c("MnWorkflowOrchestrator", "mn-workflow-orchestrator", "agentic",
+    "Generic real-time workflow visualization with multiple layout algorithms, animated edges, and phase indicator",
+    "Use to visualize any workflow topology — agent meshes, data pipelines, approval flows, CI/CD stages",
+    ["workflow", "orchestrator", "flusso", "orchestratore", "pipeline", "dag", "graph", "grafo", "mesh", "process"]),
 
   // ── data-display (12) ──
   c("MnAvatar", "mn-avatar", "data-display",

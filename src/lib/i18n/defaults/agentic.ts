@@ -2,6 +2,7 @@ import type {
   ActiveMissionsLabels, AgentTraceLabels, ApprovalChainLabels,
   AugmentedBrainLabels, AugmentedBrainV2Labels, ChatLabels,
   HubSpokeLabels, NeuralNodesLabels, ProcessTimelineLabels,
+  WorkflowOrchestratorLabels,
 } from "../types";
 
 export const activeMissionsDefaults: ActiveMissionsLabels = {
@@ -58,4 +59,10 @@ export const processTimelineDefaults: ProcessTimelineLabels = {
   stepStatus: "status",
   duration: "Duration",
   noSteps: "No steps to display.",
+};
+
+export const workflowOrchestratorDefaults: WorkflowOrchestratorLabels = {
+  workflowVisualization: "Workflow visualization",
+  phase: "Phase",
+  noNodes: "No workflow nodes to display.",
 };
