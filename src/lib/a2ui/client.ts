@@ -21,8 +21,8 @@ import type { A2UIBlock, A2UIBlocksResponse } from "./types";
 // Client-side: proxy via Next.js route handler (same-origin, no CORS)
 const DAEMON_URL = typeof window !== 'undefined' ? '' : (process.env.API_URL ?? "http://localhost:8420");
 const AUTH_TOKEN = typeof window !== 'undefined'
-  ? (process.env.NEXT_PUBLIC_AUTH_TOKEN ?? "convergio-dev")
-  : (process.env.AUTH_TOKEN ?? "convergio-dev");
+  ? (process.env.NEXT_PUBLIC_AUTH_TOKEN ?? "")
+  : (process.env.AUTH_TOKEN ?? "");
 const INITIAL_RETRY_MS = 1000;
 const MAX_RETRY_MS = 30000;
 const BACKOFF_FACTOR = 2;

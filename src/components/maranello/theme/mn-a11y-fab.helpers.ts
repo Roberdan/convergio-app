@@ -70,7 +70,20 @@ export function loadSettings(): A11ySettings {
   if (typeof window === "undefined") return { ...DEFAULTS };
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? { ...DEFAULTS, ...JSON.parse(raw) } : { ...DEFAULTS };
+    if (!raw) return { ...DEFAULTS };
+    const parsed: unknown = JSON.parse(raw);
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+      return { ...DEFAULTS };
+    }
+    const obj = parsed as Record<string, unknown>;
+    return {
+      fontSize: FONT_KEYS.includes(obj.fontSize as FontSize) ? (obj.fontSize as FontSize) : DEFAULTS.fontSize,
+      reducedMotion: typeof obj.reducedMotion === "boolean" ? obj.reducedMotion : DEFAULTS.reducedMotion,
+      highContrast: typeof obj.highContrast === "boolean" ? obj.highContrast : DEFAULTS.highContrast,
+      focusVisible: typeof obj.focusVisible === "boolean" ? obj.focusVisible : DEFAULTS.focusVisible,
+      lineSpacing: LINE_KEYS.includes(obj.lineSpacing as LineSpacing) ? (obj.lineSpacing as LineSpacing) : DEFAULTS.lineSpacing,
+      dyslexiaFont: typeof obj.dyslexiaFont === "boolean" ? obj.dyslexiaFont : DEFAULTS.dyslexiaFont,
+    };
   } catch {
     return { ...DEFAULTS };
   }

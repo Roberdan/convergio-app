@@ -18,7 +18,7 @@ interface Approval {
 }
 
 const AUTH_HEADERS = {
-  "Authorization": `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN ?? 'convergio-dev'}`,
+  "Authorization": `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN ?? ''}`,
   "Content-Type": "application/json",
 };
 

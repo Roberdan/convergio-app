@@ -9,6 +9,7 @@
  * - No x-forwarded-for (daemon's localhost bypass works)
  */
 import { NextRequest, NextResponse } from "next/server";
+import { getSessionValue } from "@/lib/session";
 
 const DAEMON = process.env.API_URL ?? "http://localhost:8420";
 
@@ -41,6 +42,17 @@ async function proxy(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  // Health endpoint is public; all other routes require a valid session
+  if (path !== "/api/health") {
+    const session = await getSessionValue();
+    if (!session) {
+      return NextResponse.json(
+        { error: { code: "UNAUTHORIZED", message: "Authentication required" } },
+        { status: 401 },
+      );
+    }
+  }
+
   const url = `${DAEMON}${path}${search}`;
   const headers: Record<string, string> = {
     "Host": "localhost:8420",
@@ -49,7 +61,7 @@ async function proxy(req: NextRequest) {
   if (contentType) headers["Content-Type"] = contentType;
   // Always authenticate — use client header or fall back to dev token
   const auth = req.headers.get("authorization");
-  headers["Authorization"] = auth ?? `Bearer ${process.env.AUTH_TOKEN ?? "convergio-dev"}`;
+  headers["Authorization"] = auth ?? `Bearer ${process.env.AUTH_TOKEN ?? ""}`;
 
   const body = req.method !== "GET" && req.method !== "HEAD"
     ? await req.text()

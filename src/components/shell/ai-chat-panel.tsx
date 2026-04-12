@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/lib/i18n";
@@ -128,11 +128,7 @@ export function AiChatPanel({ open, onOpenChange }: AiChatPanelProps) {
 
 /** Restore open state from localStorage on first mount. */
 export function useAiChatPanelState() {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    setOpen(loadOpen());
-  }, []);
+  const [open, setOpen] = useState(loadOpen);
 
   const toggle = useCallback(() => setOpen((v) => !v), []);
 
