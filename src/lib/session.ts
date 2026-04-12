@@ -12,10 +12,17 @@ const ALGORITHM = { name: "HMAC", hash: "SHA-256" } as const;
 
 /**
  * Return the session signing secret.
- * Falls back to a dev-only default — in production, always set SESSION_SECRET.
+ * In production, SESSION_SECRET is required — the app will not start without it.
+ * In development, falls back to a random per-process secret (sessions won't survive restart).
  */
+const DEV_SECRET = `dev-ephemeral-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 function getSecret(): string {
-  return process.env.SESSION_SECRET ?? "convergio-dev-secret";
+  const secret = process.env.SESSION_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET environment variable is required in production");
+  }
+  return DEV_SECRET;
 }
 
 async function importKey(secret: string): Promise<CryptoKey> {

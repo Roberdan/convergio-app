@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Plus, Trash2, Zap, Check, Loader2, Server } from 'lucide-react';
 import { MnSectionCard } from '@/components/maranello/layout';
 import { MnBadge } from '@/components/maranello/data-display';
@@ -64,17 +64,12 @@ async function testConnection(url: string): Promise<boolean> {
 
 export function DaemonSwitcher() {
   const t = useDaemonSwitcherLocale();
-  const [daemons, setDaemons] = useState<DaemonEntry[]>([]);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [daemons, setDaemons] = useState<DaemonEntry[]>(loadDaemons);
+  const [activeId, setActiveId] = useState<string | null>(loadActive);
   const [connState, setConnState] = useState<ConnectionState>({});
   const [newLabel, setNewLabel] = useState('');
   const [newUrl, setNewUrl] = useState('');
   const [addError, setAddError] = useState('');
-
-  useEffect(() => {
-    setDaemons(loadDaemons());
-    setActiveId(loadActive());
-  }, []);
 
   const handleAdd = useCallback(async () => {
     setAddError('');

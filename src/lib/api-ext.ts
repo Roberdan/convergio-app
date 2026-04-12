@@ -27,8 +27,8 @@ const BASE =
 // Dev token is the default — override via env vars in production
 const AUTH_TOKEN =
   typeof window !== 'undefined'
-    ? (process.env.NEXT_PUBLIC_AUTH_TOKEN ?? 'convergio-dev')
-    : (process.env.AUTH_TOKEN ?? 'convergio-dev');
+    ? (process.env.NEXT_PUBLIC_AUTH_TOKEN ?? '')
+    : (process.env.AUTH_TOKEN ?? '');
 
 async function get<T>(path: string): Promise<T> {
   const headers: Record<string, string> = {};
@@ -93,12 +93,10 @@ export const securityTrust = () => get<TrustLevel[]>('/api/security/trust');
 export const securitySecretsFilter = () =>
   get<SecretFilter[]>('/api/security/secrets/filter');
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const securityConfig = () =>
-  get<Record<string, any>>('/api/security/config');
+  get<Record<string, unknown>>('/api/security/config');
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const securityUpdateConfig = (update: Record<string, any>) =>
+export const securityUpdateConfig = (update: Record<string, unknown>) =>
   post<{ ok: boolean }>('/api/security/config', update);
 
 /* ── Knowledge ── */

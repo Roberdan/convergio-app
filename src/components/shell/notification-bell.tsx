@@ -13,26 +13,24 @@ export function NotificationBell() {
   const t = useLocale("notificationBell");
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const fetchNotifications = useCallback(async () => {
-    try {
-      const data = await notifyQueue();
-      setNotifications(data);
-    } catch {
-      // silently ignore polling errors
-    }
-  }, []);
 
   // Initial load + polling every 30s
   useEffect(() => {
-    setLoading(true);
-    fetchNotifications().finally(() => setLoading(false));
-
-    const interval = setInterval(fetchNotifications, POLL_INTERVAL_MS);
-    return () => clearInterval(interval);
-  }, [fetchNotifications]);
+    let mounted = true;
+    const load = async () => {
+      try {
+        const data = await notifyQueue();
+        if (mounted) setNotifications(data);
+      } catch {
+        // silently ignore polling errors
+      }
+    };
+    load();
+    const interval = setInterval(load, POLL_INTERVAL_MS);
+    return () => { mounted = false; clearInterval(interval); };
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {

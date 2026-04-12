@@ -12,8 +12,13 @@ export default function LoginPage() {
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
 
-    const expectedUser = process.env.ADMIN_USERNAME ?? "admin";
-    const expectedPass = process.env.ADMIN_PASSWORD ?? "admin";
+    const expectedUser = process.env.ADMIN_USERNAME;
+    const expectedPass = process.env.ADMIN_PASSWORD;
+
+    if (!expectedUser || !expectedPass) {
+      // Fail closed: credentials must be configured via env vars
+      return;
+    }
 
     if (username === expectedUser && password === expectedPass) {
       await setSessionCookie("authenticated");

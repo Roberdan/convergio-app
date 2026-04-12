@@ -24,8 +24,8 @@ const BASE =
 // Dev token is the default — override via env vars in production
 const AUTH_TOKEN =
   typeof window !== 'undefined'
-    ? (process.env.NEXT_PUBLIC_AUTH_TOKEN ?? 'convergio-dev')
-    : (process.env.AUTH_TOKEN ?? 'convergio-dev');
+    ? (process.env.NEXT_PUBLIC_AUTH_TOKEN ?? '')
+    : (process.env.AUTH_TOKEN ?? '');
 
 async function request<T>(
   method: string,
