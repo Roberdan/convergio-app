@@ -1,0 +1,51 @@
+---
+title: MnMeshNetwork
+category: network
+description: "Composite mesh network view combining canvas, cards, and toolbar"
+keywords: ["mesh", "network", "rete", "topology", "topologia", "graph", "grafo", "nodes", "nodi"]
+---
+
+# MnMeshNetwork
+
+Composite mesh network view combining canvas, cards, and toolbar.
+
+## When to use
+
+Use to render a complete mesh network topology with interactive controls.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `nodes` | `MeshNode[]` | **required** | Array of nodes |
+| `edges` | `MeshEdge[]` | **required** | Array of edges |
+| `onNodeSelect` | `(node: MeshNode) =&gt; void` | — | Callback when node select |
+| `onAction` | `(action: MeshAction) =&gt; void` | `{onAction` | Callback when action |
+| `onNodeAction` | `(node: MeshNode, action: string) =&gt; void` | — | Callback when node action |
+| `ariaLabel` | `string` | `"Mesh network topology"` | Accessible label for screen readers |
+| `maxParticles` | `number` | `12` | Maximum simultaneous data-flow particles (canvas mode). |
+
+## Example
+
+```tsx
+import { MnMeshNetwork } from "@/components/maranello"
+
+<MnMeshNetwork
+  nodes={[
+    { id: "n1", label: "API Gateway", status: "online", x: 100, y: 100 },
+    { id: "n2", label: "Auth Service", status: "online", x: 300, y: 50 },
+    { id: "n3", label: "DB Primary", status: "online", x: 300, y: 200 },
+    { id: "n4", label: "Cache", status: "degraded", x: 500, y: 100 },
+  ]}
+  edges={[
+    { from: "n1", to: "n2" },
+    { from: "n1", to: "n3" },
+    { from: "n2", to: "n4" },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Interactive nodes are keyboard focusable
+- Status information uses `aria-live` for updates

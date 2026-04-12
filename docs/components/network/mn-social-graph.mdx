@@ -1,0 +1,50 @@
+---
+title: MnSocialGraph
+category: network
+description: "Social network graph showing relationships and connection strength"
+keywords: ["social", "graph", "sociale", "grafo", "network", "rete", "relationship", "relazione"]
+---
+
+# MnSocialGraph
+
+Social network graph showing relationships and connection strength.
+
+## When to use
+
+Use to map social or professional relationships between entities.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `nodes` | `SocialGraphNode[]` | **required** | Array of nodes |
+| `edges` | `SocialGraphEdge[]` | **required** | Array of edges |
+| `groups` | `Record&lt;string, string&gt;` | `NO_GROUPS` | Groups |
+| `animate` | `boolean` | `true` | Enable entry animation |
+| `showLabels` | `boolean` | `true` | Whether to show labels |
+| `onNodeClick` | `(node: SocialGraphNode) =&gt; void` | — | Callback when node click |
+| `onNodeHover` | `(node: SocialGraphNode \| null) =&gt; void` | — | Callback when node hover |
+
+## Example
+
+```tsx
+import { MnSocialGraph } from "@/components/maranello"
+
+<MnSocialGraph
+  nodes={[
+    { id: "1", label: "Alice", group: "engineering" },
+    { id: "2", label: "Bob", group: "design" },
+    { id: "3", label: "Carol", group: "engineering" },
+  ]}
+  edges={[
+    { from: "1", to: "2", weight: 5 },
+    { from: "1", to: "3", weight: 8 },
+    { from: "2", to: "3", weight: 3 },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Interactive nodes are keyboard focusable
+- Status information uses `aria-live` for updates

@@ -1,0 +1,43 @@
+---
+title: MnPorterFiveForces
+category: strategy
+description: "Porter's Five Forces diagram with editable force descriptions"
+keywords: ["porter", "five forces", "cinque forze", "strategy", "strategia", "competition"]
+---
+
+# MnPorterFiveForces
+
+Porter's Five Forces diagram with editable force descriptions.
+
+## When to use
+
+Use to analyze competitive dynamics using Porter's framework.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `forces` | `Force[]` | **required** | Exactly 5 forces: rivalry, buyers, suppliers, new entrants, substitutes |
+| `ariaLabel` | `string` | `"Porter's Five Forces"` | Accessible label |
+| `className` | `string` | `{cn('relative w-full max-w-lg mx-auto'` | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnPorterFiveForces } from "@/components/maranello"
+
+<MnPorterFiveForces
+  forces={[
+    { label: "Supplier Power", value: 3, description: "Few alternative suppliers" },
+    { label: "Buyer Power", value: 4, description: "High price sensitivity" },
+    { label: "Competitive Rivalry", value: 5, description: "Intense competition" },
+    { label: "Threat of Substitution", value: 2, description: "Few direct substitutes" },
+    { label: "Threat of New Entry", value: 3, description: "Moderate barriers" },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Matrix cells are keyboard navigable
+- Visual data is supplemented with text descriptions

@@ -1,0 +1,39 @@
+---
+title: MnMeshNetworkToolbar
+category: network
+description: "Toolbar for mesh network controls: zoom, filter, layout, and export"
+keywords: ["mesh", "toolbar", "rete", "barra strumenti", "controls", "controlli", "zoom", "filter"]
+---
+
+# MnMeshNetworkToolbar
+
+Toolbar for mesh network controls: zoom, filter, layout, and export.
+
+## When to use
+
+Use alongside MnMeshNetwork to provide user controls for the graph.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onlineCount` | `number` | **required** | Callback when line count |
+| `totalCount` | `number` | **required** | Total Count value |
+| `onAction` | `(action: MeshAction) =&gt; void` | — | Callback when action |
+| `className` | `string` | — | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnMeshNetworkToolbar } from "@/components/maranello"
+
+<MnMeshNetworkToolbar
+  onlineCount={0}
+  totalCount={0}
+/>
+```
+
+## Accessibility
+
+- Interactive nodes are keyboard focusable
+- Status information uses `aria-live` for updates

@@ -1,0 +1,43 @@
+---
+title: MnTokenMeter
+category: data-display
+description: "Token usage meter showing consumption against quota with color thresholds"
+keywords: ["token", "meter", "usage", "consumo", "quota", "limit", "limite", "misuratore"]
+---
+
+# MnTokenMeter
+
+Token usage meter showing consumption against quota with color thresholds.
+
+## When to use
+
+Use to display AI token consumption, API quotas, or usage limits.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `usage` | `TokenUsage` | — | Usage |
+| `label` | `string` | `"Token Usage"` | Display label |
+| `showCost` | `boolean` | — | Whether to show cost |
+| `showBreakdown` | `boolean` | `true` | Whether to show breakdown |
+| `animate` | `boolean` | `true` | Enable entry animation |
+
+## Example
+
+```tsx
+import { MnTokenMeter } from "@/components/maranello"
+
+<MnTokenMeter
+  label="GPT-4o Usage"
+  prompt={1200}
+  completion={3400}
+  limit={8192}
+  showBreakdown
+/>
+```
+
+## Accessibility
+
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible

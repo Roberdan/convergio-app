@@ -1,0 +1,43 @@
+---
+title: MnSpeedometer
+category: data-viz
+description: "Speedometer-style gauge with animated needle and RPM-inspired design"
+keywords: ["speedometer", "tachimetro", "gauge", "speed", "velocità", "needle", "lancetta"]
+---
+
+# MnSpeedometer
+
+Speedometer-style gauge with animated needle and RPM-inspired design.
+
+## When to use
+
+Use for a high-impact single-value gauge with automotive aesthetics.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | `0` | Current value |
+| `min` | `number` | `0` | Minimum value |
+| `max` | `number` | `320` | Maximum value |
+| `unit` | `string` | `"km/h"` | Unit suffix (e.g. "%", "$", "km/h") |
+| `ticks` | `number[]` | `useMemo(() => ticksProp ?? autoTicks(min` | Array of ticks |
+| `minorTicks` | `number` | `4` | Minor Ticks value |
+| `animate` | `boolean` | `true` | Enable entry animation |
+| `arcStart` | `number` | `0` | Arc Start value |
+| `arcEnd` | `number \| null` | `null` | Arc End |
+| `subLabel` | `string \| null` | `null` | Sub Label |
+| `bar` | `BarOptions \| null` | `null` | Bar |
+
+## Example
+
+```tsx
+import { MnSpeedometer } from "@/components/maranello"
+
+<MnSpeedometer value={180} min={0} max={320} unit="km/h" animate />
+```
+
+## Accessibility
+
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with labels for color-blind users

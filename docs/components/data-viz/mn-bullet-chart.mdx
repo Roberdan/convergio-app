@@ -1,0 +1,46 @@
+---
+title: MnBulletChart
+category: data-viz
+description: "Bullet chart comparing a measured value against target ranges"
+keywords: ["bullet", "chart", "grafico", "target", "obiettivo", "performance", "range", "intervallo"]
+---
+
+# MnBulletChart
+
+Bullet chart comparing a measured value against target ranges.
+
+## When to use
+
+Use to display performance metrics against qualitative thresholds.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | **required** | Current value |
+| `target` | `number` | **required** | Target value |
+| `max` | `number` | **required** | Maximum value |
+| `label` | `string` | `{label ? `${label` | Display label |
+| `unit` | `string` | — | Unit suffix (e.g. "%", "$", "km/h") |
+| `ranges` | `BulletRange[]` | — | Array of ranges |
+| `trackHeight` | `number` | `32` | Track Height value |
+| `animate` | `boolean` | `true` | Enable entry animation |
+
+## Example
+
+```tsx
+import { MnBulletChart } from "@/components/maranello"
+
+<MnBulletChart
+  value={280}
+  target={300}
+  max={400}
+  label="Revenue ($K)"
+  animate
+/>
+```
+
+## Accessibility
+
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with labels for color-blind users

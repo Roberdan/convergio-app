@@ -1,0 +1,52 @@
+---
+title: MnAdminShell
+category: layout
+description: "Admin layout shell with sidebar navigation, header, and content area"
+keywords: ["admin", "shell", "layout", "amministrazione", "guscio", "sidebar", "barra laterale"]
+---
+
+# MnAdminShell
+
+Admin layout shell with sidebar navigation, header, and content area.
+
+## When to use
+
+Use as the top-level layout for admin or back-office applications.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `collapsed` | `boolean` | `{isCollapsed` | Enable collapsed |
+| `defaultCollapsed` | `boolean` | `false` | Default value for collapsed |
+| `onCollapsedChange` | `(collapsed: boolean) =&gt; void` | — | Callback when collapsed change |
+| `sidebarHeader` | `React.ReactNode` | — | Sidebar Header |
+| `sidebarFooter` | `React.ReactNode` | — | Sidebar Footer |
+| `nav` | `AdminShellNavItem[]` | `[]` | Array of nav |
+| `activeNavId` | `string` | — | Active Nav Id text |
+| `onNavigate` | `(id: string) =&gt; void` | `{handleNavigate` | Callback when navigate |
+| `topBar` | `boolean` | `true` | Enable top bar |
+| `breadcrumbs` | `AdminShellBreadcrumb[]` | `{breadcrumbs` | Array of breadcrumbs |
+| `pageTitle` | `string` | `{pageTitle` | Page Title text |
+| `contentId` | `string` | `"main-content"` | Content Id text |
+
+## Example
+
+```tsx
+import { MnAdminShell } from "@/components/maranello"
+
+<MnAdminShell
+  nav={[
+    { label: "Dashboard", href: "/", icon: "LayoutDashboard" },
+    { label: "Users", href: "/users", icon: "Users" },
+    { label: "Settings", href: "/settings", icon: "Settings" },
+  ]}
+>
+  <main>{children}</main>
+</MnAdminShell>
+```
+
+## Accessibility
+
+- Uses semantic landmarks (`<main>`, `<nav>`, `<aside>`)
+- Skip-to-content link is supported

@@ -1,0 +1,213 @@
+{
+  "shell": {
+    "skipToContent": "Skip to main content",
+    "dashboard": "Dashboard",
+    "brandFallback": "Convergio"
+  },
+  "header": {
+    "toggleMenu": "Toggle menu",
+    "breadcrumb": "Breadcrumb",
+    "notifications": "Notifications",
+    "openAiChat": "Open AI Chat"
+  },
+  "searchCombobox": {
+    "placeholder": "Search agents, plans, components, or navigate",
+    "searchPlaceholder": "Search...",
+    "searchResults": "Search results",
+    "components": "Components",
+    "navigation": "Navigation",
+    "categories": "Categories",
+    "theme": "Theme",
+    "noResults": "No results found.",
+    "home": "Home",
+    "light": "Light",
+    "dark": "Dark",
+    "navy": "Navy",
+    "colorblind": "Colorblind",
+    "quickActions": "Quick Actions",
+    "agents": "Agents",
+    "plans": "Plans",
+    "organizations": "Organizations",
+    "spawnAgent": "Spawn Agent",
+    "createPlan": "Create Plan",
+    "runDoctor": "Run Doctor",
+    "switchTheme": "Switch Theme",
+    "switchLanguage": "Switch Language"
+  },
+  "sidebar": {
+    "support": "Support",
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar",
+    "brandFallback": "Convergio",
+    "tabHome": "Home",
+    "tabAgents": "Agents",
+    "tabPlans": "Plans",
+    "tabChat": "Chat",
+    "tabMore": "More"
+  },
+  "dataTable": {
+    "loading": "Loading...",
+    "noData": "No data available",
+    "search": "Search...",
+    "showing": "Showing",
+    "of": "of",
+    "rows": "rows",
+    "prev": "Previous",
+    "next": "Next",
+    "columns": "Columns",
+    "filters": "Filters",
+    "export": "Export",
+    "actions": "Actions",
+    "selectAll": "Select all",
+    "selected": "selected"
+  },
+  "modal": {
+    "close": "Close",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "stateScaffold": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "empty": "No data to display",
+    "retry": "Retry"
+  },
+  "toast": {
+    "dismiss": "Dismiss",
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info"
+  },
+  "login": {
+    "title": "Sign In",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Sign In",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?"
+  },
+  "commandPalette": {
+    "placeholder": "Type a command or search...",
+    "noResults": "No results found",
+    "actions": "Actions",
+    "pages": "Pages",
+    "recent": "Recent"
+  },
+  "nav": {
+    "missionControl": "Mission Control",
+    "inbox": "Inbox",
+    "plans": "Plans",
+    "approvals": "Approvals",
+    "agents": "Agents",
+    "workspace": "Workspace",
+    "nightAgents": "Night Agents",
+    "organizations": "Organizations",
+    "meshFleet": "Mesh & Fleet",
+    "inference": "Inference",
+    "deployments": "Deployments",
+    "observatory": "Observatory",
+    "knowledge": "Knowledge",
+    "reports": "Reports",
+    "security": "Security",
+    "billing": "Billing",
+    "backup": "Backup",
+    "scheduler": "Scheduler",
+    "doctor": "Doctor",
+    "promptStudio": "Prompt Studio",
+    "settings": "Settings",
+    "components": "Components"
+  },
+  "sections": {
+    "missionControl": "Mission Control",
+    "work": "Work",
+    "agents": "Agents",
+    "organizations": "Organizations",
+    "fleet": "Fleet",
+    "intelligence": "Intelligence",
+    "governance": "Governance",
+    "admin": "Admin"
+  },
+  "common": {
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "refresh": "Refresh",
+    "loading": "Loading...",
+    "noData": "No data",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "status": "Status",
+    "actions": "Actions",
+    "name": "Name",
+    "description": "Description",
+    "type": "Type",
+    "date": "Date",
+    "id": "ID"
+  },
+  "pages": {
+    "missionControl": {
+      "title": "Mission Control",
+      "aiSummary": "AI Summary",
+      "quickActions": "Quick Actions",
+      "spawnAgent": "Spawn Agent",
+      "createPlan": "Create Plan",
+      "runDoctor": "Run Doctor",
+      "activePlans": "Active Plans",
+      "systemHealth": "System Health"
+    },
+    "agents": {
+      "title": "Agents",
+      "catalog": "Agent Catalog",
+      "active": "Active Agents",
+      "spawn": "Spawn Agent",
+      "workspace": "Agent Workspace"
+    },
+    "plans": {
+      "title": "Plans",
+      "create": "New Plan",
+      "waves": "Waves",
+      "tasks": "Tasks",
+      "evidence": "Evidence",
+      "validate": "Validate"
+    },
+    "orgs": {
+      "title": "Organizations",
+      "create": "New Organization",
+      "members": "Members",
+      "decisions": "Decisions",
+      "chart": "Org Chart"
+    }
+  },
+  "language": {
+    "switchLanguage": "Switch language",
+    "en": "English",
+    "it": "Italian",
+    "es": "Spanish",
+    "zh": "Chinese"
+  },
+  "aiChatPanel": {
+    "title": "AI Chat",
+    "placeholder": "Ask anything…",
+    "close": "Close chat",
+    "errorSending": "Failed to send message. Please try again."
+  },
+  "notificationBell": {
+    "bell": "Notifications",
+    "dismiss": "Dismiss",
+    "noNotifications": "No new notifications",
+    "loading": "Loading notifications…"
+  }
+}

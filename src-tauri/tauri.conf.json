@@ -1,0 +1,40 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nicktrap/tauri-docs/main/docs/.schemas/config.schema.json",
+  "productName": "Convergio",
+  "version": "1.0.0",
+  "identifier": "io.convergio.cockpit",
+  "build": {
+    "frontendDist": "../out",
+    "devUrl": "http://localhost:3030",
+    "beforeDevCommand": "pnpm dev -p 3030",
+    "beforeBuildCommand": "TAURI_BUILD=1 pnpm build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Convergio — Mission Control",
+        "width": 1440,
+        "height": 900,
+        "resizable": true,
+        "fullscreen": false,
+        "minWidth": 800,
+        "minHeight": 600
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  },
+  "plugins": {}
+}

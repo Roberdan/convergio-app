@@ -1,0 +1,1242 @@
+[
+  {
+    "name": "mn-design-tokens",
+    "type": "registry:lib",
+    "description": "Shared utility: mn-design-tokens",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "shared/mn-design-tokens.ts"
+    ]
+  },
+  {
+    "name": "mn-format",
+    "type": "registry:lib",
+    "description": "Shared utility: mn-format",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "shared/mn-format.ts"
+    ]
+  },
+  {
+    "name": "mn-layout-state-machine",
+    "type": "registry:lib",
+    "description": "Shared utility: mn-layout-state-machine",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "shared/mn-layout-state-machine.ts"
+    ]
+  },
+  {
+    "name": "mn-a11y",
+    "type": "registry:ui",
+    "description": "mn-a11y component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "theme/mn-a11y.tsx"
+    ]
+  },
+  {
+    "name": "mn-a11y-fab",
+    "type": "registry:ui",
+    "description": "mn-a11y-fab component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "theme/mn-a11y-fab.tsx"
+    ]
+  },
+  {
+    "name": "mn-active-missions",
+    "type": "registry:ui",
+    "description": "mn-active-missions component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "agentic/mn-active-missions.tsx"
+    ]
+  },
+  {
+    "name": "mn-activity-feed",
+    "type": "registry:ui",
+    "description": "mn-activity-feed component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "feedback/mn-activity-feed.tsx"
+    ]
+  },
+  {
+    "name": "mn-admin-shell",
+    "type": "registry:ui",
+    "description": "mn-admin-shell component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-admin-shell.tsx"
+    ]
+  },
+  {
+    "name": "mn-agent-cost-breakdown",
+    "type": "registry:ui",
+    "description": "mn-agent-cost-breakdown component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "financial/mn-agent-cost-breakdown.tsx"
+    ]
+  },
+  {
+    "name": "mn-agent-trace",
+    "type": "registry:ui",
+    "description": "mn-agent-trace component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "agentic/mn-agent-trace.tsx"
+    ]
+  },
+  {
+    "name": "mn-approval-chain",
+    "type": "registry:ui",
+    "description": "mn-approval-chain component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "agentic/mn-approval-chain.tsx"
+    ]
+  },
+  {
+    "name": "mn-async-select",
+    "type": "registry:ui",
+    "description": "mn-async-select component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-async-select.tsx"
+    ]
+  },
+  {
+    "name": "mn-audit-log",
+    "type": "registry:ui",
+    "description": "mn-audit-log component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "ops/mn-audit-log.tsx"
+    ]
+  },
+  {
+    "name": "mn-augmented-brain",
+    "type": "registry:ui",
+    "description": "mn-augmented-brain component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "agentic/mn-augmented-brain.tsx"
+    ]
+  },
+  {
+    "name": "mn-augmented-brain-v2",
+    "type": "registry:ui",
+    "description": "mn-augmented-brain-v2 component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "agentic/mn-augmented-brain-v2.tsx",
+      "agentic/mn-augmented-brain-v2.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-brain-3d",
+    "type": "registry:ui",
+    "description": "mn-brain-3d component",
+    "dependencies": [
+      "class-variance-authority",
+      "react-force-graph-3d"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "agentic/mn-brain-3d.tsx",
+      "agentic/mn-brain-3d.helpers.ts",
+      "agentic/mn-brain-3d.types.ts"
+    ]
+  },
+  {
+    "name": "mn-avatar",
+    "type": "registry:ui",
+    "description": "mn-avatar component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-avatar.tsx"
+    ]
+  },
+  {
+    "name": "mn-badge",
+    "type": "registry:ui",
+    "description": "mn-badge component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-badge.tsx"
+    ]
+  },
+  {
+    "name": "mn-bcg-matrix",
+    "type": "registry:ui",
+    "description": "mn-bcg-matrix component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-bcg-matrix.tsx"
+    ]
+  },
+  {
+    "name": "mn-binnacle",
+    "type": "registry:ui",
+    "description": "mn-binnacle component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "ops/mn-binnacle.tsx"
+    ]
+  },
+  {
+    "name": "mn-breadcrumb",
+    "type": "registry:ui",
+    "description": "mn-breadcrumb component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "navigation/mn-breadcrumb.tsx"
+    ]
+  },
+  {
+    "name": "mn-budget-treemap",
+    "type": "registry:ui",
+    "description": "mn-budget-treemap component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-budget-treemap.tsx"
+    ]
+  },
+  {
+    "name": "mn-bullet-chart",
+    "type": "registry:ui",
+    "description": "mn-bullet-chart component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-bullet-chart.tsx"
+    ]
+  },
+  {
+    "name": "mn-business-model-canvas",
+    "type": "registry:ui",
+    "description": "mn-business-model-canvas component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-business-model-canvas.tsx"
+    ]
+  },
+  {
+    "name": "mn-calendar-range",
+    "type": "registry:ui",
+    "description": "mn-calendar-range component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-calendar-range.tsx"
+    ]
+  },
+  {
+    "name": "mn-chart",
+    "type": "registry:ui",
+    "description": "mn-chart component",
+    "dependencies": [
+      "recharts"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-chart.tsx"
+    ]
+  },
+  {
+    "name": "mn-chat",
+    "type": "registry:ui",
+    "description": "mn-chat component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "agentic/mn-chat.tsx"
+    ]
+  },
+  {
+    "name": "mn-cohort-grid",
+    "type": "registry:ui",
+    "description": "mn-cohort-grid component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-cohort-grid.tsx"
+    ]
+  },
+  {
+    "name": "mn-command-palette",
+    "type": "registry:ui",
+    "description": "mn-command-palette component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "navigation/mn-command-palette.tsx",
+      "navigation/mn-command-palette.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-confidence-chart",
+    "type": "registry:ui",
+    "description": "mn-confidence-chart component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-confidence-chart.tsx",
+      "data-viz/mn-confidence-chart.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-cost-timeline",
+    "type": "registry:ui",
+    "description": "mn-cost-timeline component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-cost-timeline.tsx"
+    ]
+  },
+  {
+    "name": "mn-customer-journey",
+    "type": "registry:ui",
+    "description": "mn-customer-journey component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-customer-journey.tsx"
+    ]
+  },
+  {
+    "name": "mn-customer-journey-map",
+    "type": "registry:ui",
+    "description": "mn-customer-journey-map component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-customer-journey-map.tsx"
+    ]
+  },
+  {
+    "name": "mn-dashboard",
+    "type": "registry:ui",
+    "description": "mn-dashboard component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-dashboard.tsx"
+    ]
+  },
+  {
+    "name": "mn-dashboard-renderer",
+    "type": "registry:ui",
+    "description": "mn-dashboard-renderer component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-dashboard-renderer.tsx"
+    ]
+  },
+  {
+    "name": "mn-dashboard-strip",
+    "type": "registry:ui",
+    "description": "mn-dashboard-strip component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-dashboard-strip.tsx"
+    ]
+  },
+  {
+    "name": "mn-data-table",
+    "type": "registry:ui",
+    "description": "mn-data-table component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-data-table.tsx",
+      "data-display/mn-data-table.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-date-picker",
+    "type": "registry:ui",
+    "description": "mn-date-picker component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-date-picker.tsx"
+    ]
+  },
+  {
+    "name": "mn-date-range-picker",
+    "type": "registry:ui",
+    "description": "mn-date-range-picker component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-date-range-picker.tsx",
+      "forms/mn-date-range-picker.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-decision-matrix",
+    "type": "registry:ui",
+    "description": "mn-decision-matrix component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-decision-matrix.tsx"
+    ]
+  },
+  {
+    "name": "mn-deployment-table",
+    "type": "registry:ui",
+    "description": "mn-deployment-table component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-deployment-table.tsx"
+    ]
+  },
+  {
+    "name": "mn-detail-panel",
+    "type": "registry:ui",
+    "description": "mn-detail-panel component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-detail-panel.tsx"
+    ]
+  },
+  {
+    "name": "mn-dropdown-menu",
+    "type": "registry:ui",
+    "description": "mn-dropdown-menu component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "theme/mn-dropdown-menu.tsx"
+    ]
+  },
+  {
+    "name": "mn-entity-workbench",
+    "type": "registry:ui",
+    "description": "mn-entity-workbench component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "ops/mn-entity-workbench.tsx"
+    ]
+  },
+  {
+    "name": "mn-facet-workbench",
+    "type": "registry:ui",
+    "description": "mn-facet-workbench component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "ops/mn-facet-workbench.tsx"
+    ]
+  },
+  {
+    "name": "mn-ferrari-control",
+    "type": "registry:ui",
+    "description": "mn-ferrari-control component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "theme/mn-ferrari-control.tsx",
+      "theme/mn-ferrari-control.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-filter-panel",
+    "type": "registry:ui",
+    "description": "mn-filter-panel component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-filter-panel.tsx"
+    ]
+  },
+  {
+    "name": "mn-finops",
+    "type": "registry:ui",
+    "description": "mn-finops component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "financial/mn-finops.tsx"
+    ]
+  },
+  {
+    "name": "mn-flip-counter",
+    "type": "registry:ui",
+    "description": "mn-flip-counter component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-flip-counter.tsx"
+    ]
+  },
+  {
+    "name": "mn-form-field",
+    "type": "registry:ui",
+    "description": "mn-form-field component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-form-field.tsx"
+    ]
+  },
+  {
+    "name": "mn-funnel",
+    "type": "registry:ui",
+    "description": "mn-funnel component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-funnel.tsx"
+    ]
+  },
+  {
+    "name": "mn-gantt",
+    "type": "registry:ui",
+    "description": "mn-gantt component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "ops/mn-gantt.tsx",
+      "ops/mn-gantt.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-gauge",
+    "type": "registry:ui",
+    "description": "mn-gauge component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-gauge.tsx",
+      "data-viz/mn-gauge.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-grid-layout",
+    "type": "registry:ui",
+    "description": "mn-grid-layout component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-grid-layout.tsx"
+    ]
+  },
+  {
+    "name": "mn-half-gauge",
+    "type": "registry:ui",
+    "description": "mn-half-gauge component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-half-gauge.tsx"
+    ]
+  },
+  {
+    "name": "mn-hbar",
+    "type": "registry:ui",
+    "description": "mn-hbar component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-hbar.tsx"
+    ]
+  },
+  {
+    "name": "mn-header-shell",
+    "type": "registry:ui",
+    "description": "mn-header-shell component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-header-shell.tsx"
+    ]
+  },
+  {
+    "name": "mn-heatmap",
+    "type": "registry:ui",
+    "description": "mn-heatmap component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-heatmap.tsx"
+    ]
+  },
+  {
+    "name": "mn-hub-spoke",
+    "type": "registry:ui",
+    "description": "mn-hub-spoke component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "agentic/mn-hub-spoke.tsx"
+    ]
+  },
+  {
+    "name": "mn-icon",
+    "type": "registry:ui",
+    "description": "mn-icon component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-icon.tsx",
+      "data-display/mn-icon-catalog.ts"
+    ]
+  },
+  {
+    "name": "mn-instrument-binnacle",
+    "type": "registry:ui",
+    "description": "mn-instrument-binnacle component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "ops/mn-instrument-binnacle.tsx"
+    ]
+  },
+  {
+    "name": "mn-kanban-board",
+    "type": "registry:ui",
+    "description": "mn-kanban-board component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "ops/mn-kanban-board.tsx"
+    ]
+  },
+  {
+    "name": "mn-kpi-scorecard",
+    "type": "registry:ui",
+    "description": "mn-kpi-scorecard component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-kpi-scorecard.tsx",
+      "data-display/mn-kpi-scorecard.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-login",
+    "type": "registry:ui",
+    "description": "mn-login component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-login.tsx"
+    ]
+  },
+  {
+    "name": "mn-map",
+    "type": "registry:ui",
+    "description": "mn-map component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-map.tsx"
+    ]
+  },
+  {
+    "name": "mn-mesh-network",
+    "type": "registry:ui",
+    "description": "mn-mesh-network component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-mesh-network.tsx",
+      "network/mn-mesh-network.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-mesh-network-canvas",
+    "type": "registry:ui",
+    "description": "mn-mesh-network-canvas component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-mesh-network-canvas.tsx"
+    ]
+  },
+  {
+    "name": "mn-mesh-network-card",
+    "type": "registry:ui",
+    "description": "mn-mesh-network-card component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-mesh-network-card.tsx"
+    ]
+  },
+  {
+    "name": "mn-mesh-network-toolbar",
+    "type": "registry:ui",
+    "description": "mn-mesh-network-toolbar component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-mesh-network-toolbar.tsx"
+    ]
+  },
+  {
+    "name": "mn-modal",
+    "type": "registry:ui",
+    "description": "mn-modal component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "feedback/mn-modal.tsx"
+    ]
+  },
+  {
+    "name": "mn-network-messages",
+    "type": "registry:ui",
+    "description": "mn-network-messages component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-network-messages.tsx",
+      "network/mn-network-messages.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-neural-nodes",
+    "type": "registry:ui",
+    "description": "mn-neural-nodes component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "agentic/mn-neural-nodes.tsx",
+      "agentic/mn-neural-nodes-draw.ts",
+      "agentic/mn-neural-nodes-force.ts",
+      "agentic/mn-neural-nodes-types.ts"
+    ]
+  },
+  {
+    "name": "mn-night-jobs",
+    "type": "registry:ui",
+    "description": "mn-night-jobs component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "ops/mn-night-jobs.tsx"
+    ]
+  },
+  {
+    "name": "mn-nine-box-matrix",
+    "type": "registry:ui",
+    "description": "mn-nine-box-matrix component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-nine-box-matrix.tsx"
+    ]
+  },
+  {
+    "name": "mn-notification-center",
+    "type": "registry:ui",
+    "description": "mn-notification-center component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "feedback/mn-notification-center.tsx"
+    ]
+  },
+  {
+    "name": "mn-okr",
+    "type": "registry:ui",
+    "description": "mn-okr component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-okr.tsx"
+    ]
+  },
+  {
+    "name": "mn-org-chart",
+    "type": "registry:ui",
+    "description": "mn-org-chart component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-org-chart.tsx"
+    ]
+  },
+  {
+    "name": "mn-pipeline-ranking",
+    "type": "registry:ui",
+    "description": "mn-pipeline-ranking component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-pipeline-ranking.tsx"
+    ]
+  },
+  {
+    "name": "mn-porter-five-forces",
+    "type": "registry:ui",
+    "description": "mn-porter-five-forces component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-porter-five-forces.tsx"
+    ]
+  },
+  {
+    "name": "mn-profile",
+    "type": "registry:ui",
+    "description": "mn-profile component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-profile.tsx"
+    ]
+  },
+  {
+    "name": "mn-progress-ring",
+    "type": "registry:ui",
+    "description": "mn-progress-ring component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-progress-ring.tsx"
+    ]
+  },
+  {
+    "name": "mn-risk-matrix",
+    "type": "registry:ui",
+    "description": "mn-risk-matrix component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-risk-matrix.tsx"
+    ]
+  },
+  {
+    "name": "mn-search-drawer",
+    "type": "registry:ui",
+    "description": "mn-search-drawer component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-search-drawer.tsx",
+      "forms/mn-search-drawer.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-section-card",
+    "type": "registry:ui",
+    "description": "mn-section-card component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-section-card.tsx"
+    ]
+  },
+  {
+    "name": "mn-section-nav",
+    "type": "registry:ui",
+    "description": "mn-section-nav component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "navigation/mn-section-nav.tsx"
+    ]
+  },
+  {
+    "name": "mn-settings-panel",
+    "type": "registry:ui",
+    "description": "mn-settings-panel component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "layout/mn-settings-panel.tsx"
+    ]
+  },
+  {
+    "name": "mn-social-graph",
+    "type": "registry:ui",
+    "description": "mn-social-graph component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-social-graph.tsx"
+    ]
+  },
+  {
+    "name": "mn-source-cards",
+    "type": "registry:ui",
+    "description": "mn-source-cards component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-source-cards.tsx",
+      "data-display/mn-source-cards.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-speedometer",
+    "type": "registry:ui",
+    "description": "mn-speedometer component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-speedometer.tsx"
+    ]
+  },
+  {
+    "name": "mn-spinner",
+    "type": "registry:ui",
+    "description": "mn-spinner component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-spinner.tsx"
+    ]
+  },
+  {
+    "name": "mn-state-scaffold",
+    "type": "registry:ui",
+    "description": "mn-state-scaffold component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "feedback/mn-state-scaffold.tsx"
+    ]
+  },
+  {
+    "name": "mn-stepper",
+    "type": "registry:ui",
+    "description": "mn-stepper component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "navigation/mn-stepper.tsx"
+    ]
+  },
+  {
+    "name": "mn-strategy-canvas",
+    "type": "registry:ui",
+    "description": "mn-strategy-canvas component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-strategy-canvas.tsx"
+    ]
+  },
+  {
+    "name": "mn-streaming-text",
+    "type": "registry:ui",
+    "description": "mn-streaming-text component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "feedback/mn-streaming-text.tsx"
+    ]
+  },
+  {
+    "name": "mn-swot",
+    "type": "registry:ui",
+    "description": "mn-swot component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "strategy/mn-swot.tsx"
+    ]
+  },
+  {
+    "name": "mn-system-status",
+    "type": "registry:ui",
+    "description": "mn-system-status component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "network/mn-system-status.tsx"
+    ]
+  },
+  {
+    "name": "mn-tabs",
+    "type": "registry:ui",
+    "description": "mn-tabs component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "navigation/mn-tabs.tsx"
+    ]
+  },
+  {
+    "name": "mn-theme-rotary",
+    "type": "registry:ui",
+    "description": "mn-theme-rotary component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "theme/mn-theme-rotary.tsx"
+    ]
+  },
+  {
+    "name": "mn-theme-toggle",
+    "type": "registry:ui",
+    "description": "mn-theme-toggle component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "theme/mn-theme-toggle.tsx"
+    ]
+  },
+  {
+    "name": "mn-toast",
+    "type": "registry:ui",
+    "description": "mn-toast component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "feedback/mn-toast.tsx"
+    ]
+  },
+  {
+    "name": "mn-toggle-switch",
+    "type": "registry:ui",
+    "description": "mn-toggle-switch component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-toggle-switch.tsx"
+    ]
+  },
+  {
+    "name": "mn-token-meter",
+    "type": "registry:ui",
+    "description": "mn-token-meter component",
+    "dependencies": [
+      "class-variance-authority"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-token-meter.tsx"
+    ]
+  },
+  {
+    "name": "mn-user-table",
+    "type": "registry:ui",
+    "description": "mn-user-table component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "data-display/mn-user-table.tsx"
+    ]
+  },
+  {
+    "name": "mn-voice-input",
+    "type": "registry:ui",
+    "description": "mn-voice-input component",
+    "dependencies": [
+      "class-variance-authority",
+      "lucide-react"
+    ],
+    "registryDependencies": [],
+    "files": [
+      "forms/mn-voice-input.tsx",
+      "forms/mn-voice-input.helpers.ts"
+    ]
+  },
+  {
+    "name": "mn-waterfall",
+    "type": "registry:ui",
+    "description": "mn-waterfall component",
+    "dependencies": [],
+    "registryDependencies": [],
+    "files": [
+      "data-viz/mn-waterfall.tsx"
+    ]
+  }
+]

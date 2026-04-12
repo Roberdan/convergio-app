@@ -1,0 +1,47 @@
+---
+title: MnModal
+category: feedback
+description: "Accessible modal dialog with backdrop, focus trap, and size variants"
+keywords: ["modal", "dialog", "modale", "dialogo", "popup", "overlay", "confirm", "conferma"]
+---
+
+# MnModal
+
+Accessible modal dialog with backdrop, focus trap, and size variants.
+
+## When to use
+
+Use for confirmations, forms, or content that requires focused attention.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | **required** | Whether the modal is open. |
+| `onOpenChange` | `(open: boolean) =&gt; void` | **required** | Called when the modal requests to close. |
+| `title` | `string` | — | Modal title rendered in the header. |
+| `closeOnBackdropClick` | `boolean` | `true` | Close on backdrop click. @default true |
+| `closeOnEscape` | `boolean` | `true` | Close on Escape key press. @default true |
+| `titleId` | `string` | `titleIdProp ?? fallbackTitleId` | id applied to the title element for aria-labelledby. |
+| `bodyId` | `string` | `bodyIdProp ?? fallbackBodyId` | id applied to the body element for aria-describedby. |
+| `className` | `string` | `{backdropVariants({ visible: open` | Additional CSS classes |
+| `children` | `React.ReactNode` | — | Child elements |
+
+## Example
+
+```tsx
+import { MnModal } from "@/components/maranello"
+
+const [open, setOpen] = useState(false)
+
+<MnModal open={open} onOpenChange={setOpen} title="Confirm Action">
+  <p>Are you sure you want to proceed?</p>
+</MnModal>
+```
+
+## Accessibility
+
+- Uses `role="alert"` or `aria-live` regions for dynamic content
+- Focus is managed when content appears/disappears
+- Focus is trapped inside the modal while open
+- Escape key closes the modal

@@ -1,0 +1,65 @@
+---
+title: MnChat
+category: agentic
+description: "Real-time chat interface with message bubbles, quick actions, and voice input support"
+keywords: ["chat", "message", "conversation", "messaggio", "conversazione", "assistente", "thread", "ai", "copilot"]
+---
+
+# MnChat
+
+Real-time chat surface with message bubbles, quick action chips, and optional voice input. Designed for conversational UIs, support chat, or AI copilot interactions.
+
+## When to use
+
+Use for any conversational interface: AI assistant, support chat, team messaging. Pairs with the AI agents defined in `maranello.yaml`.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `messages` | `ChatMessage[]` | **required** | Array of messages — `{ id, role, content, timestamp? }` |
+| `loading` | `boolean` | `false` | Show typing indicator |
+| `quickActions` | `QuickAction[]` | `[]` | Suggestion chips — `{ label, action }` |
+| `placeholder` | `string` | `"Type a message..."` | Input placeholder text |
+| `onSend` | `(text: string) => void` | — | Callback when user sends a message |
+| `onVoiceStart` | `() => void` | — | Callback for voice input activation |
+| `onQuickAction` | `(action: string) => void` | — | Callback when a quick action chip is clicked |
+| `className` | `string` | — | Additional CSS classes |
+
+## Message Shape
+
+```ts
+interface ChatMessage {
+  id: string
+  role: "user" | "assistant" | "system"
+  content: string
+  timestamp?: string
+}
+```
+
+## Example
+
+```tsx
+import { MnChat } from "@/components/maranello"
+
+<MnChat
+  messages={[
+    { id: "1", role: "assistant", content: "How can I help you today?" },
+    { id: "2", role: "user", content: "Show me the deployment status" },
+    { id: "3", role: "assistant", content: "All services are operational." },
+  ]}
+  quickActions={[
+    { label: "Show status", action: "status" },
+    { label: "Run diagnostics", action: "diagnostics" },
+  ]}
+  onSend={(text) => sendMessage(text)}
+  onQuickAction={(action) => handleAction(action)}
+/>
+```
+
+## Accessibility
+
+- Messages use `role="log"` with `aria-live="polite"` for screen reader announcements
+- Input field has accessible label
+- Quick action chips are keyboard-focusable
+- Loading state announced via `aria-busy`

@@ -1,0 +1,45 @@
+---
+title: MnMeshNetworkCanvas
+category: network
+description: "Canvas-rendered mesh network visualization for large-scale topologies"
+keywords: ["mesh", "canvas", "rete", "tela", "network", "topology", "topologia", "graph", "grafo"]
+---
+
+# MnMeshNetworkCanvas
+
+Canvas-rendered mesh network visualization for large-scale topologies.
+
+## When to use
+
+Use for high-performance rendering of complex mesh network graphs.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `nodes` | `MeshNode[]` | **required** | Array of nodes |
+| `edges` | `MeshEdge[]` | **required** | Array of edges |
+| `selected` | `string \| null` | **required** | Selected |
+| `onNodeClick` | `(node: MeshNode) =&gt; void` | **required** | Callback when node click |
+| `ariaLabel` | `string` | **required** | Accessible label for screen readers |
+| `maxParticles` | `number` | **required** | Max Particles value |
+
+## Example
+
+```tsx
+import { MnMeshNetworkCanvas } from "@/components/maranello"
+
+<MnMeshNetworkCanvas
+  nodes={[]}
+  edges={[]}
+  selected={/* string | null */}
+  onNodeClick={() => {}}
+  ariaLabel="Example"
+  maxParticles={0}
+/>
+```
+
+## Accessibility
+
+- Interactive nodes are keyboard focusable
+- Status information uses `aria-live` for updates

@@ -1,0 +1,38 @@
+---
+title: MnSpinner
+category: data-display
+description: "Loading spinner with size and color variants for async state indication"
+keywords: ["spinner", "loading", "caricamento", "loader", "wait", "attesa", "progress"]
+---
+
+# MnSpinner
+
+Loading spinner with size and color variants for async state indication.
+
+## When to use
+
+Use to indicate loading or processing state in any context.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `SpinnerSize` | `"md"` | Size variant |
+| `variant` | `SpinnerVariant` | `"primary"` | Visual variant |
+| `label` | `string` | `"Loading"` | Display label |
+| `className` | `string` | — | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnSpinner } from "@/components/maranello"
+
+<MnSpinner
+  size="md"
+/>
+```
+
+## Accessibility
+
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible

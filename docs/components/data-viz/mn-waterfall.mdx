@@ -1,0 +1,43 @@
+---
+title: MnWaterfall
+category: data-viz
+description: "Waterfall chart showing cumulative positive and negative value changes"
+keywords: ["waterfall", "cascata", "chart", "grafico", "cumulative", "cumulativo", "breakdown"]
+---
+
+# MnWaterfall
+
+Waterfall chart showing cumulative positive and negative value changes.
+
+## When to use
+
+Use to break down how incremental values contribute to a total.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `steps` | `WaterfallStep[]` | **required** | Array of steps |
+| `ariaLabel` | `string` | `'Waterfall chart'` | Accessible label |
+| `className` | `string` | — | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnWaterfall } from "@/components/maranello"
+
+<MnWaterfall
+  steps={[
+    { label: "Revenue", value: 50000 },
+    { label: "COGS", value: -18000 },
+    { label: "OpEx", value: -12000 },
+    { label: "Tax", value: -5000 },
+    { label: "Net Profit", value: 15000, isTotal: true },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with labels for color-blind users

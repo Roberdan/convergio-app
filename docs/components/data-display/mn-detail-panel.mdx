@@ -1,0 +1,49 @@
+---
+title: MnDetailPanel
+category: data-display
+description: "Slide-out panel showing detailed information for a selected record"
+keywords: ["detail", "panel", "dettaglio", "pannello", "drawer", "sidebar", "info", "informazioni"]
+---
+
+# MnDetailPanel
+
+Slide-out panel showing detailed information for a selected record.
+
+## When to use
+
+Use to reveal extended details without leaving the current view.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | **required** | Whether the component is open/visible |
+| `onOpenChange` | `(open: boolean) =&gt; void` | **required** | Callback when open state changes |
+| `title` | `string` | **required** | Title text |
+| `sections` | `DetailSection[]` | **required** | Array of sections |
+| `defaultEditing` | `boolean` | `false` | Default value for editing |
+| `editable` | `boolean` | `true` | Enable inline editing |
+| `onSave` | `(data: Record&lt;string, unknown&gt;) =&gt; void` | — | Callback when save |
+| `className` | `string` | — | Additional CSS classes |
+| `children` | `React.ReactNode` | — | Child elements |
+
+## Example
+
+```tsx
+import { MnDetailPanel } from "@/components/maranello"
+
+<MnDetailPanel
+  open={open}
+  onOpenChange={setOpen}
+  title="User Details"
+  sections={[
+    { label: "Info", fields: [{ label: "Name", value: "Alice" }, { label: "Email", value: "alice@example.com" }] },
+    { label: "Activity", fields: [{ label: "Last login", value: "2 hours ago" }] },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible

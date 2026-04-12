@@ -1,0 +1,38 @@
+---
+title: MnFormField
+category: forms
+description: "Form field wrapper providing label, validation, helper text, and error state"
+keywords: ["form", "field", "modulo", "campo", "input", "label", "etichetta", "validation", "validazione"]
+---
+
+# MnFormField
+
+Form field wrapper providing label, validation, helper text, and error state.
+
+## When to use
+
+Use to wrap any input with consistent label, hint, and error display.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `fieldId` | `string` | — | Associates label via htmlFor and wires aria-describedby on the child control. |
+| `label` | `string` | — | Display label |
+| `hint` | `string` | — | Hint text |
+| `error` | `string` | — | Error text |
+| `required` | `boolean` | `{required` | Enable required |
+
+## Example
+
+```tsx
+import { MnFormField } from "@/components/maranello"
+
+<MnFormField />
+```
+
+## Accessibility
+
+- Form controls are associated with labels via `htmlFor`/`id`
+- Validation errors are announced to screen readers
+- Supports keyboard navigation between fields

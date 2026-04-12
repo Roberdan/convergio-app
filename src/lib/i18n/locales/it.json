@@ -1,0 +1,213 @@
+{
+  "shell": {
+    "skipToContent": "Vai al contenuto principale",
+    "dashboard": "Cruscotto",
+    "brandFallback": "Convergio"
+  },
+  "header": {
+    "toggleMenu": "Apri/chiudi menu",
+    "breadcrumb": "Percorso",
+    "notifications": "Notifiche",
+    "openAiChat": "Apri Chat AI"
+  },
+  "searchCombobox": {
+    "placeholder": "Cerca agenti, piani, componenti o naviga",
+    "searchPlaceholder": "Cerca...",
+    "searchResults": "Risultati di ricerca",
+    "components": "Componenti",
+    "navigation": "Navigazione",
+    "categories": "Categorie",
+    "theme": "Tema",
+    "noResults": "Nessun risultato trovato.",
+    "home": "Home",
+    "light": "Chiaro",
+    "dark": "Scuro",
+    "navy": "Navy",
+    "colorblind": "Daltonici",
+    "quickActions": "Azioni Rapide",
+    "agents": "Agenti",
+    "plans": "Piani",
+    "organizations": "Organizzazioni",
+    "spawnAgent": "Avvia Agente",
+    "createPlan": "Crea Piano",
+    "runDoctor": "Esegui Doctor",
+    "switchTheme": "Cambia Tema",
+    "switchLanguage": "Cambia Lingua"
+  },
+  "sidebar": {
+    "support": "Supporto",
+    "expandSidebar": "Espandi barra laterale",
+    "collapseSidebar": "Comprimi barra laterale",
+    "brandFallback": "Convergio",
+    "tabHome": "Home",
+    "tabAgents": "Agenti",
+    "tabPlans": "Piani",
+    "tabChat": "Chat",
+    "tabMore": "Altro"
+  },
+  "dataTable": {
+    "loading": "Caricamento...",
+    "noData": "Nessun dato disponibile",
+    "search": "Cerca...",
+    "showing": "Mostrando",
+    "of": "di",
+    "rows": "righe",
+    "prev": "Precedente",
+    "next": "Successivo",
+    "columns": "Colonne",
+    "filters": "Filtri",
+    "export": "Esporta",
+    "actions": "Azioni",
+    "selectAll": "Seleziona tutto",
+    "selected": "selezionati"
+  },
+  "modal": {
+    "close": "Chiudi",
+    "confirm": "Conferma",
+    "cancel": "Annulla"
+  },
+  "stateScaffold": {
+    "loading": "Caricamento...",
+    "error": "Qualcosa e' andato storto",
+    "empty": "Nessun dato da visualizzare",
+    "retry": "Riprova"
+  },
+  "toast": {
+    "dismiss": "Chiudi",
+    "success": "Successo",
+    "error": "Errore",
+    "warning": "Attenzione",
+    "info": "Informazione"
+  },
+  "login": {
+    "title": "Accedi",
+    "username": "Nome utente",
+    "password": "Password",
+    "submit": "Accedi",
+    "forgotPassword": "Password dimenticata?",
+    "noAccount": "Non hai un account?"
+  },
+  "commandPalette": {
+    "placeholder": "Digita un comando o cerca...",
+    "noResults": "Nessun risultato trovato",
+    "actions": "Azioni",
+    "pages": "Pagine",
+    "recent": "Recenti"
+  },
+  "nav": {
+    "missionControl": "Centro Missione",
+    "inbox": "Posta in arrivo",
+    "plans": "Piani",
+    "approvals": "Approvazioni",
+    "agents": "Agenti",
+    "workspace": "Spazio di lavoro",
+    "nightAgents": "Agenti notturni",
+    "organizations": "Organizzazioni",
+    "meshFleet": "Mesh e Flotta",
+    "inference": "Inferenza",
+    "deployments": "Distribuzioni",
+    "observatory": "Osservatorio",
+    "knowledge": "Conoscenza",
+    "reports": "Rapporti",
+    "security": "Sicurezza",
+    "billing": "Fatturazione",
+    "backup": "Backup",
+    "scheduler": "Pianificatore",
+    "doctor": "Dottore",
+    "promptStudio": "Studio Prompt",
+    "settings": "Impostazioni",
+    "components": "Componenti"
+  },
+  "sections": {
+    "missionControl": "Centro Missione",
+    "work": "Lavoro",
+    "agents": "Agenti",
+    "organizations": "Organizzazioni",
+    "fleet": "Flotta",
+    "intelligence": "Intelligence",
+    "governance": "Governance",
+    "admin": "Admin"
+  },
+  "common": {
+    "save": "Salva",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "create": "Crea",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "close": "Chiudi",
+    "back": "Indietro",
+    "next": "Avanti",
+    "previous": "Precedente",
+    "search": "Cerca",
+    "filter": "Filtra",
+    "sort": "Ordina",
+    "refresh": "Aggiorna",
+    "loading": "Caricamento...",
+    "noData": "Nessun dato",
+    "error": "Errore",
+    "success": "Successo",
+    "warning": "Attenzione",
+    "info": "Informazione",
+    "status": "Stato",
+    "actions": "Azioni",
+    "name": "Nome",
+    "description": "Descrizione",
+    "type": "Tipo",
+    "date": "Data",
+    "id": "ID"
+  },
+  "pages": {
+    "missionControl": {
+      "title": "Centro Missione",
+      "aiSummary": "Riepilogo IA",
+      "quickActions": "Azioni rapide",
+      "spawnAgent": "Avvia agente",
+      "createPlan": "Crea piano",
+      "runDoctor": "Esegui dottore",
+      "activePlans": "Piani attivi",
+      "systemHealth": "Salute del sistema"
+    },
+    "agents": {
+      "title": "Agenti",
+      "catalog": "Catalogo agenti",
+      "active": "Agenti attivi",
+      "spawn": "Avvia agente",
+      "workspace": "Spazio di lavoro agente"
+    },
+    "plans": {
+      "title": "Piani",
+      "create": "Nuovo piano",
+      "waves": "Wave",
+      "tasks": "Task",
+      "evidence": "Evidenza",
+      "validate": "Valida"
+    },
+    "orgs": {
+      "title": "Organizzazioni",
+      "create": "Nuova organizzazione",
+      "members": "Membri",
+      "decisions": "Decisioni",
+      "chart": "Organigramma"
+    }
+  },
+  "language": {
+    "switchLanguage": "Cambia lingua",
+    "en": "Inglese",
+    "it": "Italiano",
+    "es": "Spagnolo",
+    "zh": "Cinese"
+  },
+  "aiChatPanel": {
+    "title": "Chat AI",
+    "placeholder": "Chiedi qualcosa…",
+    "close": "Chiudi chat",
+    "errorSending": "Invio fallito. Riprova."
+  },
+  "notificationBell": {
+    "bell": "Notifiche",
+    "dismiss": "Ignora",
+    "noNotifications": "Nessuna nuova notifica",
+    "loading": "Caricamento notifiche…"
+  }
+}

@@ -1,0 +1,54 @@
+---
+title: MnNetworkMessages
+category: network
+description: "Message log panel for network communication events and packet traces"
+keywords: ["network", "messages", "rete", "messaggi", "log", "packet", "pacchetto", "traffic"]
+---
+
+# MnNetworkMessages
+
+Message log panel for network communication events and packet traces.
+
+## When to use
+
+Use to display real-time or historical network message traffic.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `nodes` | `NetNode[]` | **required** | Array of nodes |
+| `connections` | `NetConnection[]` | **required** | Array of connections |
+| `width` | `number` | — | Width value |
+| `height` | `number` | — | Component height in pixels |
+| `particleTrail` | `boolean` | `true` | Enable particle trail |
+| `glowEffect` | `boolean` | `true` | Enable glow effect |
+| `onNodeClick` | `(node: NetNode) =&gt; void` | — | Callback when node click |
+| `controllerRef` | `{ current: NetworkMessagesController \| null }` | — | Controller Ref |
+| `nodeColor` | `string` | — | Default node fill color (hex). |
+| `accentColor` | `string` | — | Accent / gradient-end color (hex). |
+| `labelColor` | `string` | — | Node label color (hex or rgba). |
+| `bgOverlay` | `string` | `"rgba(3` | Canvas background overlay. |
+
+## Example
+
+```tsx
+import { MnNetworkMessages } from "@/components/maranello"
+
+<MnNetworkMessages
+  nodes={[
+    { id: "a", label: "Client", x: 50, y: 150 },
+    { id: "b", label: "Server", x: 250, y: 150 },
+    { id: "c", label: "Database", x: 450, y: 150 },
+  ]}
+  connections={[
+    { from: "a", to: "b", label: "HTTP" },
+    { from: "b", to: "c", label: "SQL" },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Interactive nodes are keyboard focusable
+- Status information uses `aria-live` for updates

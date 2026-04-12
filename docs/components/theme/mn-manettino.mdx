@@ -1,0 +1,36 @@
+---
+title: MnManettino
+category: theme
+description: "Ferrari-inspired rotary mode selector with haptic-style detent positions"
+keywords: ["manettino", "rotary", "ferrari", "selector", "selettore", "dial", "ghiera"]
+---
+
+# MnManettino
+
+Ferrari-inspired rotary mode selector with haptic-style detent positions.
+
+## When to use
+
+Use as a themed mode or level selector with rotary dial interaction.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `positions` | `string[]` | `["WET"` | Array of positions |
+| `value` | `number` | — | Current value |
+| `defaultValue` | `number` | `2` | Default value for value |
+| `onChange` | `(index: number, label: string) =&gt; void` | — | Change event handler |
+
+## Example
+
+```tsx
+import { MnManettino } from "@/components/maranello"
+
+<MnManettino />
+```
+
+## Accessibility
+
+- Theme changes are announced via `aria-live`
+- All controls meet WCAG 2.2 AA contrast requirements

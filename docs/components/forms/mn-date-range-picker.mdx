@@ -1,0 +1,40 @@
+---
+title: MnDateRangePicker
+category: forms
+description: "Dual-calendar range picker with comparison period support"
+keywords: ["date", "range", "data", "intervallo", "picker", "selettore", "from", "to", "da", "a"]
+---
+
+# MnDateRangePicker
+
+Dual-calendar range picker with comparison period support.
+
+## When to use
+
+Use to select start and end dates for reporting or filtering.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `DateRange` | — | Current value |
+| `onChange` | `(range: DateRange) =&gt; void` | — | Change event handler |
+| `min` | `string` | `{min` | Minimum value |
+| `max` | `string` | `{max` | Maximum value |
+| `placeholder` | `string` | `"Select date range"` | Placeholder text |
+| `disabled` | `boolean` | `{isDis || undefined` | Disable the component |
+| `className` | `string` | — | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnDateRangePicker } from "@/components/maranello"
+
+<MnDateRangePicker />
+```
+
+## Accessibility
+
+- Form controls are associated with labels via `htmlFor`/`id`
+- Validation errors are announced to screen readers
+- Supports keyboard navigation between fields

@@ -1,0 +1,92 @@
+# convergio.yaml — Mission Control configuration
+# Branding, themes, navigation, AI agents, API connection.
+
+app:
+  name: Convergio Mission Control
+  description: AI Operations Command Center
+
+theme:
+  default: navy
+  storageKey: convergio-theme
+
+api:
+  baseUrl: http://localhost:8420
+
+ai:
+  defaultAgent: jervis
+  agents:
+    - id: jervis
+      name: Jervis
+      description: Convergio platform orchestrator
+      provider: openai
+      model: gpt-4o
+      systemPrompt: |
+        You are Jervis, the Convergio platform AI assistant.
+        You help users manage plans, agents, workspaces, and platform operations.
+        Be concise, precise, and action-oriented.
+      apiRoute: /api/chat
+      avatar: J
+      maxTokens: 2048
+
+    - id: nasra
+      name: NaSra
+      description: Design system expert
+      provider: openai
+      model: gpt-4o
+      systemPrompt: |
+        You are NaSra, the Maranello Design System expert.
+        You help with design tokens, themes, accessibility (WCAG 2.2 AA),
+        component selection, layout patterns, and visual consistency.
+      apiRoute: /api/chat
+      avatar: N
+      maxTokens: 2048
+
+# 7 sections matching the Mission Control layout
+navigation:
+  sections:
+    - label: Mission Control
+      items:
+        - { id: mission-control, label: Mission Control, href: /, icon: Radar }
+        - { id: inbox, label: Inbox, href: /inbox, icon: Bell }
+
+    - label: Work
+      items:
+        - { id: plans, label: Plans, href: /plans, icon: ClipboardList }
+        - { id: approvals, label: Approvals, href: /approvals, icon: ShieldCheck }
+
+    - label: Agents
+      items:
+        - { id: agents, label: Agents, href: /agents, icon: Users }
+        - { id: agent-workspace, label: Workspace, href: /agents/workspace, icon: MonitorPlay }
+        - { id: night-agents, label: Night Agents, href: /night-agents, icon: Moon }
+
+    - label: Organizations
+      items:
+        - { id: orgs, label: Organizations, href: /orgs, icon: Building2 }
+
+    - label: Fleet
+      items:
+        - { id: mesh, label: Mesh & Fleet, href: /mesh, icon: Network }
+        - { id: inference, label: Inference, href: /inference, icon: Brain }
+        - { id: deploy, label: Deployments, href: /deploy, icon: Rocket }
+
+    - label: Intelligence
+      items:
+        - { id: observatory, label: Observatory, href: /observatory, icon: Activity }
+        - { id: knowledge, label: Knowledge, href: /knowledge, icon: BookOpen }
+        - { id: reports, label: Reports, href: /reports, icon: FileText }
+
+    - label: Governance
+      items:
+        - { id: security, label: Security, href: /security, icon: Lock }
+        - { id: billing, label: Billing, href: /billing, icon: Receipt }
+        - { id: backup, label: Backup, href: /backup, icon: Archive }
+        - { id: scheduler, label: Scheduler, href: /scheduler, icon: Clock }
+        - { id: doctor, label: Doctor, href: /doctor, icon: Stethoscope }
+
+    - label: Admin
+      items:
+        - { id: prompts, label: Prompt Studio, href: /prompts, icon: Terminal }
+        - { id: settings, label: Settings, href: /settings, icon: Settings }
+
+pages: {}

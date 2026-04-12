@@ -1,0 +1,683 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), 'Inter', sans-serif;
+  --font-mono: var(--font-barlow), 'Barlow Condensed', sans-serif;
+  --font-heading: var(--font-outfit), 'Outfit', sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-status-success: var(--status-success);
+  --color-status-warning: var(--status-warning);
+  --color-status-error: var(--status-error);
+  --color-status-info: var(--status-info);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Maranello Design Tokens — Color Primitives
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Nero scale ── */
+  --nero-assoluto:    #000000;
+  --nero-profondo:    #0a0a0a;
+  --nero-carbon:      #111111;
+  --nero-soft:        #1a1a1a;
+
+  /* ── Grigio scale ── */
+  --grigio-alluminio: #c8c8c8;
+  --grigio-medio:     #616161;
+  --grigio-scuro:     #2a2a2a;
+  --grigio-chiaro:    #9e9e9e;
+  --grigio-ghost:     #e8e8e8;
+
+  /* ── Bianco scale ── */
+  --bianco-puro:      #ffffff;
+  --bianco-caldo:     #fafafa;
+  --bianco-ghiaccio:  #f5f5f5;
+
+  /* ── Avorio scale ── */
+  --avorio-caldo:     #f5e5c7;
+  --avorio-chiaro:    #faf3e6;
+  --avorio-medio:     #e8d5b0;
+  --avorio-scuro:     #d7c39a;
+
+  /* ── Ferrari palette ── */
+  --giallo-ferrari:   #FFC72C;
+  --giallo-hover:     #e6b326;
+  --rosso-corsa:      #DC0000;
+  --rosso-hover:      #b50000;
+  --arancio-warm:     #D4622B;
+  --verde-racing:     #00A651;
+  --verde-hover:      #008f47;
+
+  /* ── Status colors ── */
+  --status-active:    #00C853;
+  --status-warning:   #FFB300;
+  --status-danger:    #FF1744;
+  --status-info:      #448AFF;
+
+  /* ── Colorblind-safe (Okabe-Ito) ── */
+  --mn-cb-blue:       #0072B2;
+  --mn-cb-blue-dark:  #005f94;
+  --mn-cb-orange:     #D55E00;
+  --mn-cb-green:      #009E73;
+  --mn-cb-yellow:     #E69F00;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Maranello Design Tokens — Spacing, Typography & Utilities
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Accessibility scaling ── */
+  --mn-a11y-space-scale: 1;
+  --mn-a11y-font-scale:  1;
+
+  /* ── Typography ── */
+  --font-display: 'Outfit', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --mn-line-height: 1.6;
+  --text-hero:    calc(clamp(2.5rem, 5vw, 4.5rem) * var(--mn-a11y-font-scale));
+  --text-xxl:     calc(clamp(1.75rem, 3vw, 2.5rem) * var(--mn-a11y-font-scale));
+  --text-xl:      calc(clamp(1.25rem, 2vw, 1.75rem) * var(--mn-a11y-font-scale));
+  --text-large:   calc(1.125rem * var(--mn-a11y-font-scale));
+  --text-body:    calc(1rem * var(--mn-a11y-font-scale));
+  --text-small:   calc(0.875rem * var(--mn-a11y-font-scale));
+  --text-micro:   calc(0.75rem * var(--mn-a11y-font-scale));
+
+  /* ── Spacing ── */
+  --space-2xs: calc(0.125rem * var(--mn-a11y-space-scale));
+  --space-xs:  calc(0.25rem  * var(--mn-a11y-space-scale));
+  --space-sm:  calc(0.5rem   * var(--mn-a11y-space-scale));
+  --space-md:  calc(1rem     * var(--mn-a11y-space-scale));
+  --space-lg:  calc(1.5rem   * var(--mn-a11y-space-scale));
+  --space-xl:  calc(2rem     * var(--mn-a11y-space-scale));
+  --space-2xl: calc(3rem     * var(--mn-a11y-space-scale));
+  --space-3xl: calc(4rem     * var(--mn-a11y-space-scale));
+
+  /* ── Shadows ── */
+  --shadow-sm:       0 1px 4px rgba(0,0,0,0.06);
+  --shadow-md:       0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg:       0 8px 32px rgba(0,0,0,0.14);
+  --shadow-card:     0 2px 20px rgba(0,0,0,0.08);
+  --shadow-elevated: 0 8px 40px rgba(0,0,0,0.12);
+
+  /* ── Transitions ── */
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:       cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out:   cubic-bezier(0.45, 0, 0.55, 1);
+  --duration-fast: 120ms;
+  --duration-sm:   200ms;
+  --duration-md:   400ms;
+  --duration-lg:   600ms;
+
+  /* ── Z-index ── */
+  --z-dropdown: 1000;
+  --z-tooltip:  1100;
+  --z-modal:    1200;
+  --z-toast:    1300;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Base defaults (Navy) — Maranello semantic tokens + shadcn bridge
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Maranello semantic tokens ── */
+  --mn-accent:          #FFC72C;
+  --mn-accent-hover:    #e6b326;
+  --mn-accent-text:     #0d1f43;
+  --mn-accent-bg:       color-mix(in srgb, #FFC72C 10%, transparent);
+  --mn-accent-border:   color-mix(in srgb, #FFC72C 25%, transparent);
+  --mn-surface:         #0d2045;
+  --mn-surface-raised:  #122a55;
+  --mn-surface-sunken:  #091636;
+  --mn-surface-input:   #122a55;
+  --mn-surface-overlay: rgba(9, 22, 54, 0.85);
+  --mn-surface-hover:   rgba(255, 255, 255, 0.05);
+  --mn-text:            #e8eaf6;
+  --mn-text-muted:      #8ea4c8;
+  --mn-text-secondary:  #b8c8e0;
+  --mn-text-tertiary:   #a0b4d0;
+  --mn-text-disabled:   #5a7099;
+  --mn-text-inverse:    #0d1f43;
+  --mn-border:          #1e3a6a;
+  --mn-border-subtle:   rgba(255, 255, 255, 0.06);
+  --mn-border-strong:   #2a4a8a;
+  --mn-border-focus:    var(--mn-accent);
+  --mn-border-error:    var(--mn-error);
+  --mn-hover-bg:        rgba(255, 255, 255, 0.06);
+  --mn-active-bg:       rgba(255, 255, 255, 0.12);
+  --mn-focus-ring:      var(--mn-accent);
+  --mn-focus-ring-offset: var(--mn-surface);
+  --mn-error:           #ff8272;
+  --mn-error-bg:        color-mix(in srgb, #ff8272 16%, transparent);
+  --mn-success:         #b4fa72;
+  --mn-success-bg:      color-mix(in srgb, #b4fa72 12%, transparent);
+  --mn-warning:         #f9c96a;
+  --mn-warning-bg:      color-mix(in srgb, #f9c96a 14%, transparent);
+  --mn-info:            #a5d5fe;
+  --mn-info-bg:         color-mix(in srgb, #a5d5fe 14%, transparent);
+  --mn-backdrop:        rgba(0, 0, 0, 0.5);
+  --mn-scrim:           rgba(9, 22, 54, 0.8);
+  --mn-danger-text:     #ffffff;
+
+  /* ── shadcn bridge ── */
+  --background: var(--mn-surface);
+  --foreground: var(--mn-text);
+  --card: var(--mn-surface-raised);
+  --card-foreground: var(--mn-text);
+  --popover: var(--mn-surface-raised);
+  --popover-foreground: var(--mn-text);
+  --primary: var(--mn-accent);
+  --primary-foreground: var(--mn-accent-text);
+  --secondary: var(--mn-surface-raised);
+  --secondary-foreground: var(--mn-text);
+  --muted: var(--mn-border);
+  --muted-foreground: var(--mn-text-muted);
+  --accent: var(--mn-border);
+  --accent-foreground: var(--mn-text);
+  --destructive: var(--mn-error);
+  --border: var(--mn-border);
+  --input: var(--mn-surface-input);
+  --ring: var(--mn-accent);
+  --status-success: #4ade80;
+  --status-warning: #fbbf24;
+  --status-error: #ff8272;
+  --status-info: #FFC72C;
+  --chart-1: #FFC72C;
+  --chart-2: #a5d5fe;
+  --chart-3: #b4fa72;
+  --chart-4: #f9c96a;
+  --chart-5: #ff8272;
+  --radius: 0.5rem;
+  --sidebar: var(--mn-surface-sunken);
+  --sidebar-foreground: var(--mn-text);
+  --sidebar-primary: var(--mn-accent);
+  --sidebar-primary-foreground: var(--mn-accent-text);
+  --sidebar-accent: var(--mn-surface-raised);
+  --sidebar-accent-foreground: var(--mn-text);
+  --sidebar-border: var(--mn-border);
+  --sidebar-ring: var(--mn-accent);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Light theme (Maranello Avorio)
+   ══════════════════════════════════════════════════════════════ */
+[data-theme="light"] {
+  /* ── Maranello semantic tokens ── */
+  --mn-accent:          #DC0000;
+  --mn-accent-hover:    #b30000;
+  --mn-accent-text:     #ffffff;
+  --mn-accent-bg:       color-mix(in srgb, #DC0000 8%, transparent);
+  --mn-accent-border:   color-mix(in srgb, #DC0000 20%, transparent);
+  --mn-surface:         #ffffff;
+  --mn-surface-raised:  #faf3e6;
+  --mn-surface-sunken:  #e8d5b0;
+  --mn-surface-input:   #ffffff;
+  --mn-surface-overlay: color-mix(in srgb, #ffffff 92%, transparent);
+  --mn-surface-hover:   rgba(0,0,0,0.04);
+  --mn-text:            #111111;
+  --mn-text-muted:      #6b6b6b;
+  --mn-text-secondary:  #444444;
+  --mn-text-tertiary:   #5a5550;
+  --mn-text-disabled:   #7b7469;
+  --mn-text-inverse:    #ffffff;
+  --mn-border:          #d4c4a8;
+  --mn-border-subtle:   rgba(0,0,0,0.08);
+  --mn-border-strong:   #b8ad9a;
+  --mn-border-focus:    #DC0000;
+  --mn-border-error:    #DC0000;
+  --mn-hover-bg:        rgba(0,0,0,0.06);
+  --mn-active-bg:       rgba(0,0,0,0.12);
+  --mn-focus-ring:      #DC0000;
+  --mn-focus-ring-offset: #ffffff;
+  --mn-error:           #DC0000;
+  --mn-error-bg:        color-mix(in srgb, #DC0000 14%, transparent);
+  --mn-success:         #008844;
+  --mn-success-bg:      color-mix(in srgb, #008844 14%, transparent);
+  --mn-warning:         #d4a000;
+  --mn-warning-bg:      color-mix(in srgb, #d4a000 14%, transparent);
+  --mn-info:            #2b7eb5;
+  --mn-info-bg:         color-mix(in srgb, #2b7eb5 14%, transparent);
+  --mn-backdrop:        rgba(0,0,0,0.25);
+  --mn-scrim:           rgba(0,0,0,0.6);
+  --mn-danger-text:     #ffffff;
+
+  /* ── shadcn bridge ── */
+  --background: #FAF3E6;
+  --foreground: var(--mn-text);
+  --card: var(--mn-surface);
+  --card-foreground: var(--mn-text);
+  --popover: var(--mn-surface);
+  --popover-foreground: var(--mn-text);
+  --primary: var(--mn-accent);
+  --primary-foreground: var(--mn-accent-text);
+  --secondary: var(--mn-surface-raised);
+  --secondary-foreground: var(--mn-text);
+  --muted: #f0e8d8;
+  --muted-foreground: var(--mn-text-muted);
+  --accent: var(--mn-surface-raised);
+  --accent-foreground: var(--mn-text);
+  --destructive: var(--mn-error);
+  --border: var(--mn-border);
+  --input: var(--mn-surface-input);
+  --ring: var(--mn-accent);
+  --status-success: #4ade80;
+  --status-warning: #fbbf24;
+  --status-error: #ff8272;
+  --status-info: #FFC72C;
+  --chart-1: #DC0000;
+  --chart-2: #0072B2;
+  --chart-3: #008844;
+  --chart-4: #d4a000;
+  --chart-5: #6b6b6b;
+  --sidebar: #f5edd8;
+  --sidebar-foreground: var(--mn-text);
+  --sidebar-primary: var(--mn-accent);
+  --sidebar-primary-foreground: var(--mn-accent-text);
+  --sidebar-accent: #f0e8d8;
+  --sidebar-accent-foreground: var(--mn-text);
+  --sidebar-border: var(--mn-border);
+  --sidebar-ring: var(--mn-accent);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Dark theme (Maranello Nero)
+   ══════════════════════════════════════════════════════════════ */
+.dark,
+[data-theme="dark"] {
+  /* ── Maranello semantic tokens ── */
+  --mn-accent:          #FFC72C;
+  --mn-accent-hover:    #e6b326;
+  --mn-accent-text:     #111111;
+  --mn-accent-bg:       color-mix(in srgb, #FFC72C 8%, transparent);
+  --mn-accent-border:   color-mix(in srgb, #FFC72C 20%, transparent);
+  --mn-surface:         #111111;
+  --mn-surface-raised:  #1a1a1a;
+  --mn-surface-sunken:  #0a0a0a;
+  --mn-surface-input:   #1a1a1a;
+  --mn-surface-overlay: color-mix(in srgb, #000000 82%, transparent);
+  --mn-surface-hover:   rgba(255,255,255,0.04);
+  --mn-text:            #fafafa;
+  --mn-text-muted:      #9e9e9e;
+  --mn-text-secondary:  #cccccc;
+  --mn-text-tertiary:   #c8c8c8;
+  --mn-text-disabled:   #7a7a7a;
+  --mn-text-inverse:    #000000;
+  --mn-border:          #2a2a2a;
+  --mn-border-subtle:   rgba(255,255,255,0.07);
+  --mn-border-strong:   #c8c8c8;
+  --mn-border-focus:    #FFC72C;
+  --mn-border-error:    #DC0000;
+  --mn-hover-bg:        rgba(255,255,255,0.06);
+  --mn-active-bg:       rgba(255,255,255,0.12);
+  --mn-focus-ring:      #FFC72C;
+  --mn-focus-ring-offset: #111111;
+  --mn-error:           #DC0000;
+  --mn-error-bg:        color-mix(in srgb, #DC0000 16%, transparent);
+  --mn-success:         #00A651;
+  --mn-success-bg:      color-mix(in srgb, #00A651 16%, transparent);
+  --mn-warning:         #FFC72C;
+  --mn-warning-bg:      color-mix(in srgb, #FFC72C 16%, transparent);
+  --mn-info:            #448AFF;
+  --mn-info-bg:         color-mix(in srgb, #448AFF 16%, transparent);
+  --mn-backdrop:        rgba(0,0,0,0.4);
+  --mn-scrim:           rgba(0,0,0,0.72);
+  --mn-danger-text:     #ffffff;
+
+  /* ── shadcn bridge ── */
+  --background: var(--mn-surface);
+  --foreground: var(--mn-text);
+  --card: var(--mn-surface-raised);
+  --card-foreground: var(--mn-text);
+  --popover: var(--mn-surface-raised);
+  --popover-foreground: var(--mn-text);
+  --primary: var(--mn-accent);
+  --primary-foreground: var(--mn-accent-text);
+  --secondary: var(--mn-border);
+  --secondary-foreground: var(--mn-text);
+  --muted: var(--mn-border);
+  --muted-foreground: var(--mn-text-muted);
+  --accent: var(--mn-border);
+  --accent-foreground: var(--mn-text);
+  --destructive: var(--mn-error);
+  --border: var(--mn-border);
+  --input: var(--mn-surface-input);
+  --ring: var(--mn-accent);
+  --status-success: #4ade80;
+  --status-warning: #fbbf24;
+  --status-error: #ff8272;
+  --status-info: #FFC72C;
+  --chart-1: #FFC72C;
+  --chart-2: #DC0000;
+  --chart-3: #00A651;
+  --chart-4: #9e9e9e;
+  --chart-5: #c8c8c8;
+  --sidebar: var(--mn-surface-sunken);
+  --sidebar-foreground: var(--mn-text);
+  --sidebar-primary: var(--mn-accent);
+  --sidebar-primary-foreground: var(--mn-accent-text);
+  --sidebar-accent: var(--mn-border);
+  --sidebar-accent-foreground: var(--mn-text);
+  --sidebar-border: var(--mn-border);
+  --sidebar-ring: var(--mn-accent);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Colorblind theme (Okabe-Ito safe)
+   ══════════════════════════════════════════════════════════════ */
+[data-theme="colorblind"] {
+  /* ── Maranello semantic tokens ── */
+  --mn-accent:          #0072B2;
+  --mn-accent-hover:    #005f94;
+  --mn-accent-text:     #ffffff;
+  --mn-accent-bg:       color-mix(in srgb, #0072B2 8%, transparent);
+  --mn-accent-border:   color-mix(in srgb, #0072B2 20%, transparent);
+  --mn-surface:         #111111;
+  --mn-surface-raised:  #1a1a1a;
+  --mn-surface-sunken:  #0a0a0a;
+  --mn-surface-input:   #1a1a1a;
+  --mn-surface-overlay: color-mix(in srgb, #000000 82%, transparent);
+  --mn-surface-hover:   rgba(255,255,255,0.04);
+  --mn-text:            #fafafa;
+  --mn-text-muted:      #9e9e9e;
+  --mn-text-secondary:  #cccccc;
+  --mn-text-tertiary:   #c8c8c8;
+  --mn-text-disabled:   #7a7a7a;
+  --mn-text-inverse:    #000000;
+  --mn-border:          #2a2a2a;
+  --mn-border-subtle:   rgba(255,255,255,0.07);
+  --mn-border-strong:   #c8c8c8;
+  --mn-border-focus:    #0072B2;
+  --mn-border-error:    #D55E00;
+  --mn-hover-bg:        rgba(255,255,255,0.06);
+  --mn-active-bg:       rgba(255,255,255,0.12);
+  --mn-focus-ring:      #0072B2;
+  --mn-focus-ring-offset: #111111;
+  --mn-error:           #C94000;
+  --mn-error-bg:        color-mix(in srgb, #C94000 16%, transparent);
+  --mn-success:         #009E73;
+  --mn-success-bg:      color-mix(in srgb, #009E73 16%, transparent);
+  --mn-warning:         #E69F00;
+  --mn-warning-bg:      color-mix(in srgb, #E69F00 16%, transparent);
+  --mn-info:            #56B4E9;
+  --mn-info-bg:         color-mix(in srgb, #56B4E9 16%, transparent);
+  --mn-backdrop:        rgba(0,0,0,0.4);
+  --mn-scrim:           rgba(0,0,0,0.72);
+  --mn-danger-text:     #ffffff;
+
+  /* ── shadcn bridge ── */
+  --background: var(--mn-surface);
+  --foreground: var(--mn-text);
+  --card: var(--mn-surface-raised);
+  --card-foreground: var(--mn-text);
+  --popover: var(--mn-surface-raised);
+  --popover-foreground: var(--mn-text);
+  --primary: var(--mn-accent);
+  --primary-foreground: var(--mn-accent-text);
+  --secondary: var(--mn-border);
+  --secondary-foreground: var(--mn-text);
+  --muted: var(--mn-border);
+  --muted-foreground: var(--mn-text-muted);
+  --accent: var(--mn-accent);
+  --accent-foreground: var(--mn-accent-text);
+  --destructive: var(--mn-error);
+  --border: var(--mn-border);
+  --input: var(--mn-surface-input);
+  --ring: var(--mn-accent);
+  --status-success: #4ade80;
+  --status-warning: #fbbf24;
+  --status-error: #ff8272;
+  --status-info: #FFC72C;
+  --chart-1: #0072B2;
+  --chart-2: #E69F00;
+  --chart-3: #009E73;
+  --chart-4: #56B4E9;
+  --chart-5: #CC79A7;
+  --sidebar: var(--mn-surface-sunken);
+  --sidebar-foreground: var(--mn-text);
+  --sidebar-primary: var(--mn-accent);
+  --sidebar-primary-foreground: var(--mn-accent-text);
+  --sidebar-accent: var(--mn-border);
+  --sidebar-accent-foreground: var(--mn-text);
+  --sidebar-border: var(--mn-border);
+  --sidebar-ring: var(--mn-accent);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Navy override (MUST be last to win over .dark class)
+   ══════════════════════════════════════════════════════════════ */
+[data-theme="navy"] {
+  /* ── Maranello semantic tokens ── */
+  --mn-accent:          #FFC72C;
+  --mn-accent-hover:    #e6b326;
+  --mn-accent-text:     #0d1f43;
+  --mn-accent-bg:       color-mix(in srgb, #FFC72C 10%, transparent);
+  --mn-accent-border:   color-mix(in srgb, #FFC72C 25%, transparent);
+  --mn-surface:         #0d2045;
+  --mn-surface-raised:  #122a55;
+  --mn-surface-sunken:  #091636;
+  --mn-surface-input:   #122a55;
+  --mn-surface-overlay: rgba(9, 22, 54, 0.85);
+  --mn-surface-hover:   rgba(255, 255, 255, 0.05);
+  --mn-text:            #e8eaf6;
+  --mn-text-muted:      #8ea4c8;
+  --mn-text-secondary:  #b8c8e0;
+  --mn-text-tertiary:   #a0b4d0;
+  --mn-text-disabled:   #5a7099;
+  --mn-text-inverse:    #0d1f43;
+  --mn-border:          #1e3a6a;
+  --mn-border-subtle:   rgba(255, 255, 255, 0.06);
+  --mn-border-strong:   #2a4a8a;
+  --mn-border-focus:    var(--mn-accent);
+  --mn-border-error:    var(--mn-error);
+  --mn-hover-bg:        rgba(255, 255, 255, 0.06);
+  --mn-active-bg:       rgba(255, 255, 255, 0.12);
+  --mn-focus-ring:      var(--mn-accent);
+  --mn-focus-ring-offset: var(--mn-surface);
+  --mn-error:           #ff8272;
+  --mn-error-bg:        color-mix(in srgb, #ff8272 16%, transparent);
+  --mn-success:         #b4fa72;
+  --mn-success-bg:      color-mix(in srgb, #b4fa72 12%, transparent);
+  --mn-warning:         #f9c96a;
+  --mn-warning-bg:      color-mix(in srgb, #f9c96a 14%, transparent);
+  --mn-info:            #a5d5fe;
+  --mn-info-bg:         color-mix(in srgb, #a5d5fe 14%, transparent);
+  --mn-backdrop:        rgba(0, 0, 0, 0.5);
+  --mn-scrim:           rgba(9, 22, 54, 0.8);
+  --mn-danger-text:     #ffffff;
+
+  /* ── shadcn bridge ── */
+  --background: var(--mn-surface);
+  --foreground: var(--mn-text);
+  --card: var(--mn-surface-raised);
+  --card-foreground: var(--mn-text);
+  --popover: var(--mn-surface-raised);
+  --popover-foreground: var(--mn-text);
+  --primary: var(--mn-accent);
+  --primary-foreground: var(--mn-accent-text);
+  --secondary: var(--mn-surface-raised);
+  --secondary-foreground: var(--mn-text);
+  --muted: var(--mn-border);
+  --muted-foreground: var(--mn-text-muted);
+  --accent: var(--mn-border);
+  --accent-foreground: var(--mn-text);
+  --destructive: var(--mn-error);
+  --border: var(--mn-border);
+  --input: var(--mn-surface-input);
+  --ring: var(--mn-accent);
+  --status-success: #4ade80;
+  --status-warning: #fbbf24;
+  --status-error: #ff8272;
+  --status-info: #FFC72C;
+  --chart-1: #FFC72C;
+  --chart-2: #a5d5fe;
+  --chart-3: #b4fa72;
+  --chart-4: #f9c96a;
+  --chart-5: #ff8272;
+  --sidebar: var(--mn-surface-sunken);
+  --sidebar-foreground: var(--mn-text);
+  --sidebar-primary: var(--mn-accent);
+  --sidebar-primary-foreground: var(--mn-accent-text);
+  --sidebar-accent: var(--mn-surface-raised);
+  --sidebar-accent-foreground: var(--mn-text);
+  --sidebar-border: var(--mn-border);
+  --sidebar-ring: var(--mn-accent);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  html {
+    @apply font-sans;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Maranello type scale — Outfit for headings, Inter for body, Barlow Condensed for mono */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-outfit), 'Outfit', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  h1 { font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 700; }
+  h2 { font-size: clamp(1.25rem, 2vw, 1.75rem); }
+  h3 { font-size: 1.125rem; }
+  h4 { font-size: 1rem; font-weight: 600; }
+
+  code, kbd, pre, samp, .font-mono {
+    font-family: var(--font-barlow), 'Barlow Condensed', sans-serif;
+  }
+
+  /* Labels, badges, nav items — condensed display rhythm */
+  .text-label {
+    font-family: var(--font-outfit), 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .text-micro {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+  }
+  .text-caption {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    transition: none;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── MnA11yFab: accessibility preference classes ── */
+html.mn-font-large { font-size: 118.75%; }
+html.mn-font-xl { font-size: 137.5%; }
+
+html.mn-dyslexic,
+html.mn-dyslexic body,
+html.mn-dyslexic input,
+html.mn-dyslexic textarea,
+html.mn-dyslexic select,
+html.mn-dyslexic button {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+}
+
+html.mn-high-contrast {
+  --foreground: #ffffff;
+  --background: #000000;
+  --muted-foreground: #e0e0e0;
+  --border: #ffffff;
+}
+
+html.mn-reduced-motion,
+html.mn-reduced-motion *,
+html.mn-reduced-motion *::before,
+html.mn-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ── MnA11yFab v2: new class names ── */
+body.mn-a11y-dyslexia-font,
+body.mn-a11y-dyslexia-font input,
+body.mn-a11y-dyslexia-font textarea,
+body.mn-a11y-dyslexia-font select,
+body.mn-a11y-dyslexia-font button {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+}
+
+body.mn-a11y-high-contrast {
+  --foreground: #ffffff;
+  --background: #000000;
+  --muted-foreground: #e0e0e0;
+  --border: #ffffff;
+}
+
+body.mn-a11y-reduced-motion *,
+body.mn-a11y-reduced-motion *::before,
+body.mn-a11y-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+html.mn-no-focus-ring *:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}

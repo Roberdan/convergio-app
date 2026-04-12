@@ -1,0 +1,44 @@
+---
+title: MnHeatmap
+category: data-viz
+description: "Matrix heatmap with color-coded cells and interactive tooltips"
+keywords: ["heatmap", "mappa di calore", "matrix", "matrice", "color", "colore", "intensity"]
+---
+
+# MnHeatmap
+
+Matrix heatmap with color-coded cells and interactive tooltips.
+
+## When to use
+
+Use to reveal patterns across two dimensions via color intensity.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `data` | `{ label: string` | **required** | 2D grid of cells: rows x cols |
+| `value` | `number }[][]` | **required** | Current value |
+| `colorScale` | `HeatmapColorScale` | — | Color scale endpoints (supports CSS variables and raw colors) |
+| `showValues` | `boolean` | `false` | Show numeric values inside cells |
+| `ariaLabel` | `string` | `'Heatmap'` | Accessible label for the heatmap |
+| `className` | `string` | `{cn('inline-grid gap-1'` | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnHeatmap } from "@/components/maranello"
+
+<MnHeatmap
+  data={[
+    [{ label: "Mon", value: 3 }, { label: "Tue", value: 7 }, { label: "Wed", value: 2 }],
+    [{ label: "Mon", value: 5 }, { label: "Tue", value: 1 }, { label: "Wed", value: 9 }],
+  ]}
+  showValues
+/>
+```
+
+## Accessibility
+
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with labels for color-blind users

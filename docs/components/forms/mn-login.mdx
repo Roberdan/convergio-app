@@ -1,0 +1,50 @@
+---
+title: MnLogin
+category: forms
+description: "Login form with email/password fields, SSO options, and forgot-password link"
+keywords: ["login", "auth", "accesso", "autenticazione", "password", "sign-in", "email"]
+---
+
+# MnLogin
+
+Login form with email/password fields, SSO options, and forgot-password link.
+
+## When to use
+
+Use as the primary authentication entry point.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | — | Title text |
+| `titleAccent` | `string` | — | Title Accent text |
+| `subtitle` | `string` | — | Subtitle text |
+| `version` | `string` | — | Version text |
+| `env` | `string` | — | Env text |
+| `error` | `string` | — | Error banner displayed above the form. |
+| `submitLabel` | `string` | `"Sign in"` | @default "Sign in" |
+| `forgotPasswordHref` | `string` | — | Forgot Password Href text |
+| `onForgotPassword` | `() =&gt; void` | — | Callback when forgot password |
+| `onSubmit` | `(email: string, password: string) =&gt; void` | `{handleSubmit` | Callback when submit |
+| `socialProviders` | `SocialProvider[]` | — | Array of socialProviders |
+| `onSocialLogin` | `(providerId: string) =&gt; void` | — | Callback when social login |
+| `checks` | `LoginServiceCheck[]` | — | Array of checks |
+| `loading` | `boolean` | `false` | Show loading state |
+
+## Example
+
+```tsx
+import { MnLogin } from "@/components/maranello"
+
+<MnLogin
+  onSubmit={(email, password) => handleLogin(email, password)}
+  submitLabel="Sign in"
+/>
+```
+
+## Accessibility
+
+- Form controls are associated with labels via `htmlFor`/`id`
+- Validation errors are announced to screen readers
+- Supports keyboard navigation between fields

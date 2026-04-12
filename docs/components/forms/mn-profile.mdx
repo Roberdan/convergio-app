@@ -1,0 +1,41 @@
+---
+title: MnProfile
+category: forms
+description: "User profile form with avatar upload, personal info, and preference fields"
+keywords: ["profile", "user", "profilo", "utente", "settings", "impostazioni", "account"]
+---
+
+# MnProfile
+
+User profile form with avatar upload, personal info, and preference fields.
+
+## When to use
+
+Use for user settings pages where profile data can be viewed and edited.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | **required** | Name text |
+| `email` | `string` | — | Email text |
+| `avatarUrl` | `string` | — | Avatar Url text |
+| `sections` | `ProfileSection[]` | `[]` | Array of sections |
+| `trigger` | `React.ReactNode` | — | Trigger |
+| `className` | `string` | `{cn(avatarBase` | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnProfile } from "@/components/maranello"
+
+<MnProfile
+  name="Example"
+/>
+```
+
+## Accessibility
+
+- Form controls are associated with labels via `htmlFor`/`id`
+- Validation errors are announced to screen readers
+- Supports keyboard navigation between fields

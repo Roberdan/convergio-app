@@ -1,0 +1,41 @@
+---
+title: MnFacetWorkbench
+category: ops
+description: "Multi-facet workbench for exploring data across configurable dimensions"
+keywords: ["facet", "workbench", "sfaccettatura", "banco di lavoro", "dimension", "dimensione"]
+---
+
+# MnFacetWorkbench
+
+Multi-facet workbench for exploring data across configurable dimensions.
+
+## When to use
+
+Use to let analysts slice data by multiple facets simultaneously.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `groups` | `FacetGroup[]` | **required** | Array of groups |
+| `filters` | `FacetFilters` | — | Filters |
+| `onFilterChange` | `(filters: FacetFilters) =&gt; void` | — | Callback when filter change |
+| `clearAllLabel` | `string` | `"Clear all"` | Clear All Label text |
+
+## Example
+
+```tsx
+import { MnFacetWorkbench } from "@/components/maranello"
+
+<MnFacetWorkbench
+  groups={[
+    { label: "Status", options: [{ label: "Active", value: "active" }, { label: "Inactive", value: "inactive" }] },
+    { label: "Role", options: [{ label: "Admin", value: "admin" }, { label: "Editor", value: "editor" }] },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Data tables include proper `<th>` scope attributes
+- Drag-and-drop has keyboard alternatives

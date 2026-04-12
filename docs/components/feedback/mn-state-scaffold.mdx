@@ -1,0 +1,44 @@
+---
+title: MnStateScaffold
+category: feedback
+description: "Empty-state scaffold rendering contextual illustrations and call-to-action"
+keywords: ["state", "scaffold", "stato", "placeholder", "empty", "vuoto", "error", "errore"]
+---
+
+# MnStateScaffold
+
+Empty-state scaffold rendering contextual illustrations and call-to-action.
+
+## When to use
+
+Use for empty, error, or loading states to guide users toward next steps.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `state` | `StateScaffoldState` | **required** | Current scaffold state. |
+| `message` | `string` | — | Optional message displayed in non-ready states. |
+| `actionLabel` | `string` | — | Label for the action button (error retry or empty action). |
+| `onRetry` | `() =&gt; void` | — | Called when the retry button is clicked (error state). |
+| `onAction` | `() =&gt; void` | `{onRetry` | Called when the action button is clicked (empty state). |
+
+## Example
+
+```tsx
+import { MnStateScaffold } from "@/components/maranello"
+
+{/* Loading state */}
+<MnStateScaffold state="loading" />
+
+{/* Empty state */}
+<MnStateScaffold state="empty" title="No data" description="Add items to get started" />
+
+{/* Error state */}
+<MnStateScaffold state="error" title="Something went wrong" onRetry={() => refetch()} />
+```
+
+## Accessibility
+
+- Uses `role="alert"` or `aria-live` regions for dynamic content
+- Focus is managed when content appears/disappears

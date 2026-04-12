@@ -1,0 +1,44 @@
+---
+title: MnBreadcrumb
+category: navigation
+description: "Breadcrumb trail with separator customization and overflow truncation"
+keywords: ["breadcrumb", "navigation", "briciole di pane", "navigazione", "path", "percorso"]
+---
+
+# MnBreadcrumb
+
+Breadcrumb trail with separator customization and overflow truncation.
+
+## When to use
+
+Use to show hierarchical page location and enable upward navigation.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `BreadcrumbItem[]` | **required** | Array of items |
+| `separator` | `React.ReactNode` | — | Separator |
+| `onNavigate` | `(` | `{onNavigate` | Callback when navigate |
+| `item` | `BreadcrumbItem,` | **required** | Item |
+| `index` | `number,` | **required** | Index |
+| `event` | `React.MouseEvent,` | **required** | Event |
+
+## Example
+
+```tsx
+import { MnBreadcrumb } from "@/components/maranello"
+
+<MnBreadcrumb
+  items={[
+    { label: "Home", href: "/" },
+    { label: "Showcase", href: "/showcase" },
+    { label: "Data Viz" },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Implements `aria-current` for active navigation items
+- Full keyboard navigation support with arrow keys

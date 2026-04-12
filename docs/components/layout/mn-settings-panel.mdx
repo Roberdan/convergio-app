@@ -1,0 +1,36 @@
+---
+title: MnSettingsPanel
+category: layout
+description: "Settings form panel with categorized option groups and save/cancel controls"
+keywords: ["settings", "panel", "impostazioni", "pannello", "config", "configurazione", "options"]
+---
+
+# MnSettingsPanel
+
+Settings form panel with categorized option groups and save/cancel controls.
+
+## When to use
+
+Use to present application or module settings in a structured panel.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `sections` | `SettingsSection[]` | **required** | Array of sections |
+| `className` | `string` | — | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnSettingsPanel } from "@/components/maranello"
+
+<MnSettingsPanel
+  sections={[]}
+/>
+```
+
+## Accessibility
+
+- Uses semantic landmarks (`<main>`, `<nav>`, `<aside>`)
+- Skip-to-content link is supported

@@ -1,0 +1,42 @@
+---
+title: MnFinOps
+category: financial
+description: "Financial operations dashboard with spend tracking and budget alerts"
+keywords: ["finops", "financial", "finanziario", "operations", "operazioni", "spend", "spesa", "budget"]
+---
+
+# MnFinOps
+
+Financial operations dashboard with spend tracking and budget alerts.
+
+## When to use
+
+Use to monitor cloud and AI spend with budget guardrails.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `metrics` | `FinOpsMetric[]` | **required** | Array of metrics |
+| `formatValue` | `(v: number) =&gt; string` | — | Format values (default: toLocaleString) |
+| `ariaLabel` | `string` | `'Financial Operations'` | Accessible label |
+| `className` | `string` | `{cn('rounded-lg border bg-card'` | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnFinops } from "@/components/maranello"
+
+<MnFinops
+  metrics={[
+    { label: "Compute", current: 12400, previous: 11800, budget: 15000, unit: "$" },
+    { label: "Storage", current: 3200, previous: 2900, budget: 4000, unit: "$" },
+    { label: "Network", current: 890, previous: 950, budget: 1200, unit: "$" },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Monetary values use `aria-label` for screen reader clarity
+- Tables include proper header associations

@@ -1,0 +1,38 @@
+---
+title: MnToast
+category: feedback
+description: "Toast notification with auto-dismiss, stacking, and severity variants"
+keywords: ["toast", "notification", "notifica", "snackbar", "alert", "avviso", "message", "messaggio"]
+---
+
+# MnToast
+
+Toast notification with auto-dismiss, stacking, and severity variants.
+
+## When to use
+
+Use for brief, non-blocking feedback after user actions.
+
+## Props
+
+_This component extends native HTML attributes. See source for full type details._
+
+
+## Example
+
+```tsx
+import { MnToast, toast } from "@/components/maranello"
+
+{/* Trigger a toast */}
+toast.success("Changes saved successfully")
+toast.error("Failed to connect to server")
+toast.info("New version available")
+
+{/* Toast container (add once in your layout) */}
+<MnToast />
+```
+
+## Accessibility
+
+- Uses `role="alert"` or `aria-live` regions for dynamic content
+- Focus is managed when content appears/disappears

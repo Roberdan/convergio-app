@@ -1,0 +1,44 @@
+---
+title: MnApprovalChain
+category: agentic
+description: "Sequential approval workflow showing sign-off status across stakeholders"
+keywords: ["approval", "chain", "workflow", "approvazione", "catena", "flusso", "sign-off"]
+---
+
+# MnApprovalChain
+
+Sequential approval workflow showing sign-off status across stakeholders.
+
+## When to use
+
+Use for multi-step approval processes requiring ordered sign-offs.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `steps` | `ApprovalStep[]` | **required** | Array of steps |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Layout orientation |
+| `editable` | `boolean` | `false` | Enable inline editing |
+| `onAction` | `(step: ApprovalStep, action: ApprovalAction) =&gt; void` | `{onAction` | Callback when action |
+| `className` | `string` | `{cls` | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnApprovalChain } from "@/components/maranello"
+
+<MnApprovalChain
+  steps={[
+    { id: "a1", label: "Engineering", approver: "Alice", status: "approved", timestamp: "2025-01-10" },
+    { id: "a2", label: "Security", approver: "Bob", status: "approved", timestamp: "2025-01-11" },
+    { id: "a3", label: "Legal", approver: "Carol", status: "pending" },
+    { id: "a4", label: "Executive", approver: "Dave", status: "waiting" },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Status updates use `aria-live` for real-time announcements
+- Interactive elements support keyboard activation

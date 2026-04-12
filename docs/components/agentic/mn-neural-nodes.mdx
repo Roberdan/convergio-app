@@ -1,0 +1,44 @@
+---
+title: MnNeuralNodes
+category: agentic
+description: "Interactive neural network node graph for visualizing model architectures"
+keywords: ["neural", "nodes", "network", "neurale", "nodi", "rete", "graph", "grafo", "AI"]
+---
+
+# MnNeuralNodes
+
+Interactive neural network node graph for visualizing model architectures.
+
+## When to use
+
+Use to render neural-network-style node graphs or AI pipeline topologies.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `nodes` | `NeuralNodeData[]` | `nodeData.map((nd) => toInternal(nd` | Array of nodes |
+| `connections` | `NeuralConnection[]` | `[]; spawn(); return` | Array of connections |
+| `nodeCount` | `number` | `30` | Node Count value |
+| `connectionDensity` | `number` | `0.15` | Connection Density value |
+| `colors` | `string[]` | `DEFAULT_COLORS` | Array of colors |
+| `pulseSpeed` | `number` | `1` | Pulse Speed value |
+| `particleCount` | `number` | `2` | Particle Count value |
+| `interactive` | `boolean` | `true` | Enable interactive |
+| `labels` | `boolean` | — | Enable labels |
+| `forceLayout` | `boolean` | — | Enable force layout |
+| `labelFont` | `string` | `"monospace"` | Label Font text |
+| `onReady` | `(controller: NeuralNodesController) =&gt; void` | — | Callback when ready |
+
+## Example
+
+```tsx
+import { MnNeuralNodes } from "@/components/maranello"
+
+<MnNeuralNodes nodeCount={40} connectionDensity={0.2} interactive />
+```
+
+## Accessibility
+
+- Status updates use `aria-live` for real-time announcements
+- Interactive elements support keyboard activation

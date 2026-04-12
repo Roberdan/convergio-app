@@ -1,0 +1,41 @@
+---
+title: MnDatePicker
+category: forms
+description: "Single-date picker with calendar popup and manual input support"
+keywords: ["date", "picker", "data", "selettore", "calendar", "calendario", "input"]
+---
+
+# MnDatePicker
+
+Single-date picker with calendar popup and manual input support.
+
+## When to use
+
+Use to select a single date from a calendar or by typing.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | — | Current value |
+| `onChange` | `(date: string) =&gt; void` | — | Change event handler |
+| `min` | `string` | — | Minimum value |
+| `max` | `string` | — | Maximum value |
+| `disabledDates` | `string[]` | — | Array of disabledDates |
+| `placeholder` | `string` | `"Select date"` | Placeholder text |
+| `disabled` | `boolean` | `{disabled` | Disable the component |
+| `className` | `string` | `{cn(datePickerVariants({ size` | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnDatePicker } from "@/components/maranello"
+
+<MnDatePicker />
+```
+
+## Accessibility
+
+- Form controls are associated with labels via `htmlFor`/`id`
+- Validation errors are announced to screen readers
+- Supports keyboard navigation between fields

@@ -1,0 +1,38 @@
+---
+title: MnDashboardRenderer
+category: layout
+description: "Dynamic dashboard renderer that lays out widget configs into a grid"
+keywords: ["dashboard", "renderer", "cruscotto", "rendering", "widget", "dynamic", "dinamico"]
+---
+
+# MnDashboardRenderer
+
+Dynamic dashboard renderer that lays out widget configs into a grid.
+
+## When to use
+
+Use to render user-configured dashboards from a JSON widget definition.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `schema` | `RendererSchema` | **required** | Grid schema describing rows and widget columns. |
+| `data` | `Record&lt;string, unknown&gt;` | — | Map of dataKey to widget data. |
+| `renderWidget` | `RenderWidgetFn` | `{renderWidget` | Custom widget render function. |
+| `onRetry` | `(dataKey: string) =&gt; void` | — | Called when a widget retry button is clicked. |
+
+## Example
+
+```tsx
+import { MnDashboardRenderer } from "@/components/maranello"
+
+<MnDashboardRenderer
+  schema={/* RendererSchema */}
+/>
+```
+
+## Accessibility
+
+- Uses semantic landmarks (`<main>`, `<nav>`, `<aside>`)
+- Skip-to-content link is supported

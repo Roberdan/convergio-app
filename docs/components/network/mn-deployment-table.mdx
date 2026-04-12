@@ -1,0 +1,41 @@
+---
+title: MnDeploymentTable
+category: network
+description: "Deployment status table listing services, versions, and health checks"
+keywords: ["deployment", "table", "distribuzione", "tabella", "service", "servizio", "version"]
+---
+
+# MnDeploymentTable
+
+Deployment status table listing services, versions, and health checks.
+
+## When to use
+
+Use to monitor deployed services with their current version and status.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `deployments` | `Deployment[]` | **required** | Array of deployments |
+| `ariaLabel` | `string` | `'Deployments'` | Accessible label for screen readers |
+| `className` | `string` | — | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnDeploymentTable } from "@/components/maranello"
+
+<MnDeploymentTable
+  deployments={[
+    { id: "d1", service: "api-gateway", version: "2.4.1", environment: "production", status: "success", timestamp: "2025-01-15T10:30:00Z" },
+    { id: "d2", service: "auth-service", version: "1.8.0", environment: "staging", status: "in_progress", timestamp: "2025-01-15T11:00:00Z" },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Interactive nodes are keyboard focusable
+- Status information uses `aria-live` for updates
+- Follows WAI-ARIA Tabs pattern (`role="tablist"` / `role="tab"`)

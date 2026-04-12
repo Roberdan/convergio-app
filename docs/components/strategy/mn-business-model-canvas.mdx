@@ -1,0 +1,35 @@
+---
+title: MnBusinessModelCanvas
+category: strategy
+description: "Business Model Canvas with nine editable building blocks"
+keywords: ["business", "model", "canvas", "modello", "tela", "strategy", "strategia", "value"]
+---
+
+# MnBusinessModelCanvas
+
+Business Model Canvas with nine editable building blocks.
+
+## When to use
+
+Use to map out a business model across value proposition, channels, and more.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `blocks` | `BmcBlock[]` | `controlledBlocks ?? defaultBlocks()` | Array of blocks |
+| `editable` | `boolean` | `true` | Enable inline editing |
+| `onChange` | `(blocks: BmcBlock[]) =&gt; void` | `{(e) => setDraft(e.target.value)` | Change event handler |
+
+## Example
+
+```tsx
+import { MnBusinessModelCanvas } from "@/components/maranello"
+
+<MnBusinessModelCanvas editable />
+```
+
+## Accessibility
+
+- Matrix cells are keyboard navigable
+- Visual data is supplemented with text descriptions

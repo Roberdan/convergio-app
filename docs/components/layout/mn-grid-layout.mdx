@@ -1,0 +1,34 @@
+---
+title: MnGridLayout
+category: layout
+description: "Responsive grid layout manager with drag-and-drop widget repositioning"
+keywords: ["grid", "layout", "griglia", "disposizione", "drag", "drop", "responsive", "reattivo"]
+---
+
+# MnGridLayout
+
+Responsive grid layout manager with drag-and-drop widget repositioning.
+
+## When to use
+
+Use when users need to rearrange widgets within a grid.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `columns` | `GridColumns` | `1` | Base number of columns (used at smallest viewport). |
+| `breakpoints` | `Breakpoints` | — | Responsive column overrides per breakpoint. |
+
+## Example
+
+```tsx
+import { MnGridLayout } from "@/components/maranello"
+
+<MnGridLayout />
+```
+
+## Accessibility
+
+- Uses semantic landmarks (`<main>`, `<nav>`, `<aside>`)
+- Skip-to-content link is supported

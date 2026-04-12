@@ -1,0 +1,47 @@
+---
+title: MnConfidenceChart
+category: data-viz
+description: "Chart displaying confidence intervals and probability distributions"
+keywords: ["confidence", "chart", "grafico", "confidenza", "interval", "intervallo", "probability"]
+---
+
+# MnConfidenceChart
+
+Chart displaying confidence intervals and probability distributions.
+
+## When to use
+
+Use to visualize prediction confidence, error ranges, or probability bands.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `labels` | `string[]` | **required** | Array of labels |
+| `values` | `number[]` | **required** | Array of values |
+| `lower` | `number[]` | **required** | Array of lower |
+| `upper` | `number[]` | **required** | Array of upper |
+| `unit` | `string` | `""` | Unit suffix (e.g. "%", "$", "km/h") |
+| `color` | `string` | `"var(--mn-accent)"` | Color text |
+| `showDots` | `boolean` | `true` | Whether to show dots |
+| `animate` | `boolean` | `true` | Enable entry animation |
+| `height` | `number` | `200` | Component height in pixels |
+
+## Example
+
+```tsx
+import { MnConfidenceChart } from "@/components/maranello"
+
+<MnConfidenceChart
+  labels={["Jan", "Feb", "Mar", "Apr", "May"]}
+  values={[42, 55, 48, 62, 70]}
+  lower={[35, 45, 38, 50, 58]}
+  upper={[50, 65, 58, 74, 82]}
+  unit="%"
+/>
+```
+
+## Accessibility
+
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with labels for color-blind users

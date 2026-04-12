@@ -1,0 +1,42 @@
+---
+title: MnBinnacle
+category: ops
+description: "Operational binnacle log combining events, metrics, and alerts in one stream"
+keywords: ["binnacle", "log", "giornale di bordo", "registro", "operations", "operazioni", "events"]
+---
+
+# MnBinnacle
+
+Operational binnacle log combining events, metrics, and alerts in one stream.
+
+## When to use
+
+Use to unify operational signals into a single chronological view.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `entries` | `BinnacleEntry[]` | **required** | Array of entries |
+| `maxVisible` | `number` | `50` | Max entries to display before scrolling. Default: 50 |
+| `ariaLabel` | `string` | `'Event log'` | Accessible label for screen readers |
+| `className` | `string` | — | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnBinnacle } from "@/components/maranello"
+
+<MnBinnacle
+  entries={[
+    { id: "e1", timestamp: "10:32:01", level: "info", message: "Service started on port 8420" },
+    { id: "e2", timestamp: "10:32:05", level: "warn", message: "High memory usage detected (87%)" },
+    { id: "e3", timestamp: "10:33:12", level: "error", message: "Connection to DB lost, retrying..." },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Data tables include proper `<th>` scope attributes
+- Drag-and-drop has keyboard alternatives

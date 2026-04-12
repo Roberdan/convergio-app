@@ -1,0 +1,36 @@
+---
+title: MnIcon
+category: data-display
+description: "SVG icon renderer with consistent sizing and theme-aware coloring"
+keywords: ["icon", "svg", "icona", "symbol", "simbolo", "glyph"]
+---
+
+# MnIcon
+
+SVG icon renderer with consistent sizing and theme-aware coloring.
+
+## When to use
+
+Use to display icons from the Maranello icon set.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `MnIconName` | **required** | Icon name from the catalog. |
+| `label` | `string` | `"Success" className="text-green-600" />` | Accessible label. When provided the icon is meaningful; otherwise it is decorative (`aria-hidden`). |
+
+## Example
+
+```tsx
+import { MnIcon } from "@/components/maranello"
+
+<MnIcon
+  name={/* MnIconName */}
+/>
+```
+
+## Accessibility
+
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible

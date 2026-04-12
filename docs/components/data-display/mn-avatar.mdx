@@ -1,0 +1,36 @@
+---
+title: MnAvatar
+category: data-display
+description: "User avatar with initials fallback, status indicator, and size variants"
+keywords: ["avatar", "user", "profile", "utente", "profilo", "image", "immagine", "photo"]
+---
+
+# MnAvatar
+
+User avatar with initials fallback, status indicator, and size variants.
+
+## When to use
+
+Use to represent users or entities with photo, initials, or icon.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | `{src` | URL for the avatar image |
+| `alt` | `string` | `""` | Alt text for image (required when src is provided) |
+| `initials` | `string` | — | Initials to display when no image is provided (1-2 chars) |
+| `status` | `AvatarStatus` | — | Online status indicator |
+
+## Example
+
+```tsx
+import { MnAvatar } from "@/components/maranello"
+
+<MnAvatar />
+```
+
+## Accessibility
+
+- Color is not the only indicator — text or icons provide meaning
+- Interactive elements are keyboard accessible

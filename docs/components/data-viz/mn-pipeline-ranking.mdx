@@ -1,0 +1,42 @@
+---
+title: MnPipelineRanking
+category: data-viz
+description: "Ranked pipeline chart showing deal or item scores in order"
+keywords: ["pipeline", "ranking", "classifica", "rank", "score", "punteggio", "deal", "ordine"]
+---
+
+# MnPipelineRanking
+
+Ranked pipeline chart showing deal or item scores in order.
+
+## When to use
+
+Use to rank and compare pipeline items by a scoring metric.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `stages` | `PipelineStage[]` | **required** | Array of stages |
+| `ariaLabel` | `string` | `'Pipeline funnel'` | Accessible label |
+| `className` | `string` | — | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnPipelineRanking } from "@/components/maranello"
+
+<MnPipelineRanking
+  stages={[
+    { label: "Discovery", count: 42, value: 1200000 },
+    { label: "Proposal", count: 18, value: 850000 },
+    { label: "Negotiation", count: 8, value: 520000 },
+    { label: "Closed Won", count: 3, value: 180000 },
+  ]}
+/>
+```
+
+## Accessibility
+
+- Charts include `aria-label` describing the data trend
+- Color is supplemented with labels for color-blind users

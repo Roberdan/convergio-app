@@ -1,0 +1,48 @@
+---
+title: MnEntityWorkbench
+category: ops
+description: "Workbench view for inspecting and editing a single business entity"
+keywords: ["entity", "workbench", "entità", "banco di lavoro", "edit", "modifica", "detail"]
+---
+
+# MnEntityWorkbench
+
+Workbench view for inspecting and editing a single business entity.
+
+## When to use
+
+Use to provide a full editing surface for a complex domain entity.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `tabs` | `EntityWorkbenchTab[]` | **required** | Array of tabs |
+| `activeTabId` | `string` | `== undefined) setInternalActive(id)` | Active Tab Id text |
+| `onTabSelect` | `(tabId: string) =&gt; void` | — | Callback when tab select |
+| `onTabClose` | `(tabId: string) =&gt; void` | — | Callback when tab close |
+| `onTabAdd` | `() =&gt; void` | — | Callback when tab add |
+| `onSave` | `(tabId: string) =&gt; void` | — | Callback when save |
+| `onReorder` | `(tabIds: string[]) =&gt; void` | — | Callback when reorder |
+| `allowAdd` | `boolean` | `true` | Enable allow add |
+| `renderContent` | `(tab: EntityWorkbenchTab) =&gt; React.ReactNode` | — | Render Content |
+
+## Example
+
+```tsx
+import { MnEntityWorkbench } from "@/components/maranello"
+
+<MnEntityWorkbench
+  tabs={[
+    { id: "users", label: "Users", count: 42 },
+    { id: "teams", label: "Teams", count: 8 },
+    { id: "roles", label: "Roles", count: 5 },
+  ]}
+  allowAdd
+/>
+```
+
+## Accessibility
+
+- Data tables include proper `<th>` scope attributes
+- Drag-and-drop has keyboard alternatives

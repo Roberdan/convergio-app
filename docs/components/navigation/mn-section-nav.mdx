@@ -1,0 +1,43 @@
+---
+title: MnSectionNav
+category: navigation
+description: "Vertical section navigation sidebar with nested collapsible groups"
+keywords: ["section", "nav", "sezione", "navigazione", "sidebar", "barra laterale", "menu"]
+---
+
+# MnSectionNav
+
+Vertical section navigation sidebar with nested collapsible groups.
+
+## When to use
+
+Use for intra-page or intra-module vertical navigation menus.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `SectionNavItem[]` | **required** | Ordered list of navigable sections. |
+| `current` | `string` | **required** | The `id` of the currently active section. |
+| `position` | `SectionNavPosition` | — | Controls which edge gets the accent border. |
+| `onNavigate` | `(id: string) =&gt; void` | — | Called when the user navigates to a different section. |
+
+## Example
+
+```tsx
+import { MnSectionNav } from "@/components/maranello"
+
+<MnSectionNav
+  items={[
+    { id: "overview", label: "Overview" },
+    { id: "details", label: "Details" },
+    { id: "settings", label: "Settings" },
+  ]}
+  current="overview"
+/>
+```
+
+## Accessibility
+
+- Implements `aria-current` for active navigation items
+- Full keyboard navigation support with arrow keys

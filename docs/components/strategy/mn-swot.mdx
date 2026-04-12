@@ -1,0 +1,58 @@
+---
+title: MnSwot
+category: strategy
+description: "SWOT analysis grid with four color-coded quadrants"
+keywords: ["swot", "strengths", "weaknesses", "opportunities", "threats", "forze", "debolezze", "opportunità", "minacce", "analisi"]
+---
+
+# MnSwot
+
+SWOT analysis grid with four color-coded quadrants. Each quadrant accepts a list of items displayed as cards.
+
+## When to use
+
+Use to conduct a structured SWOT analysis — strategic planning, competitive assessment, or project evaluation.
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `strengths` | `string[]` | **required** | Items in the Strengths quadrant |
+| `weaknesses` | `string[]` | **required** | Items in the Weaknesses quadrant |
+| `opportunities` | `string[]` | **required** | Items in the Opportunities quadrant |
+| `threats` | `string[]` | **required** | Items in the Threats quadrant |
+| `editable` | `boolean` | `false` | Enable inline editing of items |
+| `onChange` | `(quadrant: SwotQuadrant, items: string[]) => void` | — | Callback when items change (requires `editable`) |
+| `ariaLabel` | `string` | `"SWOT Analysis"` | Accessible label for the grid |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Grid size variant |
+| `className` | `string` | — | Additional CSS classes |
+
+## Example
+
+```tsx
+import { MnSwot } from "@/components/maranello"
+
+<MnSwot
+  strengths={["Strong brand", "Loyal customers", "Proprietary technology"]}
+  weaknesses={["High costs", "Limited market reach"]}
+  opportunities={["New markets", "AI integration", "Strategic partnerships"]}
+  threats={["Competitors", "Regulation changes", "Economic downturn"]}
+/>
+
+{/* With editing */}
+<MnSwot
+  strengths={strengths}
+  weaknesses={weaknesses}
+  opportunities={opportunities}
+  threats={threats}
+  editable
+  onChange={(quadrant, items) => updateSwot(quadrant, items)}
+/>
+```
+
+## Accessibility
+
+- Grid uses `role="grid"` with labeled quadrants
+- Quadrant headers use semantic colors from `--mn-success`, `--mn-error`, `--mn-warning`, `--mn-info`
+- Keyboard navigable: Tab between quadrants, Enter to edit items
+- Screen reader announces quadrant name and item count
