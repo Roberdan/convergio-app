@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.6.0] - 14 April 2026
+
+### Multi-Provider AI Routing
+- feat(ai): 8 provider options for chat agents, configured via `convergio.yaml`
+- SDK-based: `openai`, `anthropic`, `copilot`, `qwen` (via Vercel AI SDK)
+- CLI-based: `claude-cli`, `copilot-cli`, `qwen-cli` (spawn local binary, no API keys)
+- Each CLI provider parses its native NDJSON stream format
+- CLI helpers extracted to `route.helpers.ts` (CONSTITUTION P4 compliance)
+
 ## [1.5.1] - 14 April 2026
 
 ### Theme Refinements
