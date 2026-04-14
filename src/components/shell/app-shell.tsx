@@ -1,20 +1,21 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { useLocale } from "@/lib/i18n";
 import { Sidebar, type NavSection } from "./sidebar";
 import { Header } from "./header";
-import { MnA11yFab } from "@/components/maranello";
 
 export interface AppShellProps {
   children: React.ReactNode;
   sections: NavSection[];
   brandName?: string;
   brandLogo?: string;
+  /** Optional slot for accessibility FAB (e.g. MnA11yFab). */
+  a11ySlot?: ReactNode;
 }
 
-export function AppShell({ children, sections, brandName, brandLogo }: AppShellProps) {
+export function AppShell({ children, sections, brandName, brandLogo, a11ySlot }: AppShellProps) {
   const t = useLocale("shell");
   const pathname = usePathname();
   // Start collapsed so mobile Sheet is closed on initial render
@@ -50,7 +51,7 @@ export function AppShell({ children, sections, brandName, brandLogo }: AppShellP
           </div>
         </main>
       </div>
-      <MnA11yFab />
+      {a11ySlot}
     </>
   );
 }

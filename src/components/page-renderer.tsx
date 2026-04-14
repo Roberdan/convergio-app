@@ -1,27 +1,20 @@
+import { Suspense, createElement } from "react";
 import type { PageConfig, PageBlock } from "@/types";
 import { loadAIConfig } from "@/lib/config-loader";
+import { getBlock } from "@/lib/block-registry";
 import { KpiCard, DataTable, ActivityFeed, StatList, EmptyState, AIChatPanel } from "@/components/blocks";
-import {
-  MnGauge,
-  MnChart,
-  MnGantt,
-  MnKanbanBoard,
-  MnFunnel,
-  MnHbar,
-  MnSpeedometer,
-  MnMap,
-  MnOkr,
-  MnSystemStatus,
-  MnDataTable,
-  MnWorkflowOrchestrator,
-} from "@/components/maranello";
 
 /**
  * Page Renderer — transforms a PageConfig into rendered UI.
  *
- * Mobile-first responsive grid: single column on small screens,
- * configured columns on md+ breakpoints. Unknown block types
- * trigger a console.warn for debugging.
+ * Maranello block components are loaded from the dynamic block registry
+ * (see src/lib/block-registry.ts). Built-in blocks (kpi-card, data-table,
+ * activity-feed, stat-list, empty-state, ai-chat) are always available.
+ *
+ * To register Maranello blocks, import block-registrations.ts in your layout:
+ * ```ts
+ * import "@/lib/block-registrations";
+ * ```
  */
 
 /** Map column count to responsive Tailwind grid classes (mobile-first) */
@@ -53,12 +46,15 @@ export function PageRenderer({ config }: { config: PageConfig }) {
   );
 }
 
-const KNOWN_TYPES = new Set([
-  "kpi-card", "data-table", "activity-feed",
-  "stat-list", "empty-state", "ai-chat",
-]);
+/** Fallback shown while a lazy block component is loading. */
+function BlockFallback() {
+  return (
+    <div className="animate-pulse rounded-lg bg-[var(--mn-surface-sunken)] h-32" />
+  );
+}
 
 function BlockRenderer({ block }: { block: PageBlock }) {
+  /* Built-in blocks — always available, no registry needed */
   switch (block.type) {
     case "kpi-card":
       return <KpiCard {...block} />;
@@ -72,38 +68,27 @@ function BlockRenderer({ block }: { block: PageBlock }) {
       return <EmptyState {...block} />;
     case "ai-chat":
       return <AIChatPanel defaultAgentId={block.agentId} aiConfig={loadAIConfig()} />;
-    case "gauge-block":
-      return <MnGauge {...block} />;
-    case "chart-block": {
-      const { type: _blockType, chartType, ...rest } = block; // eslint-disable-line @typescript-eslint/no-unused-vars
-      return <MnChart type={chartType} {...rest} />;
-    }
-    case "gantt-block":
-      return <MnGantt {...block} />;
-    case "kanban-block":
-      return <MnKanbanBoard {...block} />;
-    case "funnel-block":
-      return <MnFunnel {...block} />;
-    case "hbar-block":
-      return <MnHbar {...block} />;
-    case "speedometer-block":
-      return <MnSpeedometer {...block} />;
-    case "map-block":
-      return <MnMap {...block} />;
-    case "okr-block":
-      return <MnOkr {...block} />;
-    case "system-status-block":
-      return <MnSystemStatus {...block} />;
-    case "data-table-maranello":
-      return <MnDataTable {...block} />;
-    case "workflow-orchestrator-block":
-      return <MnWorkflowOrchestrator {...block} />;
-    default: {
-      const unknownType = (block as { type: string }).type;
-      if (!KNOWN_TYPES.has(unknownType)) {
-        console.warn(`[PageRenderer] Unknown block type: "${unknownType}". Skipping.`);
-      }
-      return null;
-    }
+    default:
+      break;
   }
+
+  /* Registry blocks — Maranello components registered via block-registry */
+  return <RegistryBlock block={block} />;
+}
+
+function RegistryBlock({ block }: { block: PageBlock }) {
+  const Component = getBlock(block.type);
+  if (!Component) {
+    console.warn(`[PageRenderer] Unknown block type: "${block.type}". Is the component installed and registered?`);
+    return null;
+  }
+  /* chart-block needs type remapping: block.chartType → component's type prop */
+  const props = block.type === "chart-block"
+    ? (() => { const { type: _t, chartType, ...rest } = block; return { type: chartType, ...rest }; })() // eslint-disable-line @typescript-eslint/no-unused-vars
+    : block;
+  return (
+    <Suspense fallback={<BlockFallback />}>
+      {createElement(Component, props)}
+    </Suspense>
+  );
 }
