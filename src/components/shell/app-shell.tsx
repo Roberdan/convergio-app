@@ -5,16 +5,17 @@ import { usePathname } from "next/navigation";
 import { useLocale } from "@/lib/i18n";
 import { Sidebar, type NavSection } from "./sidebar";
 import { Header } from "./header";
-import { MnA11yFab } from "@/components/maranello";
 
 export interface AppShellProps {
   children: React.ReactNode;
   sections: NavSection[];
   brandName?: string;
   brandLogo?: string;
+  /** Optional floating action button (e.g. MnA11yFab) rendered after the shell. */
+  fab?: React.ReactNode;
 }
 
-export function AppShell({ children, sections, brandName, brandLogo }: AppShellProps) {
+export function AppShell({ children, sections, brandName, brandLogo, fab }: AppShellProps) {
   const t = useLocale("shell");
   const pathname = usePathname();
   // Start collapsed so mobile Sheet is closed on initial render
@@ -50,7 +51,7 @@ export function AppShell({ children, sections, brandName, brandLogo }: AppShellP
           </div>
         </main>
       </div>
-      <MnA11yFab />
+      {fab}
     </>
   );
 }
