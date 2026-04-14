@@ -1,5 +1,36 @@
 # Changelog
 
+## [1.7.1] - 14 April 2026
+
+### Documentation Restructure
+- docs: per-folder `AGENTS.md` in every `src/` subdirectory (9 files) — any agent gets local context on entry
+- docs: root docs slimmed 1059→397 lines (−63%), zero duplication between files
+- docs: agent specialist files restored with full domain knowledge (gauge complications, CRUD patterns, a11y checklist, composition recipes) — updated for v1.7.0 (103 components, 10 MCP tools, 5 providers)
+- docs: README.md updated — "Three Ways to Use It" (framework / core package / registry), 10 MCP tools, correct URLs
+- chore: all `convergio-frontend` references → `convergio-ui-framework`
+
+## [1.7.0] - 14 April 2026
+
+### Core Package + Smart Registry
+- feat: dynamic block registry — PageRenderer loads components lazily from a Map-based registry instead of 12 static imports
+- feat: `registerBlock()` / `lazyBlock()` / `getBlock()` API in `src/lib/block-registry.ts`
+- feat: `block-registrations.ts` auto-registers all built-in block types for framework mode
+- feat: `AppShell` accepts optional `a11ySlot` prop — shell works without Maranello components
+- feat: component dependency graph — `scripts/scan-deps.ts` scans 136 files, `scripts/dep-graph.json` maps 112 main components
+- feat: `scripts/sync-registry-deps.ts` updates `registryDependencies` in 107 `public/r/*.json` registry files
+- feat: 3 new Nasra MCP tools: `analyze_yaml_needs`, `resolve_component_deps`, `install_components`
+- feat: Azure OpenAI provider added (`provider: "azure"` in convergio.yaml, reads `AZURE_OPENAI_ENDPOINT` + `AZURE_OPENAI_API_KEY`)
+- breaking: CLI providers removed (`claude-cli`, `copilot-cli`, `qwen-cli`) — use SDK providers instead
+- chore: deleted `route.helpers.ts` (CLI spawn code)
+- chore: MCP server version 1.0.0 → 1.1.0, now 10 tools
+
+### Provider summary (5 SDK providers)
+- `openai` — OpenAI API (OPENAI_API_KEY)
+- `azure` — Azure OpenAI (AZURE_OPENAI_ENDPOINT + AZURE_OPENAI_API_KEY)
+- `anthropic` — Anthropic API (ANTHROPIC_API_KEY)
+- `copilot` — GitHub Copilot API (GITHUB_TOKEN)
+- `qwen` — DashScope API (QWEN_API_KEY)
+
 ## [1.6.0] - 14 April 2026
 
 ### Multi-Provider AI Routing

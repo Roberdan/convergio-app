@@ -1,0 +1,24 @@
+{
+  "name": "@convergio/core",
+  "version": "1.7.0",
+  "description": "Convergio UI Framework core — shell, config, theme, hooks, and page renderer for config-driven dashboards.",
+  "license": "MPL-2.0",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./shell": "./shell.ts",
+    "./config": "./config.ts",
+    "./theme": "./theme.ts",
+    "./hooks": "./hooks.ts",
+    "./blocks": "./blocks.ts",
+    "./block-registry": "./block-registry.ts",
+    "./page-renderer": "./page-renderer.ts"
+  },
+  "peerDependencies": {
+    "next": ">=16",
+    "react": ">=19",
+    "react-dom": ">=19",
+    "yaml": ">=2",
+    "zod": ">=4"
+  }
+}
