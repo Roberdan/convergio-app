@@ -159,15 +159,15 @@ describe("POST /api/chat", () => {
   it("returns 501 for unsupported provider", async () => {
     const configLoader = await import("@/lib/config-loader");
     vi.mocked(configLoader.loadAIConfig).mockReturnValueOnce({
-      defaultAgentId: "nasra",
+      defaultAgentId: "custom-agent",
       agents: [
         {
-          id: "nasra",
-          name: "Nasra",
-          description: "Research agent for analysis tasks",
-          provider: "anthropic" as const,
-          model: "claude-sonnet-4-6",
-          systemPrompt: "You are Nasra, a research assistant.",
+          id: "custom-agent",
+          name: "Custom",
+          description: "Custom provider agent",
+          provider: "custom" as const,
+          model: "custom-model",
+          systemPrompt: "You are a custom assistant.",
         },
       ],
     });
