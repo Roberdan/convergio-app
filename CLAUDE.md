@@ -1,4 +1,4 @@
-# Convergio UI Framework — AI Instructions
+# Convergio App — AI Instructions
 
 ## Quick start
 Read `AGENTS.md` for project overview. Each `src/` subdirectory has its own `AGENTS.md`.

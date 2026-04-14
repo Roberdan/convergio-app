@@ -69,10 +69,22 @@ navigation:
           label: Mesh Network
           href: /mesh
           icon: Network
+        - id: kernel
+          label: Kernel (Jarvis)
+          href: /kernel
+          icon: Cpu
+        - id: voice
+          label: Voice
+          href: /voice
+          icon: Mic
+        - id: bus
+          label: Message Bus
+          href: /bus
+          icon: Radio
         - id: inference
           label: Inference
           href: /inference
-          icon: Cpu
+          icon: Zap
         - id: prompts
           label: Prompts
           href: /prompts
