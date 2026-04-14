@@ -41,6 +41,20 @@ import type {
   AuditEntry,
   ResourceStatus,
   Snapshot,
+  ChainStatus,
+  ChainBumpRequest,
+  ChainBumpResult,
+  SecurityPolicy,
+  SecurityScan,
+  SecurityFinding,
+  ScheduledJob,
+  JobRun,
+  Report,
+  ReportGenerateInput,
+  Deployment,
+  DiagnosticReport,
+  Capability,
+  Notification,
 } from './types';
 
 const BASE =

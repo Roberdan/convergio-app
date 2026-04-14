@@ -42,7 +42,6 @@ ai:
       avatar: N
       maxTokens: 2048
 
-# 10 cockpit sections matching the daemon API surface
 navigation:
   sections:
     - label: Overview
@@ -56,17 +55,23 @@ navigation:
         - { id: orgs, label: Organizations, href: /orgs, icon: Building2 }
         - { id: mesh, label: Mesh, href: /mesh, icon: Network }
         - { id: inference, label: Inference, href: /inference, icon: Brain }
+        - { id: deploy, label: Deploy, href: /deploy, icon: Rocket }
 
     - label: Operations
       items:
         - { id: billing, label: Billing, href: /billing, icon: Receipt }
         - { id: observatory, label: Observatory, href: /observatory, icon: Activity }
         - { id: metrics, label: Metrics, href: /metrics, icon: BarChart3 }
+        - { id: scheduler, label: Scheduler, href: /scheduler, icon: Clock }
         - { id: night-agents, label: Night Agents, href: /night-agents, icon: Moon }
+        - { id: reports, label: Reports, href: /reports, icon: FileText }
         - { id: prompts, label: Prompt Studio, href: /prompts, icon: Terminal }
 
     - label: System
       items:
+        - { id: security, label: Security, href: /security, icon: Shield }
+        - { id: backup, label: Backup, href: /backup, icon: HardDrive }
+        - { id: doctor, label: Doctor, href: /doctor, icon: Stethoscope }
         - { id: settings, label: Settings, href: /settings, icon: Settings }
         - { id: showcase, label: Components, href: /showcase, icon: Palette }
 

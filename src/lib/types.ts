@@ -266,6 +266,38 @@ export interface DepGraphValidation { valid: boolean; errors: string[] }
 /* ── Backup ── */
 export interface Snapshot { id: string; label?: string; created_at: string; size_bytes: number }
 
+/* ── Chain ── */
+export interface ChainCrate { name: string; version: string; path: string }
+export interface ChainStatus { chain: ChainCrate[]; summary: { total: number; outdated: number } }
+export interface ChainBumpRequest { crate_name: string; from_tag?: string; to_tag?: string; dry_run?: boolean }
+export interface ChainBumpResult { affected: string[]; summary: string }
+
+/* ── Security ── */
+export interface SecurityPolicy { id: string; name: string; enabled: boolean; severity: 'low' | 'medium' | 'high' | 'critical'; description: string; last_checked?: string }
+export interface SecurityScan { id: string; status: 'pending' | 'running' | 'completed' | 'failed'; findings: number; started_at: string; completed_at?: string }
+export interface SecurityFinding { id: string; scan_id: string; severity: 'low' | 'medium' | 'high' | 'critical'; title: string; description: string; resource: string; remediation?: string; resolved: boolean }
+
+/* ── Scheduler ── */
+export interface ScheduledJob { id: string; name: string; schedule: string; enabled: boolean; last_run?: string; next_run?: string; status: 'idle' | 'running' | 'failed' }
+export interface JobRun { id: string; job_id: string; status: 'running' | 'completed' | 'failed'; started_at: string; completed_at?: string; output?: string }
+
+/* ── Reports ── */
+export interface Report { id: string; name: string; type: string; status: 'pending' | 'generating' | 'ready' | 'failed'; created_at: string; download_url?: string }
+export interface ReportGenerateInput { type: string; params?: Record<string, unknown> }
+
+/* ── Deploy ── */
+export interface Deployment { id: string; target: string; version: string; status: 'pending' | 'deploying' | 'live' | 'rolled_back' | 'failed'; created_at: string; completed_at?: string }
+
+/* ── Doctor ── */
+export interface DiagnosticCheck { name: string; status: 'pass' | 'warn' | 'fail'; message: string; details?: string }
+export interface DiagnosticReport { checks: DiagnosticCheck[]; overall: 'healthy' | 'degraded' | 'unhealthy'; timestamp: string }
+
+/* ── Capabilities ── */
+export interface Capability { name: string; version: string; enabled: boolean; description?: string }
+
+/* ── Notifications ── */
+export interface Notification { id: string; title: string; message: string; severity: 'info' | 'warning' | 'error'; read: boolean; created_at: string }
+
 /* ── SSE Domain Events ── */
 export interface IpcEvent { from: string; to?: string; content: string; event_type: string; ts: string }
 export type DomainEventType =
