@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import {
-  BarChart3, Brain, DollarSign, FormInput, Home, Layout,
-  MessageSquare, Monitor, Moon, Navigation, Network,
-  Search, Settings, Shield, Sun, Table, Target,
+  BarChart3, Brain, Building2, Clock, Cpu, CreditCard,
+  FileText, HardDrive, LayoutDashboard, Monitor, Moon,
+  Network, Rocket, Search, Settings, Shield, Stethoscope,
+  Sun, Telescope,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useLocale } from "@/lib/i18n"
@@ -13,21 +14,26 @@ import { useTheme } from "@/components/theme/theme-provider"
 import { searchCatalog } from "@/lib/component-catalog"
 
 const NAV_ICONS = [
-  { key: "home" as const, href: "/", icon: Home },
+  { key: "home" as const, href: "/dashboard", icon: LayoutDashboard },
 ] as const
 
 const CATEGORY_ITEMS = [
-  { label: "Agentic AI", href: "/showcase/agentic", icon: Brain },
-  { label: "Data Display", href: "/showcase/data-display", icon: Table },
-  { label: "Data Viz", href: "/showcase/data-viz", icon: BarChart3 },
-  { label: "Feedback", href: "/showcase/feedback", icon: MessageSquare },
-  { label: "Financial", href: "/showcase/financial", icon: DollarSign },
-  { label: "Forms", href: "/showcase/forms", icon: FormInput },
-  { label: "Layout", href: "/showcase/layout", icon: Layout },
-  { label: "Navigation", href: "/showcase/navigation", icon: Navigation },
-  { label: "Network", href: "/showcase/network", icon: Network },
-  { label: "Operations", href: "/showcase/ops", icon: Settings },
-  { label: "Strategy", href: "/showcase/strategy", icon: Target },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Observatory", href: "/observatory", icon: Telescope },
+  { label: "Metrics", href: "/metrics", icon: BarChart3 },
+  { label: "Agents", href: "/agents", icon: Brain },
+  { label: "Mesh Network", href: "/mesh", icon: Network },
+  { label: "Scheduler", href: "/scheduler", icon: Clock },
+  { label: "Deploy", href: "/deploy", icon: Rocket },
+  { label: "Security", href: "/security", icon: Shield },
+  { label: "Doctor", href: "/doctor", icon: Stethoscope },
+  { label: "Backup", href: "/backup", icon: HardDrive },
+  { label: "Inference", href: "/inference", icon: Cpu },
+  { label: "Organizations", href: "/orgs", icon: Building2 },
+  { label: "Billing", href: "/billing", icon: CreditCard },
+  { label: "Reports", href: "/reports", icon: FileText },
+  { label: "Night Agents", href: "/night-agents", icon: Moon },
+  { label: "Settings", href: "/settings", icon: Settings },
 ] as const
 
 const THEME_ICONS = [
@@ -58,7 +64,7 @@ export function SearchCombobox() {
 
   // Build flat list of selectable items for keyboard nav
   const items = results.length > 0
-    ? results.map((e) => ({ type: "nav" as const, label: e.name, href: `/showcase/${e.category}#${e.slug}`, desc: e.description }))
+    ? results.map((e) => ({ type: "nav" as const, label: e.name, href: `/dashboard`, desc: e.description }))
     : [
         ...NAV_ITEMS.map((i) => ({ type: "nav" as const, label: i.label, href: i.href, icon: i.icon })),
         ...CATEGORY_ITEMS.map((i) => ({ type: "nav" as const, label: i.label, href: i.href, icon: i.icon })),

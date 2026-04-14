@@ -91,7 +91,7 @@ function loadRaw(): ValidatedConfig {
 export function loadAppConfig(): AppConfig {
   const raw = loadRaw();
   return {
-    name: raw.app?.name ?? "Convergio Frontend Framework",
+    name: raw.app?.name ?? "Convergio",
     description: raw.app?.description,
     logo: raw.app?.logo,
     defaultTheme: (raw.theme?.default as AppConfig["defaultTheme"]) ?? "navy",

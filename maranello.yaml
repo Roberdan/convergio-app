@@ -1,5 +1,5 @@
 # ============================================================================
-# maranello.yaml — Convergio Frontend Framework configuration
+# maranello.yaml — Convergio App configuration
 #
 # This file defines branding, theme, navigation, and dashboard pages.
 # Edit this file and restart `pnpm dev` to customize the app.
@@ -11,8 +11,8 @@
 
 # ── App Identity ──
 app:
-  name: Convergio Frontend Framework
-  description: Preset-driven showcase and framework explorer for real product surfaces
+  name: Convergio
+  description: Daemon cockpit — monitor, manage, and operate the Convergio platform
   # logo: /logo.svg
 
 # ── Theme ──
@@ -23,80 +23,91 @@ theme:
   default: navy
 
 # ── Navigation ──
-# Sidebar navigation sections. Each item needs:
-#   id    — unique identifier
-#   label — display text
-#   href  — route path
-#   icon  — Lucide icon name (must exist in src/lib/icon-map.ts)
-#   badge — optional numeric badge
 navigation:
   sections:
-    - label: Framework
+    - label: Overview
       items:
-        - id: home
-          label: Home
-          href: /
-          icon: Home
         - id: dashboard
           label: Dashboard
           href: /dashboard
           icon: LayoutDashboard
-        - id: icons
-          label: Icons
-          href: /showcase/icons
-          icon: Shapes
-
-    - label: Components
-      items:
-        - id: agentic
-          label: Agentic AI
-          href: /showcase/agentic
-          icon: Brain
-        - id: cockpit
-          label: Cockpit
-          href: /showcase/cockpit
-          icon: Gauge
-        - id: data-display
-          label: Data Display
-          href: /showcase/data-display
-          icon: Table
-        - id: data-viz
-          label: Data Viz
-          href: /showcase/data-viz
+        - id: observatory
+          label: Observatory
+          href: /observatory
+          icon: Telescope
+        - id: metrics
+          label: Metrics
+          href: /metrics
           icon: BarChart3
-        - id: feedback
-          label: Feedback
-          href: /showcase/feedback
-          icon: Bell
-        - id: financial
-          label: Financial
-          href: /showcase/financial
-          icon: DollarSign
-        - id: forms
-          label: Forms
-          href: /showcase/forms
-          icon: TextCursorInput
-        - id: layout
-          label: Layout
-          href: /showcase/layout
-          icon: LayoutGrid
-        - id: navigation
-          label: Navigation
-          href: /showcase/navigation
-          icon: Compass
-        - id: network
-          label: Network
-          href: /showcase/network
+
+    - label: Operations
+      items:
+        - id: agents
+          label: Agents
+          href: /agents
+          icon: Brain
+        - id: plans
+          label: Plans
+          href: /plans
+          icon: ClipboardList
+        - id: scheduler
+          label: Scheduler
+          href: /scheduler
+          icon: Clock
+        - id: deploy
+          label: Deploy
+          href: /deploy
+          icon: Rocket
+        - id: night-agents
+          label: Night Agents
+          href: /night-agents
+          icon: Moon
+
+    - label: Infrastructure
+      items:
+        - id: mesh
+          label: Mesh Network
+          href: /mesh
           icon: Network
-        - id: ops
-          label: Operations
-          href: /showcase/ops
-          icon: Activity
-        - id: strategy
-          label: Strategy
-          href: /showcase/strategy
-          icon: Target
-        - id: theme
-          label: Theme & A11y
-          href: /showcase/theme
-          icon: Palette
+        - id: inference
+          label: Inference
+          href: /inference
+          icon: Cpu
+        - id: prompts
+          label: Prompts
+          href: /prompts
+          icon: MessageSquare
+
+    - label: Governance
+      items:
+        - id: security
+          label: Security
+          href: /security
+          icon: Shield
+        - id: reports
+          label: Reports
+          href: /reports
+          icon: FileText
+        - id: doctor
+          label: Doctor
+          href: /doctor
+          icon: Stethoscope
+        - id: backup
+          label: Backup
+          href: /backup
+          icon: HardDrive
+
+    - label: Organization
+      items:
+        - id: orgs
+          label: Organizations
+          href: /orgs
+          icon: Building2
+        - id: billing
+          label: Billing
+          href: /billing
+          icon: CreditCard
+        - id: settings
+          label: Settings
+          href: /settings
+          icon: Settings

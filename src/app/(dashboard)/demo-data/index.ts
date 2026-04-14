@@ -1,5 +1,5 @@
 /**
- * Showcase sample data — barrel re-export.
+ * Demo seed data — used by dashboard when no daemon is connected.
  * Split into domain files for maintainability.
  */
 export {
@@ -7,10 +7,10 @@ export {
   decisionCriteria, decisionOptions, pipelineStages, activityItems,
   meshNodes, meshEdges, hubSpokeHub, hubSpokeSpokes,
   deployments, auditEntries, missions, nightJobs,
-} from './showcase-data-viz';
+} from './viz';
 
 export {
   brainNodes, brainConnections, binnacleEntries, stripMetrics, orgTree,
   brain3DNodes, brain3DEdges,
   brainV2Nodes, brainV2Synapses, brainV2Stats,
-} from './showcase-data-agentic';
+} from './agentic';

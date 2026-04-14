@@ -28,8 +28,8 @@ const barlowCondensed = Barlow_Condensed({
 const appConfig = loadAppConfig();
 
 export const metadata: Metadata = {
-  title: appConfig.name ?? "Convergio Frontend Framework",
-  description: appConfig.description ?? "Convergio Frontend Framework",
+  title: appConfig.name ?? "Convergio",
+  description: appConfig.description ?? "Convergio",
 };
 
 export default function RootLayout({

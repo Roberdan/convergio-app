@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
-import Link from 'next/link';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useSse } from '@/hooks/use-sse';
 import * as api from '@/lib/api';
@@ -25,7 +24,7 @@ import {
   brainV2Synapses as demoBrainV2SynapsesSeed,
   hubSpokeHub as demoHubSeed, hubSpokeSpokes as demoSpokeSeed,
   missions as demoMissionSeed,
-} from '../showcase/showcase-data';
+} from '../demo-data';
 import {
   type EventFilter, FILTERS, DEMO_SUMMARY, DEMO_SERVICES, DEMO_COSTS,
   DEMO_MESSAGES, DEMO_STRIP_ZONES, healthToService, eventToActivity,
@@ -138,24 +137,21 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">{demoMode ? 'Convergio Frontend Framework' : 'Dashboard'}</h1>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-sm text-muted-foreground">
             {demoMode
-              ? 'Demo mode keeps the homepage rich with animated dashboards, charts, and seeded framework data even when no daemon is attached.'
+              ? 'Daemon not connected — showing seed data. Start the daemon on :8420 for live telemetry.'
               : 'Live runtime telemetry from the active agent mesh.'}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {demoMode ? (
-            <Link href="/showcase" className="rounded-md border px-3 py-1.5 text-sm hover:bg-accent">Explore components</Link>
-          ) : null}
           <MnBadge tone={demoMode ? 'info' : connected ? 'success' : 'danger'}>
-            {demoMode ? 'Demo mode' : connected ? 'Live' : 'Disconnected'}
+            {demoMode ? 'Offline' : connected ? 'Live' : 'Disconnected'}
           </MnBadge>
         </div>
       </div>
 
-      <MnDashboardStrip metrics={stripMetrics} zones={demoMode ? DEMO_STRIP_ZONES : undefined} ariaLabel="Framework dashboard preview" />
+      <MnDashboardStrip metrics={stripMetrics} zones={demoMode ? DEMO_STRIP_ZONES : undefined} ariaLabel="Convergio dashboard" />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <KpiCard label="Active Agents" value={summary.activeAgents} sub={summary.externalAgents ? `${summary.externalAgents} external` : undefined} />

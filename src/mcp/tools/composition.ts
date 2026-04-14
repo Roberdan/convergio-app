@@ -16,7 +16,7 @@ const COMPOSITIONS: Composition[] = [
     name: 'Ops Cockpit',
     components: ['MnGauge', 'MnDashboardStrip', 'MnSystemStatus', 'MnHeatmap', 'MnActivityFeed'],
     description: 'Operations monitoring cockpit with Ferrari Luce-inspired gauges, dashboard strip, service health, resource heatmap, and live activity.',
-    example: 'See /showcase/cockpit for a full working example with all gauge complications (arcBar, subDials, crosshair, multigraph).',
+    example: 'See /dashboard for the main cockpit with gauge complications (arcBar, subDials, crosshair, multigraph).',
   },
   {
     name: 'Executive Dashboard',
