@@ -1,0 +1,124 @@
+plan:
+  name: "Epsilon — Infrastructure Debt (from Plan 12)"
+  project: convergio
+  description: |
+    Infrastructure features from old Plan 12 (Project-as-Org v3) that are essential
+    for multi-project multi-agent work. NOT the full 70-task scope — only the items
+    that prevent real multi-agent operation from working safely.
+    Depends on Alpha + Beta (gates and tests must be solid first).
+  priority: medium
+  depends_on: [alpha-stabilize, beta-test-doctor]
+
+waves:
+  - id: W1
+    name: "Multi-Agent Safety"
+    description: "Prevent parallel agent conflicts — the #1 real-world failure mode"
+    parallel: true
+    tasks:
+      - id: T1-01
+        do: |
+          Worktree reaper: auto-cleanup orphaned worktrees older than 24h.
+          Check for stale .worktrees/ entries, remove worktree + delete branch.
+          Run as scheduled task (cron every 6h). Route: POST /api/workspace/reap.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+      - id: T1-02
+        do: |
+          File lock advisory system: POST /api/locks/acquire {file_path, agent_id, ttl_secs}.
+          Prevents two agents editing the same file. Advisory (not enforced by OS).
+          GET /api/locks/active shows current locks. Auto-expire on TTL.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+      - id: T1-03
+        do: |
+          PR dependency chain: POST /api/merge/dependencies {pr_url, depends_on: [pr_urls]}.
+          MergeGuardian checks deps before allowing merge.
+          GET /api/merge/queue shows pending merges with dependency status.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+  - id: W2
+    name: "Per-Project Intelligence"
+    description: "Each project gets its own Thor, drift detection, telemetry"
+    parallel: true
+    tasks:
+      - id: T2-01
+        do: |
+          Per-project Thor: Thor validation scoped to project context.
+          When validating a task, Thor loads project-specific rules (from project config)
+          and checks against project-specific test suites. Not just workspace-wide.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+      - id: T2-02
+        do: |
+          NightAgent drift detection: compare current repo state against last scan.
+          Detect: new files not in any plan, deleted files still referenced,
+          config changes not tracked. Report via POST /api/night-agents/:id/drift.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test -p convergio-night-agents"
+
+      - id: T2-03
+        do: |
+          Per-project telemetry: observatory tracks metrics per project_id.
+          Dashboard endpoint: GET /api/observatory/project/:id/summary.
+          Includes: test count, coverage trend, build time, agent hours.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test -p convergio-observatory"
+
+  - id: W3
+    name: "Org Role Dispatch"
+    description: "Route work to the right agent based on org role and capability"
+    parallel: false
+    tasks:
+      - id: T3-01
+        do: |
+          Org role dispatcher: when a task arrives, route to the agent with
+          matching capability + lowest load. Uses scheduler policy weights.
+          POST /api/org/:id/dispatch {task_description, required_capabilities}.
+          Returns: {assigned_agent, reason}.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+  - id: WF
+    name: "Closure"
+    parallel: false
+    tasks:
+      - id: TF-01
+        do: "Full test suite, ADR-029 (multi-agent safety), CHANGELOG, deploy verify"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "cd daemon && cargo test 2>&1 | tail -1 | grep -q 'test result: ok'"

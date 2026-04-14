@@ -1,0 +1,318 @@
+waves:
+  - id: W1
+    name: "Bridge Migration + Bug Fix"
+    tasks:
+      - id: T1-01
+        do: |
+          Refactor MCP server to use ToolDef registry + generic bridge for ALL tool dispatch.
+          Currently server.rs uses old dual system: tools.rs (McpTool) + handlers.rs (match).
+          Replace with: registry.rs (ToolDef) + bridge.rs (dispatch_tool).
+          
+          1. In server.rs: replace `use crate::handlers::handle_tool_call` + `use crate::tools::list_tools`
+             with `use crate::registry::{fetch_tool_defs, list_tool_defs_filtered, find_tool_def}`
+             and `use crate::bridge::dispatch_tool`
+          2. Add `tool_defs: Vec<ToolDef>` field to McpServer, populated in constructor via fetch_tool_defs()
+          3. handle_tools_list: use list_tool_defs_filtered(self.tool_defs, self.ring)
+          4. handle_tools_call: find_tool_def + dispatch_tool instead of handle_tool_call match
+          5. Remove min_ring_for_tool() — ring is embedded in ToolDef
+          6. Delete tools.rs, handlers.rs, handlers_night.rs, handlers_reports.rs, handlers_workflow.rs, tools_night.rs, tools_reports.rs, tools_workflow.rs (all replaced by bridge)
+          7. Update lib.rs to remove dead modules
+          8. Verify: cargo check, cargo test in convergio-mcp crate
+          
+          Worktree: worktrees/lambda-v2
+          Branch: feat/mcp-full-coverage
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: plan-reviewer
+        effort: 3
+        test_criteria: "cargo check --workspace && cargo test -p convergio-mcp"
+        verify:
+          - "cargo check -p convergio-mcp"
+          - "cargo test -p convergio-mcp"
+
+      - id: T1-02
+        do: |
+          Fix issue #489: cvg_plan_import sends 'yaml_content' but API expects 'spec'.
+          
+          In daemon/crates/convergio-orchestrator/src/mcp_defs.rs:
+          Find the cvg_plan_import tool definition.
+          Change the property name from "yaml_content" to "spec" in input_schema.
+          Keep the description as "YAML spec content".
+          
+          Also in the MCP registry_defs (if cvg_plan_import is there too), fix the same.
+          
+          Worktree: worktrees/lambda-v2 (same branch)
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: plan-reviewer
+        effort: 1
+        test_criteria: "grep -q 'spec' daemon/crates/convergio-orchestrator/src/mcp_defs.rs"
+        verify:
+          - "grep 'spec' daemon/crates/convergio-orchestrator/src/mcp_defs.rs"
+
+  - id: W2
+    name: "Tool Explosion — Add MCP defs to all extension crates"
+    tasks:
+      - id: T2-01
+        do: |
+          Add mcp_defs.rs to convergio-org with ALL its routes exposed as MCP tools.
+          Routes to cover:
+          - /api/projects/scan (GET) - cvg_scan_projects
+          - /api/org/projects/onboard (POST) - cvg_onboard_project
+          - /api/orgs (POST) - cvg_create_org, (GET) - cvg_list_orgs
+          - /api/orgs/:id (GET) - cvg_get_org, (PUT) - cvg_update_org, (DELETE) - cvg_delete_org
+          - /api/orgs/:id/telemetry (GET) - cvg_org_telemetry
+          - /api/orgs/:id/digest (GET) - cvg_org_digest
+          - /api/orgs/:id/plans (GET) - cvg_org_plans
+          - /api/orgs/:id/members (POST) - cvg_add_member
+          - /api/orgs/:id/members/:agent (DELETE) - cvg_remove_member
+          - /api/orgs/:id/orgchart (GET) - cvg_org_chart
+          - /api/orgs/:id/ask (POST) - cvg_ask_org
+          - /api/orgs/:id/kb/seed (POST) - cvg_seed_org_kb
+          - /api/notify/queue (GET) - cvg_notify_queue
+          - /api/notify/telegram/test (POST) - cvg_telegram_test
+          - /api/decisions (POST+GET) - cvg_log_decision, cvg_list_decisions
+          
+          Follow pattern from crates/convergio-agents/src/mcp_defs.rs.
+          Add pub mod mcp_defs to lib.rs. Wire fn mcp_tools() in ext.rs.
+          Max 300 lines per file. Use sensible ring assignments.
+          
+          Worktree: worktrees/lambda-v2
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: plan-reviewer
+        effort: 2
+        test_criteria: "cargo check -p convergio-org"
+        verify:
+          - "cargo check -p convergio-org"
+          - "test -f daemon/crates/convergio-org/src/mcp_defs.rs"
+
+      - id: T2-02
+        do: |
+          Add mcp_defs.rs to convergio-backup, convergio-longrunning, convergio-observatory.
+          
+          convergio-backup (~10 routes):
+          /api/backup/snapshots GET - cvg_list_snapshots
+          /api/backup/snapshots/create POST - cvg_create_snapshot
+          /api/backup/snapshots/verify POST - cvg_verify_snapshot
+          /api/backup/restore POST - cvg_restore_backup
+          /api/backup/retention/rules GET - cvg_retention_rules
+          /api/backup/retention/rules POST - cvg_set_retention
+          /api/backup/retention/purge POST - cvg_run_purge
+          /api/backup/purge-log GET - cvg_purge_log
+          /api/backup/export POST - cvg_export_org
+          /api/backup/import POST - cvg_import_org
+          
+          convergio-longrunning (~9 routes):
+          /api/longrunning/heartbeat POST - cvg_register_heartbeat
+          /api/longrunning/heartbeat/beat POST - cvg_heartbeat_beat
+          /api/longrunning/heartbeat/stale GET - cvg_stale_heartbeats
+          /api/longrunning/checkpoint GET+POST - cvg_load_checkpoint, cvg_save_lr_checkpoint
+          /api/longrunning/progress/:id GET - cvg_load_progress
+          /api/longrunning/delegation/:id GET - cvg_delegation_tree
+          /api/longrunning/budget/:id GET - cvg_budget_status
+          
+          convergio-observatory (~8 routes):
+          /api/observatory/timeline GET - cvg_obs_timeline
+          /api/observatory/search GET - cvg_obs_search
+          /api/observatory/dashboard GET - cvg_obs_dashboard
+          /api/observatory/anomalies GET - cvg_obs_anomalies
+          /api/observatory/webhooks GET+POST - cvg_list_webhooks, cvg_register_webhook
+          /api/observatory/metrics GET - cvg_obs_metrics
+          
+          For each: create mcp_defs.rs, add to lib.rs, wire in ext.rs.
+          Follow convergio-agents/src/mcp_defs.rs pattern. Max 300 lines/file.
+          
+          Worktree: worktrees/lambda-v2
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: plan-reviewer
+        effort: 2
+        test_criteria: "cargo check -p convergio-backup -p convergio-longrunning -p convergio-observatory"
+        verify:
+          - "cargo check -p convergio-backup -p convergio-longrunning -p convergio-observatory"
+
+      - id: T2-03
+        do: |
+          Add mcp_defs.rs to convergio-deploy, convergio-build, convergio-delegation, convergio-scheduler.
+          
+          convergio-deploy (~5 routes):
+          /api/deploy/upgrade POST - cvg_deploy_upgrade
+          /api/deploy/push-all POST - cvg_deploy_push_all
+          /api/deploy/status GET - cvg_deploy_status
+          /api/deploy/history GET - cvg_deploy_history
+          /api/deploy/diagnostics POST - cvg_deploy_diagnostics
+          
+          convergio-build (~5 routes):
+          /api/build/self POST - cvg_build_self
+          /api/build/status/:id GET - cvg_build_status (path_params: [id])
+          /api/build/history GET - cvg_build_history
+          /api/build/deploy/:id POST - cvg_build_deploy (path_params: [id])
+          /api/build/rollback POST - cvg_build_rollback
+          
+          convergio-delegation (~4 routes):
+          /api/delegate/spawn POST - already exists as cvg_spawn_agent, skip
+          /api/delegate/status/:delegation_id GET - cvg_delegation_status (path_params: [delegation_id])
+          /api/delegate/list GET - cvg_list_delegations
+          /api/mesh/delegate POST - cvg_mesh_delegate
+          
+          convergio-scheduler (~3 routes):
+          /api/scheduler/decide POST - cvg_scheduler_decide
+          /api/scheduler/policy GET+POST - cvg_get_policy, cvg_set_policy
+          /api/scheduler/history GET - cvg_scheduler_history
+          
+          For each: create mcp_defs.rs, add to lib.rs, wire in ext.rs.
+          
+          Worktree: worktrees/lambda-v2
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: plan-reviewer
+        effort: 2
+        test_criteria: "cargo check -p convergio-deploy -p convergio-build -p convergio-delegation -p convergio-scheduler"
+        verify:
+          - "cargo check -p convergio-deploy -p convergio-build -p convergio-delegation -p convergio-scheduler"
+
+      - id: T2-04
+        do: |
+          Add mcp_defs.rs to convergio-voice, convergio-inference, convergio-autoresearch,
+          convergio-multitenancy, convergio-file-transport, convergio-org-package,
+          convergio-provisioning, convergio-depgraph.
+          
+          convergio-voice (~5): cvg_voice_status, cvg_voice_speak, cvg_voice_intent, cvg_voice_transcribe, cvg_voice_pipeline
+          convergio-inference (~3): cvg_inference_costs, cvg_inference_routing, cvg_inference_complete
+          convergio-autoresearch (~4): cvg_ar_results, cvg_ar_experiments, cvg_ar_metrics, cvg_ar_trigger
+          convergio-multitenancy (~6): cvg_tenancy_list_peers, cvg_tenancy_manage_peer, cvg_tenancy_secrets, cvg_tenancy_audit, cvg_tenancy_resources, cvg_tenancy_set_limits
+          convergio-file-transport (~4): cvg_ft_push, cvg_ft_pull, cvg_ft_transfers, cvg_ft_transfer_status
+          convergio-org-package (~4): cvg_install_package, cvg_validate_package, cvg_list_packages, cvg_get_package
+          convergio-provisioning (~3): cvg_provision_peer, cvg_provision_runs, cvg_provision_run
+          convergio-depgraph (~4): cvg_depgraph, cvg_depgraph_validate, cvg_capabilities, cvg_openapi
+          
+          For each: create mcp_defs.rs, add to lib.rs, wire in ext.rs.
+          Max 300 lines/file. Follow convergio-agents/src/mcp_defs.rs pattern.
+          
+          Worktree: worktrees/lambda-v2
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: plan-reviewer
+        effort: 2
+        test_criteria: "cargo check --workspace"
+        verify:
+          - "cargo check --workspace"
+
+  - id: W3
+    name: "Validation and Wiring"
+    tasks:
+      - id: T3-01
+        do: |
+          Verify all tools work end-to-end:
+          1. Build daemon + MCP binary: cargo build --release
+          2. Restart daemon, hit /api/meta/mcp-tools, count tools, must be >= 100
+          3. Test MCP server via stdin: send initialize, tools/list, verify tool count >= 100
+          4. Test 5 representative tools across domains
+          5. Test ring filtering: ring=3 (sandboxed) should see fewer tools than ring=1 (trusted)
+          6. Add integration test in convergio-mcp tests: tool_count_at_least_100
+          7. cargo test --workspace must pass
+          
+          Worktree: worktrees/lambda-v2
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: plan-reviewer
+        effort: 2
+        test_criteria: "cargo test --workspace"
+        verify:
+          - "cargo test --workspace"
+          - "cargo fmt --all -- --check"
+
+  - id: WTF
+    name: "Closure — tests, docs, PR, deploy"
+    tasks:
+      - id: TF-tests
+        do: |
+          Final test pass:
+          1. cargo fmt --all -- --check
+          2. RUSTFLAGS="-Dwarnings" cargo clippy --workspace -- -D warnings
+          3. cargo test --workspace
+          4. Fix any failures
+          
+          Worktree: worktrees/lambda-v2
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: plan-reviewer
+        effort: 1
+        test_criteria: "cargo test --workspace && cargo clippy --workspace -- -D warnings"
+        verify:
+          - "cargo fmt --all -- --check"
+          - "cargo test --workspace"
+
+      - id: TF-doc
+        do: |
+          Update documentation:
+          1. Update AGENTS.md MCP tools table with new tool count
+          2. Update README.md MCP section
+          3. Add CHANGELOG.md entry: feat(mcp): full daemon route exposure (140+ tools)
+          4. Close GitHub issue #489 with comment
+          5. Update issue #438 comment with final tool count
+          
+          Worktree: worktrees/lambda-v2
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: doc-validator
+        effort: 1
+        test_criteria: "test -f CHANGELOG.md"
+        verify:
+          - "grep -i 'mcp' CHANGELOG.md"
+
+      - id: TF-pr
+        do: |
+          Commit all changes with: feat(mcp): full daemon route exposure via generic bridge
+          
+          Closes #489
+          
+          Push branch and create PR with full description following template.
+          
+          Worktree: worktrees/lambda-v2
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: plan-reviewer
+        effort: 1
+        test_criteria: "gh pr view --json state"
+        verify:
+          - "git log --oneline -1 | grep -i feat"
+
+      - id: TF-deploy-verify
+        do: |
+          After PR merge:
+          1. Pull main, rebuild daemon + MCP binary
+          2. Restart daemon via launchctl
+          3. Verify: curl localhost:8420/api/meta/mcp-tools and count tools >= 100
+          4. Verify MCP server responds to initialize with correct version
+          5. Clean up worktree
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: plan-reviewer
+        effort: 1
+        test_criteria: "curl -s localhost:8420/api/health | grep ok"
+        verify:
+          - "curl -s http://localhost:8420/api/health | grep ok"

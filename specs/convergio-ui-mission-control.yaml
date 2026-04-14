@@ -1,0 +1,1161 @@
+# Convergio UI — Full Mission Control Redesign
+# Scale: full | 38 F-xx | ~45 tasks | 14 waves + 3 checkpoints + closure
+# Project: convergio-app (inside convergio/ repo)
+# Framework: convergio-frontend (Maranello DS, Next.js 16, Tauri)
+# Devil's Advocate: resolved (7 findings)
+# Models consulted: GPT 5.4 (architecture), Goldeneye (UX design)
+
+plan:
+  name: "Convergio UI — Full Mission Control"
+  project_id: convergio
+  description: >
+    Complete frontend redesign as AI Operations Command Center.
+    25+ pages covering all 200+ daemon API endpoints and 81 capabilities.
+    Multi-daemon aware, Tauri desktop + web, 4 themes, 4 languages,
+    WebSocket + SSE real-time, WCAG 2.2 AA accessible.
+
+waves:
+  # ═══════════════════════════════════════════════════════════
+  # W0 — Foundation: project setup, i18n, test infra, Tauri
+  # Covers: F-01, F-26, F-28, F-34, F-38
+  # ═══════════════════════════════════════════════════════════
+  - id: W0
+    name: "Foundation — Project Setup & Infrastructure"
+    tasks:
+      - id: T0-01
+        do: >
+          Clone convergio-frontend framework into convergio-app/ (delete existing content first).
+          Configure convergio.yaml with full Convergio navigation (7 sections: Mission Control, Work,
+          Agents, Organizations, Fleet, Intelligence, Governance, Admin). Configure api.baseUrl to
+          http://localhost:8420. Set up pnpm, verify pnpm dev starts, verify pnpm build succeeds.
+          Configure next.config.ts for API proxy to daemon. Set NEXT_PUBLIC_API_URL.
+          All 14 existing dashboard pages must render (even if empty placeholders initially wired).
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "pnpm build succeeds, pnpm dev serves at localhost:3000, convergio.yaml has 7 nav sections"
+        verify:
+          - "cd convergio-app && test -f convergio.yaml"
+          - "cd convergio-app && test -f package.json"
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && grep -q 'Mission Control' convergio.yaml"
+
+      - id: T0-02
+        do: >
+          Set up full i18n infrastructure for 4 languages: English (en), Italian (it),
+          Spanish (es), Chinese (zh). Use the framework's useLocale() / resolveLocale() system.
+          Create 4 complete locale files covering ALL navigation labels, page titles,
+          button labels, error messages, tooltips, placeholders, aria-labels, and system messages.
+          Every user-facing string in convergio.yaml navigation must be localized.
+          Add language switcher to the header (dropdown with flag icons).
+          Default locale detection from browser. Persist in localStorage.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "4 locale files exist with 100+ keys each, language switcher renders, switching locale updates all nav labels"
+        verify:
+          - "cd convergio-app && test -f src/lib/i18n/locales/en.json"
+          - "cd convergio-app && test -f src/lib/i18n/locales/it.json"
+          - "cd convergio-app && test -f src/lib/i18n/locales/es.json"
+          - "cd convergio-app && test -f src/lib/i18n/locales/zh.json"
+          - "cd convergio-app && pnpm typecheck"
+
+      - id: T0-03
+        do: >
+          Set up Playwright E2E test infrastructure + visual regression testing.
+          Configure playwright.config.ts for 3 browsers (Chrome, Firefox, WebKit).
+          Add visual regression with @playwright/test toHaveScreenshot().
+          Create test helpers: login flow, API mock, theme switcher, locale switcher.
+          Write first smoke test: app loads, sidebar renders, theme switching works, locale switching works.
+          Configure CI-ready scripts in package.json. Test in Navy and Dark themes.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Playwright runs, smoke test passes in Navy+Dark themes, visual regression captures baseline screenshots"
+        verify:
+          - "cd convergio-app && test -f playwright.config.ts"
+          - "cd convergio-app && test -f e2e/smoke.spec.ts"
+          - "cd convergio-app && pnpm test:e2e --reporter=list 2>&1 | grep -q 'passed'"
+
+      - id: T0-04
+        do: >
+          Configure Tauri 2.0 desktop shell in src-tauri/. Update tauri.conf.json:
+          productName "Convergio", identifier "io.convergio.cockpit", window 1440x900.
+          Set up system tray plugin (tauri-plugin-tray). Create tray icon assets
+          (template icons for macOS menu bar: green/yellow/red variants, 22x22 @1x and @2x).
+          Implement basic system tray with: app name, "Open Dashboard" action, "Quit" action.
+          Verify cargo tauri build compiles. The tray functionality (health polling, nodes)
+          comes in W11; this task sets up the Tauri + tray plugin foundation.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Tauri config valid, system tray plugin configured, cargo tauri build succeeds"
+        verify:
+          - "cd convergio-app && test -f src-tauri/tauri.conf.json"
+          - "cd convergio-app && grep -q 'Convergio' src-tauri/tauri.conf.json"
+          - "cd convergio-app && test -f src-tauri/icons/icon.icns"
+
+  # ═══════════════════════════════════════════════════════════
+  # W1 — Daemon WebSocket Layer (Rust, in main convergio repo)
+  # Covers: F-23
+  # ═══════════════════════════════════════════════════════════
+  - id: W1
+    name: "Daemon WebSocket Layer"
+    tasks:
+      - id: T1-01
+        do: >
+          Add WebSocket support to convergio-ipc crate. Implement axum WebSocket upgrade handler
+          at /api/ws/agent-chat. The WebSocket protocol should support:
+          1. Client sends: {type: "subscribe", agent_id: "..."} to watch an agent
+          2. Client sends: {type: "message", agent_id: "...", content: "..."} to send to agent
+          3. Server sends: {type: "agent_event", agent_id: "...", event: {...}} for agent activity
+          4. Server sends: {type: "agent_message", agent_id: "...", content: "..."} for agent replies
+          5. Heartbeat ping/pong every 30s.
+          Wire the WebSocket handler into the IPC extension routes. Bridge to existing EventBus
+          so WS clients receive the same events as SSE. Add auth token check on upgrade.
+          Write integration test with tokio-tungstenite client. Verify cargo check + cargo test.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "WebSocket endpoint responds to upgrade, auth works, events stream, integration test passes"
+        verify:
+          - "cd daemon && cargo check --workspace"
+          - "cd daemon && cargo test -p convergio-ipc -- ws"
+          - "cd daemon && grep -q 'ws/agent-chat' crates/convergio-ipc/src/routes.rs || grep -rq 'ws/agent-chat' crates/convergio-ipc/src/"
+          - "cd daemon && cargo fmt --all -- --check"
+
+  # ═══════════════════════════════════════════════════════════
+  # W2 — Mission Control + Core Shell (Flagship #1)
+  # Covers: F-02, F-25, F-29
+  # ═══════════════════════════════════════════════════════════
+  - id: W2
+    name: "Mission Control & Core Shell"
+    tasks:
+      - id: T2-01
+        do: >
+          Build the Mission Control home page (/) — the flagship command center.
+          This is NOT a generic dashboard. It answers 3 questions in 5 seconds:
+          1. Are my organizations healthy? 2. Which mission needs me? 3. Can I safely do nothing?
+
+          Layout (use Maranello DS components):
+          - Top strip: MnSystemStatus (daemon health + mesh nodes) + MnBudgetTracker (total spend)
+          - AI summary line: "2 orgs on track, 1 blocked, $412 remaining, no human action needed"
+          - Left: MnSentinel (overall health gauge) + MnSpeedometer (throughput)
+          - Center: Active plans list with MnWaveProgress for top 3 plans
+          - Right: MnActivityFeed (live SSE events from /api/observatory/timeline)
+          - Bottom: Quick action buttons (Spawn Agent, Create Plan, Run Doctor)
+
+          Data sources: /api/health, /api/cost/summary, /api/plan-db/list, /api/agents/runtime,
+          /api/observatory/timeline, /api/mesh, /api/orgs.
+          Use useApiQuery with pollInterval for health data. Use useEventSource for timeline.
+          All strings localized via useLocale(). All components themed for 4 themes.
+          Responsive: on mobile, stack vertically with summary-first layout.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "Mission Control renders, shows real daemon data, SSE timeline works, mobile responsive"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/page.tsx'"
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && pnpm typecheck"
+
+      - id: T2-02
+        do: >
+          Build the AI Chat panel with streaming. Implement /api/chat Next.js route that proxies
+          to the daemon's /api/kernel/ask endpoint. Use Vercel AI SDK v6 for streaming responses.
+          Configure 2 AI agents in convergio.yaml:
+          1. Jervis — platform orchestrator (proxies to /api/kernel/ask)
+          2. NaSra — design system expert (proxies to /api/orgs/:id/ask with org=convergio-frontend)
+          The chat panel should be a global sidebar (toggleable via header icon or Cmd+J).
+          Support: streaming text, markdown rendering, code blocks, agent switching.
+          All strings localized. Works in all 4 themes.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "AI chat panel opens, streams responses from daemon, agent switching works, markdown renders"
+        verify:
+          - "cd convergio-app && test -f src/app/api/chat/route.ts"
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && pnpm typecheck"
+
+      - id: T2-03
+        do: >
+          Enhance the Command Palette (Cmd-K) for global Convergio search.
+          The palette must search across ALL Convergio objects:
+          - Agents (from /api/agents/catalog)
+          - Plans (from /api/plan-db/list)
+          - Organizations (from /api/orgs)
+          - Tasks (from plan execution trees)
+          - Reports (from /api/reports)
+          - Anomalies (from /api/observatory/anomalies)
+          Add quick actions: "Spawn Agent", "Create Plan", "Run Doctor", "Switch Theme",
+          "Switch Language", "Open Settings".
+          Use MnCommandMenu from Maranello DS. Fuzzy search with cmdk.
+          All labels localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Cmd-K opens, searches agents/plans/orgs, quick actions work, localized"
+        verify:
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && pnpm typecheck"
+
+  # ═══════════════════════════════════════════════════════════
+  # W3 — Agent Workspace (Flagship #2)
+  # Covers: F-03, F-05
+  # ═══════════════════════════════════════════════════════════
+  - id: W3
+    name: "Agent Workspace — Live Agent Interaction"
+    tasks:
+      - id: T3-01
+        do: >
+          Build the Agent Workspace page (/agents/workspace) — the 4-pane flagship experience.
+
+          LEFT RAIL — Agent Roster:
+          - MnAgentSidebar with agents from /api/agents/runtime
+          - Filter by: status (active/idle/blocked), org, plan, capability
+          - Each agent shows: MnAgentCard with role, org, current task, budget burn, status badge
+
+          CENTER — Live Conversation + Execution Timeline:
+          - MnAgentChat connected via WebSocket (/api/ws/agent-chat)
+          - Shows agent events: tool calls, decisions, approvals, errors
+          - Human can send messages to agent, approve/reject, interrupt
+          - Fallback to SSE (/api/events/stream) if WebSocket unavailable
+
+          RIGHT INSPECTOR — Context Panel:
+          - Current task details (from plan execution tree)
+          - Plan/wave position with MnWaveProgress
+          - Evidence gate status with MnGateStatus
+          - Budget burn rate
+          - Assigned model/tier and mesh node
+          - Linked PR/commit/files
+
+          BOTTOM DRAWER — Runtime:
+          - Agent logs (from /api/agents/:id/context)
+          - IPC messages (from /api/ipc/messages)
+          - Artifacts
+          - Checkpoints
+
+          All strings localized. All themes. Responsive: on mobile, tabs instead of panes.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "4-pane layout renders, WebSocket connects, agent roster shows data, chat works"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/agents/workspace/page.tsx'"
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && pnpm typecheck"
+
+      - id: T3-02
+        do: >
+          Build the Agents catalog page (/agents) with full CRUD.
+          - LIST: MnDataTable with agents from /api/agents/catalog. Columns: name, category,
+            status, model, description. Filter by category, status. Search by name.
+          - CREATE: Modal form to create new agent spec (POST /api/agents/catalog).
+            Fields: name, description, category, instructions, model, tier, budget.
+          - EDIT: Click agent row → detail view with editable fields (PUT /api/agents/catalog/:name).
+          - DELETE: Confirm dialog → DELETE /api/agents/catalog/:name.
+          - SPAWN: "Spawn Agent" button opens form → POST /api/agents/spawn.
+            Fields: agent_name, org_id, instructions, tier, budget_usd, timeout_secs.
+            Dry-run toggle (dry_run: true for validation).
+          - RUNTIME: Tab showing active agents from /api/agents/runtime with kill button.
+          - KILL ALL: Emergency button → POST /api/agents/kill-all (confirm dialog).
+          All strings localized. Use MnBadge for status. MnAgentCard for list items optionally.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "Agent list renders, CRUD works, spawn form submits, runtime tab shows active agents"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/agents/page.tsx'"
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && pnpm typecheck"
+
+  # ═══════════════════════════════════════════════════════════
+  # W4 — Plan Orchestrator (Flagship #3)
+  # Covers: F-04, F-20
+  # ═══════════════════════════════════════════════════════════
+  - id: W4
+    name: "Plan Orchestrator & Approvals"
+    tasks:
+      - id: T4-01
+        do: >
+          Build the Plan Orchestrator page (/plans) with full plan lifecycle.
+          - LIST: MnDataTable with plans from /api/plan-db/list. Columns: id, name, project,
+            status, tasks_done/total, created_at. Filter by status, project. Sort by date.
+          - CREATE: "New Plan" → form with name, project_id → POST /api/plan-db/create.
+          - DETAIL VIEW (/plans/[id]): Full plan viewer with:
+            a) Header: plan name, status badge, progress bar
+            b) MnPlanTimeline showing all waves
+            c) MnWaveProgress for each wave with task cards
+            d) MnGateStatus for each task (evidence/test/PR/wave/validator gates)
+            e) Task detail panel: click task → shows description, evidence, PR link, agent
+            f) Actions: Start (POST /api/plan-db/start/:id), Cancel, Resume, Validate (Thor)
+          - IMPORT: "Import YAML" button → textarea/file upload → POST /api/plan-db/import
+          - WAVE CREATE: "Add Wave" → POST /api/plan-db/wave/create
+          - TASK CREATE: "Add Task" within wave → POST /api/plan-db/task/create
+          All strings localized. Use MnGantt for timeline visualization option.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "Plan list renders, detail view shows waves/tasks, CRUD actions work, gate status visible"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/plans/page.tsx'"
+          - "cd convergio-app && test -f 'src/app/(dashboard)/plans/[id]/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+      - id: T4-02
+        do: >
+          Build the Approvals & Evidence page (/approvals).
+          - PENDING APPROVALS: List from /api/approvals/pending. Each shows: what, who requested,
+            urgency, context. One-click Approve/Reject buttons.
+          - EVIDENCE INSPECTOR: For any task, show evidence records from /api/evidence/:task_id.
+            Types: test_result, test_pass, commit, pr_url. Show gate chain status.
+          - PREFLIGHT: Show preflight validation results from /api/evidence/preflight/:task_id.
+          - APPROVAL DETAIL: /api/approvals/:id with full context + approve/reject actions.
+          Use MnGateStatus, MnRunbookStep for step visualization.
+          Add notification badge on sidebar nav item showing pending approval count.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Approvals list renders, approve/reject works, evidence inspector shows gate chain"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/approvals/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+  # ═══════════════════════════════════════════════════════════
+  # WC1 — Session Checkpoint (Rule 15: every 15-20 tasks)
+  # ═══════════════════════════════════════════════════════════
+  - id: WC1
+    name: "Session Checkpoint 1"
+    tasks:
+      - id: TC1-01
+        do: >
+          Session checkpoint: commit all work, push, update plan.md.
+          Run pnpm build + pnpm typecheck + pnpm test to verify no regressions.
+          Run pnpm test:e2e for smoke tests. Verify daemon connectivity.
+          Suggest new session if shell budget is below threshold.
+          Manual smoke test by Roberdan: verify Mission Control, Agent Workspace,
+          Plan Orchestrator visually in Navy and Dark themes.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        test_criteria: "All builds pass, E2E smoke tests pass, manual verification done"
+        verify:
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && pnpm typecheck"
+
+  # ═══════════════════════════════════════════════════════════
+  # W5 — Organizations
+  # Covers: F-06
+  # ═══════════════════════════════════════════════════════════
+  - id: W5
+    name: "Organizations Management"
+    tasks:
+      - id: T5-01
+        do: >
+          Build the Organizations page (/orgs) with full org lifecycle.
+          - LIST: Card grid of orgs from /api/orgs. Each card: name, mission, CEO, member count,
+            budget, status. Use MnAgentCard-style cards.
+          - CREATE: "New Organization" → form → POST /api/orgs. Fields: name, mission, budget.
+          - DETAIL VIEW (/orgs/[id]):
+            a) Header: org name, mission, CEO agent, status
+            b) ORG CHART: MnOrgChart from /api/orgs/:id/orgchart
+            c) MEMBERS: List with add (POST /api/orgs/:id/members) and remove
+            d) DECISION LOG: MnDecisionLog from /api/decisions
+            e) ASK AI: Chat interface → POST /api/orgs/:id/ask (org AI Q&A)
+            f) KB SEED: "Seed Knowledge" button → POST /api/orgs/:id/kb/seed
+            g) DISPATCH: "Dispatch Task" → POST /api/org/:id/dispatch (future: /api/orgs/:id/dispatch)
+            h) TELEMETRY: From /api/orgs/:id/telemetry
+            i) DIGEST: Summary from /api/orgs/:id/digest
+            j) PLANS: Org's plans from /api/orgs/:id/plans
+            k) ASK LOG: History from /api/orgs/:id/ask-log
+          All strings localized. Use MnBudgetTracker for budget visualization.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "Org list renders, detail view shows orgchart/members/decisions, CRUD works, ask AI works"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/orgs/page.tsx'"
+          - "cd convergio-app && test -f 'src/app/(dashboard)/orgs/[id]/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+  # ═══════════════════════════════════════════════════════════
+  # W6 — Infrastructure Pages
+  # Covers: F-07, F-08, F-18
+  # ═══════════════════════════════════════════════════════════
+  - id: W6
+    name: "Infrastructure — Mesh, Inference, Security"
+    tasks:
+      - id: T6-01
+        do: >
+          Build the Mesh & Fleet page (/mesh).
+          - MESH STATUS: MnMeshPanel with data from /api/mesh. Show local node + peers.
+          - PEER LIST: MnPeerCard for each peer from /api/mesh/peers. Show: host, role,
+            latency, last_seen, transport, status.
+          - NODE READINESS: MnSystemStatus from /api/node/readiness.
+          - SYNC STATUS: From /api/sync/status. Show export/import state.
+          - TOPOLOGY: MnNodeGraph or MnClusterMap showing peer connections.
+          - DELEGATE: "Delegate to Peer" → POST /api/delegate/spawn.
+          - FILE TRANSPORT: Transfer list from /api/file-transport/transfers.
+            Push/Pull forms → POST /api/file-transport/push|pull.
+          - TENANCY: Peer list from /api/tenancy/peers. Audit from /api/tenancy/audit.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "Mesh status renders, peer cards show data, node graph visualizes topology"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/mesh/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+      - id: T6-02
+        do: >
+          Build the Inference & Models page (/inference).
+          - COSTS: MnChart (area) from /api/inference/costs showing cost over time.
+          - ROUTING: Current routing decision from /api/inference/routing-decision.
+            Show model selection logic, tier, budget state.
+          - MODEL STATUS: From /api/kernel/status. Show loaded models, uptime, config.
+          - BUDGET: MnBudgetTracker + MnGauge for budget enforcement state.
+          - COMPLETION: Test form → POST /api/inference/complete (developer tool).
+          - METRICS: Cost breakdown from /api/metrics/cost. Summary from /api/metrics/summary.
+          All strings localized. Use MnChart for time-series, MnHBar for comparisons.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Inference page renders, cost chart shows data, routing info displayed"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/inference/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+      - id: T6-03
+        do: >
+          Build the Security & Governance page (/security).
+          - TRUST LEVELS: Table from /api/security/trust. Set trust per peer.
+          - SECRETS FILTERS: List from /api/security/secrets/filter. Add new filter.
+          - SANDBOX POLICIES: Per-peer sandbox config from /api/security/sandbox/:peer.
+            Edit resource limits.
+          - TENANCY RESOURCES: From /api/tenancy/resources. Set limits.
+          - TENANCY SECRETS: From /api/tenancy/secrets.
+          Use MnDataTable for lists. Forms for configuration.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Security page renders, trust levels editable, sandbox policies configurable"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/security/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+  # ═══════════════════════════════════════════════════════════
+  # W7 — Intelligence Pages
+  # Covers: F-09, F-10, F-11
+  # ═══════════════════════════════════════════════════════════
+  - id: W7
+    name: "Intelligence — Observatory, Knowledge, Reports"
+    tasks:
+      - id: T7-01
+        do: >
+          Build the Observatory page (/observatory).
+          - TIMELINE: MnActivityFeed with live SSE from /api/observatory/timeline.
+            Filter by org, type, severity. Paginated.
+          - SEARCH: Full-text search via /api/observatory/search.
+          - DASHBOARD: Aggregate metrics from /api/observatory/dashboard.
+            MnChart for cost/hour, throughput/day, model latency.
+          - ANOMALIES: List from /api/observatory/anomalies with MnIncidentBanner.
+            Resolution workflow: click anomaly → detail → resolve with note
+            (POST /api/observatory/anomalies/:id/resolve).
+          - METRICS: Prometheus-compatible metrics from /api/observatory/metrics.
+          - WEBHOOKS: CRUD from /api/observatory/webhooks. Create/delete webhooks.
+          All strings localized. Use useEventSource for live timeline.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "Timeline renders live events, search works, anomaly resolution workflow functional"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/observatory/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+      - id: T7-02
+        do: >
+          Build the Knowledge Base page (/knowledge).
+          - SEARCH: Semantic search form → POST /api/knowledge/search.
+            Results show content, source_type, score, source_id. Click to expand.
+          - WRITE: "Add Knowledge" form → POST /api/knowledge/write.
+            Fields: content, source_type (task/commit/doc/agent_memory/kb), source_id, org_id, agent_id.
+          - BROWSE: Stats from /api/knowledge/stats showing entry counts, source distribution.
+          - SEED: "Seed from Org" → POST /api/knowledge/seed.
+          - DELETE: Remove entries via DELETE /api/knowledge/:id.
+          Use MnDataTable for results. Syntax highlighting for code content.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Knowledge search returns results, write form submits, stats displayed"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/knowledge/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+      - id: T7-03
+        do: >
+          Build the Reports (CTT) page (/reports).
+          - LIST: MnDataTable with reports from /api/reports. Filter by type, status.
+          - GENERATE: "New Report" → form → POST /api/reports/generate.
+            Fields: topic, report_type (leadership-profile/company-deep-dive/industry-analysis/
+            tech-analysis/market-report/general/analysis/research), depth (brief/standard/full),
+            format (markdown/pdf).
+          - VIEW: /reports/[id] → Markdown renderer for report content from /api/reports/:id.
+          - DOWNLOAD: PDF download via /api/reports/:id/download.
+          Use MnActivityFeed for generation progress. MnBadge for status.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Report list renders, generation form submits, view page renders markdown, download works"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/reports/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+  # ═══════════════════════════════════════════════════════════
+  # WC2 — Session Checkpoint 2
+  # ═══════════════════════════════════════════════════════════
+  - id: WC2
+    name: "Session Checkpoint 2"
+    tasks:
+      - id: TC2-01
+        do: >
+          Session checkpoint: commit all work, push, update plan.md.
+          Run full build + typecheck + lint + unit tests + E2E tests.
+          Manual smoke test: verify Orgs, Mesh, Inference, Observatory, Knowledge, Reports
+          pages visually in Navy and Dark themes. Verify all pages are accessible via
+          sidebar navigation. Verify Command Palette finds objects from new pages.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        test_criteria: "All builds pass, E2E pass, manual verification done for W5-W7 pages"
+        verify:
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && pnpm typecheck"
+
+  # ═══════════════════════════════════════════════════════════
+  # W8 — Operations Pages
+  # Covers: F-13, F-14, F-15
+  # ═══════════════════════════════════════════════════════════
+  - id: W8
+    name: "Operations — Billing, Deploy, Backup"
+    tasks:
+      - id: T8-01
+        do: >
+          Build the Billing & FinOps page (/billing).
+          - USAGE: MnChart from /api/billing/usage. Time-series cost breakdown.
+          - INVOICES: MnDataTable from /api/billing/invoices. Per-org invoices.
+          - RATES: Rate cards from /api/billing/rates.
+          - COST SUMMARY: MnBudgetTracker from /api/cost/summary. Total spend, active plans.
+          - ALERTS: Configure budget alerts → POST /api/billing/alerts.
+          - AGENT COSTS: Use MnAgentCostBreakdown (Maranello component) for per-agent costs.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Billing page renders, cost chart shows data, invoices list, alerts configurable"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/billing/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+      - id: T8-02
+        do: >
+          Build the Deployments page (/deploy).
+          - STATUS: Current deploy status from /api/deploy/status. MnDeploy component.
+          - HISTORY: MnDataTable from /api/deploy/history. Show version, timestamp, status.
+          - UPGRADE: "Upgrade" button → POST /api/deploy/upgrade. Confirm dialog.
+          - PUSH ALL: "Push to All Nodes" → POST /api/deploy/push-all. Shows progress.
+          - ROLLBACK: "Rollback" → POST /api/build/rollback. Confirm dialog.
+          - DIAGNOSTICS: "Run Diagnostics" → POST /api/deploy/diagnostics. Show results.
+          - BUILD: Trigger build → POST /api/build/self. Show status from /api/build/status/:id.
+          - BUILD HISTORY: From /api/build/history.
+          All strings localized. Use MnSystemStatus for deploy health.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Deploy page renders, status shows, upgrade/rollback buttons work, build history visible"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/deploy/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+      - id: T8-03
+        do: >
+          Build the Backup & Restore page (/backup).
+          - SNAPSHOTS: MnDataTable from /api/backup/snapshots. Columns: id, label, created_at, size.
+          - CREATE: "Create Snapshot" → POST /api/backup/snapshots/create. Optional label.
+          - VERIFY: "Verify" per snapshot → POST /api/backup/snapshots/verify.
+          - RESTORE: "Restore" → POST /api/backup/restore. Confirm dialog with warning.
+          - RETENTION: Rules from /api/backup/retention/rules. Edit form to set rules.
+          - PURGE: "Purge Old" → POST /api/backup/retention/purge. Show purge log.
+          - EXPORT/IMPORT: Export org data → POST /api/backup/export. Import → POST /api/backup/import.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Backup page renders, snapshot CRUD works, retention config editable, restore has confirm"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/backup/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+  # ═══════════════════════════════════════════════════════════
+  # W9 — Tools & Config Pages
+  # Covers: F-12, F-16, F-17, F-19
+  # ═══════════════════════════════════════════════════════════
+  - id: W9
+    name: "Tools — Prompts, Night Agents, Doctor, Scheduler"
+    tasks:
+      - id: T9-01
+        do: >
+          Build the Prompt Studio page (/prompts).
+          - PROMPTS: MnDataTable with prompts from /api/prompts. CRUD: create, view, edit, delete.
+          - PROMPT EDITOR: Monaco-style editor for prompt content. Preview with variable substitution.
+          - ACTIVE BY NAME: Quick lookup via /api/prompts/active/:name.
+          - SKILLS: Skill registry from /api/skills. Register new, search, browse.
+          - SKILL PROMPTS: View skill prompt via /api/skills/:name/prompt.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Prompt list renders, CRUD works, editor saves, skill registry searchable"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/prompts/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+      - id: T9-02
+        do: >
+          Build the Night Agents page (/night-agents).
+          - DEFINITIONS: MnDataTable with agent defs from /api/night-agents. CRUD: create, edit, delete.
+          - TRIGGER: "Run Now" button per agent → POST /api/night-agents/:id/trigger (via MCP).
+          - RUNS: Run history from /api/night-agents/:id/runs. Show status, output, duration.
+          - PROJECTS: Tracked projects from /api/night-agents/projects (if endpoint exists).
+            Scan form. Project tracking management.
+          - MnNightJobs component for visualization.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Night agent list renders, CRUD works, trigger button works, run history shows"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/night-agents/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+      - id: T9-03
+        do: >
+          Build the Doctor & Diagnostics page (/doctor).
+          - RUN DOCTOR: "Run Full Doctor" button → GET /api/doctor/full. Show results as they stream.
+          - SUMMARY: From /api/doctor/summary. Overall health score.
+          - ISSUES: From /api/doctor/issues. List of current issues with severity.
+          - DASHBOARD: From /api/doctor/dashboard. System overview metrics.
+          - HISTORY: From /api/doctor/history. Past doctor runs.
+          - CATEGORY CHECK: Run specific category → GET /api/doctor/check/:category.
+          - VERSION: From /api/doctor/version.
+          Use MnSystemStatus for overall health. MnGauge for health score.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Doctor page renders, run doctor shows results, history list, issues displayed"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/doctor/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+      - id: T9-04
+        do: >
+          Build the Scheduler page (/scheduler).
+          - POLICY: Current policy from /api/scheduler/policy. Edit form to update.
+          - DECISIONS: Decision history from /api/scheduler/history. MnDataTable.
+          - DECIDE: Test decision form → POST /api/scheduler/decide. Show result.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        test_criteria: "Scheduler page renders, policy editable, history displayed"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/scheduler/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+  # ═══════════════════════════════════════════════════════════
+  # W10 — System Pages + Notifications
+  # Covers: F-21, F-22
+  # ═══════════════════════════════════════════════════════════
+  - id: W10
+    name: "System — Settings, Notifications, Showcase"
+    tasks:
+      - id: T10-01
+        do: >
+          Build the Settings page (/settings).
+          - DAEMON CONNECTION: Show current API URL. Edit field (saved to localStorage).
+          - THEME: Theme selector with live preview (all 4 themes).
+          - LANGUAGE: Language selector (EN/IT/ES/ZH) with live preview.
+          - ACCESSIBILITY: Toggle a11y toolbar, high-contrast, reduce motion.
+          - SYSTEM INFO: Version from /api/doctor/version. Capabilities from /api/capabilities.
+          - DEP GRAPH: Dependency graph from /api/depgraph. MnNodeGraph visualization.
+            Validate button → /api/depgraph/validate.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Settings page renders, theme/language switching works, daemon URL configurable"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/settings/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+      - id: T10-02
+        do: >
+          Build the Inbox / Notifications page (/inbox).
+          - NOTIFICATION QUEUE: List from /api/notify/queue. Show title, message, severity, timestamp.
+          - SEND NOTIFICATION: Form → POST /api/notify. Fields: title, message, severity.
+          - TELEGRAM TEST: "Test Telegram" → POST /api/notify/telegram/test.
+          - PENDING APPROVALS: Badge count from /api/approvals/pending. Link to /approvals.
+          - ANOMALY ALERTS: Recent anomalies from /api/observatory/anomalies.
+          Add notification bell icon in header with unread count badge.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Inbox renders, notification list shows, send form works, header bell shows count"
+        verify:
+          - "cd convergio-app && test -f 'src/app/(dashboard)/inbox/page.tsx'"
+          - "cd convergio-app && pnpm build"
+
+  # ═══════════════════════════════════════════════════════════
+  # W11 — Tauri Desktop + System Tray
+  # Covers: F-24, F-27
+  # ═══════════════════════════════════════════════════════════
+  - id: W11
+    name: "Tauri Desktop — System Tray & Menu Bar"
+    tasks:
+      - id: T11-01
+        do: >
+          Implement the macOS menu bar icon (system tray) functionality in Tauri.
+          The tray icon must:
+          1. Show dynamic icon based on system health:
+             - Green (healthy) — all systems operational
+             - Yellow (degraded) — some issues detected
+             - Red (down) — daemon unreachable or critical failures
+          2. Poll /api/health every 10s to determine icon state.
+          3. Dropdown menu shows:
+             - "Convergio — [status]" header
+             - Separator
+             - "Nodes" submenu: list mesh peers from /api/mesh/peers with status
+             - "Active Agents: N" (from /api/agents/runtime)
+             - "Active Plans: N" (from /api/plan-db/list?status=active)
+             - Separator
+             - "Open Dashboard" → opens main window
+             - "Run Doctor" → triggers /api/doctor and shows notification
+             - "Spawn Agent..." → opens spawn dialog in main window
+             - Separator
+             - "Quit Convergio"
+          4. Native macOS template icons (22x22 @1x, 44x44 @2x) for each state.
+          Implement as Tauri Rust commands + React bridge. Test on macOS.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "Tray icon appears in macOS menu bar, changes color on health, dropdown shows nodes/agents/plans"
+        verify:
+          - "cd convergio-app && grep -q 'tray' src-tauri/src/main.rs || grep -rq 'tray' src-tauri/src/"
+          - "cd convergio-app && test -f src-tauri/icons/tray-green.png"
+          - "cd convergio-app && test -f src-tauri/icons/tray-yellow.png"
+          - "cd convergio-app && test -f src-tauri/icons/tray-red.png"
+
+      - id: T11-02
+        do: >
+          Implement daemon switcher (Phase 2 feature) as settings sub-page.
+          - DAEMON LIST: localStorage-backed list of daemon URLs with labels.
+          - ADD: Form to add new daemon (label + URL). Test connection on save.
+          - SWITCH: Click daemon → set as active → reload all data.
+          - REMOVE: Delete daemon from list.
+          - Current active daemon shown in header bar.
+          This is purely client-side. No server endpoint needed.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Daemon switcher UI renders, add/remove/switch works, active daemon shown in header"
+        verify:
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && pnpm typecheck"
+
+  # ═══════════════════════════════════════════════════════════
+  # WC3 — Session Checkpoint 3
+  # ═══════════════════════════════════════════════════════════
+  - id: WC3
+    name: "Session Checkpoint 3"
+    tasks:
+      - id: TC3-01
+        do: >
+          Session checkpoint: commit all work, push.
+          Run full build + typecheck + lint + unit tests + E2E tests.
+          Manual smoke test: verify ALL pages render correctly in Navy and Dark themes.
+          Verify Tauri desktop builds and system tray works.
+          Verify all navigation items link to real pages. Verify Command Palette finds all objects.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        test_criteria: "All builds pass, all pages render, Tauri builds, manual verification done"
+        verify:
+          - "cd convergio-app && pnpm build"
+
+  # ═══════════════════════════════════════════════════════════
+  # W12 — Mobile + Accessibility + Remaining Themes
+  # Covers: F-28, F-32, F-33
+  # ═══════════════════════════════════════════════════════════
+  - id: W12
+    name: "Mobile, Accessibility & Theme Completion"
+    tasks:
+      - id: T12-01
+        do: >
+          Make ALL pages mobile-responsive. Implement:
+          - Bottom tab bar for mobile: Briefing, Alerts, Agents, Chat, More
+          - Mission Control mobile: stack vertically, summary-first, compact gauges
+          - Agent Workspace mobile: tabs instead of 4 panes
+          - Plan Orchestrator mobile: collapsed wave accordion
+          - All data tables: horizontal scroll on mobile
+          - Touch-friendly interaction targets (min 44x44px)
+          - Swipe gestures where appropriate
+          Test on iPhone/iPad viewport sizes via Playwright.
+          All strings localized. All themes.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "All pages render on mobile viewport, bottom tab bar works, touch targets 44px+"
+        verify:
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && pnpm typecheck"
+
+      - id: T12-02
+        do: >
+          Full WCAG 2.2 AA accessibility audit and fixes.
+          - Run axe-core on every page. Fix all violations.
+          - Ensure keyboard navigation works on every interactive element.
+          - Add aria-labels to all icon-only buttons.
+          - Ensure screen reader announces page changes, notifications, live updates.
+          - Verify color contrast ratios in all 4 themes (especially Colorblind).
+          - Add skip-to-content link.
+          - Ensure focus indicators are visible in all themes.
+          - Test with VoiceOver on macOS.
+          Add axe-core integration to Playwright E2E tests (auto-fail on violations).
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "Zero axe-core violations on all pages, keyboard nav works, VoiceOver tested"
+        verify:
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && pnpm test:e2e"
+
+      - id: T12-03
+        do: >
+          Enable and test Light + Colorblind themes on all pages.
+          - Verify every page renders correctly in Light theme (warm ivory bg, red accent).
+          - Verify every page renders correctly in Colorblind theme (Okabe-Ito palette).
+          - Fix any theme-specific issues (contrast, readability, chart colors).
+          - Add visual regression screenshots for Light and Colorblind themes.
+          - Update Playwright E2E to test in all 4 themes.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "All pages render in Light+Colorblind themes, visual regression baselines captured"
+        verify:
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && pnpm test:e2e"
+
+  # ═══════════════════════════════════════════════════════════
+  # W13 — Auto-Update + Extensibility + Cross-Repo
+  # Covers: F-35, F-36, F-37, F-38
+  # ═══════════════════════════════════════════════════════════
+  - id: W13
+    name: "Auto-Update, Extensibility & Cross-Repo Workflow"
+    tasks:
+      - id: T13-01
+        do: >
+          Implement auto-detection of new daemon capabilities.
+          - On app load, fetch /api/capabilities and compare with known capabilities list.
+          - If new capabilities found, show notification banner:
+            "Daemon has N new capabilities not yet covered by the UI"
+          - Show list of uncovered capabilities in Settings > System Info.
+          - Architecture: maintain a capabilities-manifest.json that maps capability → page/section.
+            New capabilities without a mapping trigger the notification.
+          This enables easy extensibility: add a new daemon module → UI tells you it needs a page.
+          All strings localized.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Capability detection works, notification shows for unknown capabilities, manifest maintained"
+        verify:
+          - "cd convergio-app && test -f src/lib/capabilities-manifest.json"
+          - "cd convergio-app && pnpm build"
+
+      - id: T13-02
+        do: >
+          Implement framework update tracking.
+          - Add convergio-frontend version to package.json metadata.
+          - Create script that checks convergio-frontend GitHub releases for new versions.
+          - Show in Settings: "Framework version: X.Y.Z" and "Latest: A.B.C".
+          - If outdated, show update instructions.
+          - Document migration path in docs/guides/framework-updates.md.
+          This is informational — actual update is manual (copy new components, merge config).
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        test_criteria: "Framework version displayed in settings, update check works, migration docs exist"
+        verify:
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && test -f docs/guides/framework-updates.md"
+
+      - id: T13-03
+        do: >
+          Document the cross-repo issue management workflow.
+          Create docs/guides/cross-repo-workflow.md explaining:
+          1. During development, if a bug/limitation found in convergio-frontend or convergio daemon:
+             a. Open GitHub issue on the respective repo (gh issue create)
+             b. Use Convergio daemon to spawn an agent on the target repo
+                (POST /api/agents/spawn with instructions referencing the issue)
+             c. Monitor agent progress via IPC (/api/ipc/messages)
+             d. When fix is merged upstream, update convergio-app to incorporate it
+          2. Add a "Report Issue" button in Settings that opens a GitHub issue form
+             pre-filled with system info (daemon version, frontend version, capabilities).
+          Implement the "Report Issue" button in the Settings page.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        test_criteria: "Workflow documented, Report Issue button in Settings opens GitHub issue form"
+        verify:
+          - "cd convergio-app && test -f docs/guides/cross-repo-workflow.md"
+          - "cd convergio-app && pnpm build"
+
+  # ═══════════════════════════════════════════════════════════
+  # WF — Final Closure
+  # ═══════════════════════════════════════════════════════════
+  - id: WF
+    name: "Final Closure — Tests, Docs, PR, Deploy"
+    tasks:
+      - id: TF-tests
+        do: >
+          Complete E2E test suite covering all 25+ pages.
+          - Each page has at least 1 Playwright test: loads, shows data, core action works.
+          - 3 cross-page journey tests:
+            1. Create org → create plan → spawn agent → view in workspace
+            2. Mission Control → click plan → view tasks → approve gate
+            3. Settings → change theme → verify all pages update
+          - Visual regression baselines for all 4 themes on key pages.
+          - Accessibility tests via axe-core on every page.
+          - Mobile viewport tests for Mission Control, Agents, Plans.
+          All tests must pass: pnpm test && pnpm test:e2e.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        test_criteria: "All unit tests pass, all E2E tests pass, visual regression baselines captured, a11y clean"
+        verify:
+          - "cd convergio-app && pnpm test"
+          - "cd convergio-app && pnpm test:e2e"
+          - "cd convergio-app && pnpm build"
+
+      - id: TF-doc
+        do: >
+          Write documentation:
+          - README.md: project overview, setup instructions, architecture diagram, development guide
+          - docs/architecture.md: page map, data flow, component usage, API integration pattern
+          - docs/guides/adding-a-page.md: step-by-step for adding new pages
+          - docs/guides/framework-updates.md: how to update from convergio-frontend
+          - docs/guides/cross-repo-workflow.md: issue management across repos
+          - CHANGELOG.md: initial release notes
+          - Update convergio repo README to reference convergio-app
+        type: document
+        output_type: document
+        model: claude-opus-4-6
+        executor_agent: copilot
+        validator_agent: doc-validator
+        effort: 2
+        test_criteria: "All docs exist, README has setup instructions, architecture doc has page map"
+        verify:
+          - "cd convergio-app && test -f README.md"
+          - "cd convergio-app && test -f docs/architecture.md"
+          - "cd convergio-app && test -f docs/guides/adding-a-page.md"
+
+      - id: TF-pr
+        do: >
+          Create final PR with all changes. PR body must include:
+          1. Problem: Current UI covers 15% of daemon capabilities, read-only
+          2. Why: Need full Mission Control for monitoring + management + agent interaction
+          3. What changed: 25+ pages, WebSocket layer, Tauri system tray, 4 themes, 4 languages
+          4. Validation: pnpm build + typecheck + lint + test + test:e2e + cargo tauri build
+          5. Impact: Complete UI for Convergio daemon
+          Include screenshots of key pages in Navy theme.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        test_criteria: "PR created with full description, all checks pass"
+        verify:
+          - "cd convergio-app && pnpm build"
+
+      - id: TF-deploy-verify
+        do: >
+          Verify deployment:
+          - pnpm build succeeds
+          - pnpm start serves at localhost:3000
+          - All pages accessible
+          - Daemon connectivity verified (curl localhost:8420/api/health)
+          - Tauri desktop builds
+          - System tray works on macOS
+          - Version matches expected
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        test_criteria: "Production build serves, daemon reachable, Tauri builds, system tray functional"
+        verify:
+          - "cd convergio-app && pnpm build"
+          - "curl -s http://localhost:8420/api/health | grep -q 'ok'"
+
+# ═══════════════════════════════════════════════════════════
+# Stress Test (ADR-039)
+# ═══════════════════════════════════════════════════════════
+stress_test:
+  most_likely_to_fail: >
+    T11-01 (Tauri system tray) — Tauri's system tray API on macOS has quirks
+    with dynamic icon swapping and native menu construction. Rust ↔ React bridge
+    for health polling adds complexity.
+  single_point_of_failure: >
+    T0-01 (Foundation setup) — if the convergio-frontend template doesn't clone
+    cleanly into convergio-app/ or has incompatibilities with the monorepo structure,
+    everything downstream is blocked.
+  removable_task: >
+    T9-04 (Scheduler) — simplest page, lowest user impact. Policy config is rarely
+    changed and can be done via CLI.
+  cascade_risk: >
+    W1 (WebSocket) → W3 (Agent Workspace). If WebSocket layer has issues, the
+    flagship Agent Workspace chat degrades to SSE-only. Mitigation: T3-01 has
+    SSE fallback built in.
+  integration_gap: >
+    The Command Palette (T2-03) needs to query objects from pages that don't exist
+    yet when it's built in W2. Initial implementation should gracefully handle
+    empty/unavailable data sources and be updated in later waves.

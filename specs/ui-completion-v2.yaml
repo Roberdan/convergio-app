@@ -1,0 +1,1010 @@
+# Plan 1127v2 — Mission Control UI Completion (v2-revised)
+# 19 features (F-01..F-21, minus F-13 done, F-20 merged into F-02, F-22 wired)
+# Fixes all CRUD gaps from Plan 1127 audit
+#
+# Strategy:
+#   W0: ADR + daemon response format verification
+#   W1: API client + types expansion (all missing endpoints)
+#   W2: Simple CRUD (agents edit, knowledge, prompts)
+#   W3: Full CRUD (night agents, backup, security)
+#   W4: Enhancements (scheduler, deploy, billing, reports)
+#   W4b: i18n completion for all new pages (4 languages)
+#   WC1: Checkpoint
+#   W5: Core UX (plans lifecycle, delegation, task detail)
+#   W6: Shell features (AI chat, notifications, mesh)
+#   W7: Architecture (mobile, agent WebSocket)
+#   WC2: Checkpoint
+#   W8: E2E tests (CRUD operations)
+#   WF: Final closure (includes doctor SMOKE_ROUTES update)
+#
+# Execution model (F-22):
+#   Copilot tasks: delegated via `cvg agent spawn` through daemon
+#   Opus tasks: executed directly by the main agent
+#   Each wave = one worktree = one branch = one PR
+#   Evidence recorded via POST /api/plan-db/task/evidence
+#   Thor validates via POST /api/plan-db/validate
+
+project: convergio
+name: "UI Completion v2 — Full CRUD + Lifecycle"
+description: |
+  Complete Mission Control UI with functional CRUD on all pages,
+  plan lifecycle controls, delegation management, AI chat wiring,
+  notification bell, mobile responsive, and CRUD E2E tests.
+  Every feature verified against running daemon.
+  Execution via Convergio delegation (cvg agent spawn for copilot tasks).
+
+waves:
+  # ──────────────────────────────────────────────────────────────
+  # W0: ADR + Daemon Response Verification
+  # ──────────────────────────────────────────────────────────────
+  - id: W0
+    name: "ADR + daemon response format verification"
+    tasks:
+      - id: T0-01
+        do: |
+          Write ADR-031: Mission Control UI Completion v2.
+
+          File: docs/adr/ADR-031-ui-completion-v2.md
+
+          Content:
+          - Decision: complete all CRUD operations in Mission Control UI
+          - Context: Plan 1127 (43 tasks) left 24 features missing or stub-only
+          - Approach: 19 F-xx features, Maranello DS, verified against live daemon
+          - Execution: copilot via cvg agent spawn for mechanical CRUD,
+            Opus for architecture (plans lifecycle, WebSocket, mobile)
+          - Risks: security config endpoints may not exist, prompt edit via delete+create
+          - Trade-offs: SSE preferred over WebSocket for simplicity (except agent workspace)
+
+          Follow existing ADR format in docs/adr/ directory.
+        type: docs
+        output_type: document
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: doc-validator
+        effort_level: 1
+        test_criteria: "ADR file exists with correct structure"
+        verify:
+          - "test -f docs/adr/ADR-031-ui-completion-v2.md"
+          - "grep -q 'Decision' docs/adr/ADR-031-ui-completion-v2.md"
+
+      - id: T0-02
+        do: |
+          Verify daemon response formats match TypeScript types.
+
+          Run the daemon and call each API endpoint that will be used by the UI.
+          For each endpoint, compare the actual JSON response with the TypeScript
+          interface in convergio-app/src/lib/types.ts.
+
+          Endpoints to verify (minimum):
+          - GET /api/night-agents → NightAgent[]
+          - GET /api/backup/snapshots → Snapshot[]
+          - GET /api/backup/retention/rules → RetentionRule[]
+          - GET /api/deploy/status → DeployStatus
+          - GET /api/deploy/history → DeployEntry[]
+          - GET /api/scheduler/policy → SchedulerPolicy
+          - GET /api/reports → Report[]
+          - GET /api/notify/queue → Notification[]
+          - GET /api/plan-db/list → Plan[]
+          - GET /api/plan-db/execution-tree/:id → ExecutionTree
+          - GET /api/mesh → MeshStatus
+          - GET /api/mesh/peers → Peer[]
+          - GET /api/longrunning/delegation/:id → Delegation
+          - GET /api/security/config → (check if exists, document 404)
+
+          Output: a verification report listing each endpoint, its actual response
+          shape, and whether the TypeScript type matches. Fix types.ts for any
+          mismatches BEFORE the CRUD tasks start.
+
+          This is the CRITICAL task that prevents Plan 1127's main bug
+          (types didn't match daemon responses, causing runtime crashes).
+        type: analysis
+        output_type: analysis
+        model: claude-opus-4-6
+        assignee: claude
+        validator_agent: thor
+        effort_level: 3
+        test_criteria: "All TypeScript types in types.ts match daemon response format"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "curl -s http://localhost:8420/api/night-agents | python3 -c 'import sys,json; json.load(sys.stdin); print(\"ok\")'"
+          - "curl -s http://localhost:8420/api/deploy/status | python3 -c 'import sys,json; json.load(sys.stdin); print(\"ok\")'"
+
+  # ──────────────────────────────────────────────────────────────
+  # W1: API Client + Types Expansion
+  # ──────────────────────────────────────────────────────────────
+  - id: W1
+    name: "API client expansion"
+    depends_on: [W0]
+    tasks:
+      - id: T1-01
+        do: |
+          Add ALL missing API client functions to convergio-app/src/lib/api.ts
+          and corresponding TypeScript types to src/lib/types.ts.
+
+          Missing endpoints to add (grouped by domain):
+
+          NIGHT AGENTS:
+            nightAgentList() → GET /api/night-agents
+            nightAgentGet(id) → GET /api/night-agents/:id
+            nightAgentCreate(input) → POST /api/night-agents
+            nightAgentUpdate(id, input) → PUT /api/night-agents/:id
+            nightAgentDelete(id) → DELETE /api/night-agents/:id
+            nightAgentTrigger(id) → POST /api/night-agents/:id/trigger
+            nightAgentRuns(id) → GET /api/night-agents/:id/runs
+            nightAgentCancelRun(id, runId) → POST /api/night-agents/:id/runs/:run_id/cancel
+
+          BACKUP (add to existing):
+            backupVerify(id) → POST /api/backup/snapshots/verify {snapshot_id}
+            backupRestore(id) → POST /api/backup/restore {snapshot_id}
+            backupDelete(id) → DELETE /api/backup/snapshots/:id
+            backupRetentionRules() → GET /api/backup/retention/rules
+            backupSetRetention(input) → POST /api/backup/retention/rules
+            backupPurge() → POST /api/backup/retention/purge
+
+          DEPLOY:
+            deployStatus() → GET /api/deploy/status
+            deployHistory() → GET /api/deploy/history
+            deployUpgrade(input) → POST /api/deploy/upgrade
+            deployRollback(version) → POST /api/deploy/upgrade {target_version}
+            deployDiagnostics() → POST /api/deploy/diagnostics
+
+          SCHEDULER:
+            schedulerPolicy() → GET /api/scheduler/policy
+            schedulerUpdatePolicy(input) → POST /api/scheduler/policy
+            schedulerHistory(limit?) → GET /api/scheduler/history
+            schedulerDecide(input) → POST /api/scheduler/decide
+
+          REPORTS:
+            reportList() → GET /api/reports
+            reportGet(id) → GET /api/reports/:id
+            reportGenerate(input) → POST /api/reports/generate
+            reportDownload(id) → GET /api/reports/:id/download (returns blob)
+
+          NOTIFICATIONS:
+            notifyQueue() → GET /api/notify/queue
+            notifySend(input) → POST /api/notify
+            notifyTelegramTest() → POST /api/notify/telegram/test
+
+          PLAN LIFECYCLE (add to existing plan functions, use /api/plan-db/ path):
+            planDbList(p?) → GET /api/plan-db/list
+            planDbGet(id) → GET /api/plan-db/json/:plan_id
+            planDbCreate(input) → POST /api/plan-db/create
+            planDbStart(id) → POST /api/plan-db/start/:plan_id
+            planDbCancel(id) → POST /api/plan-db/cancel/:plan_id
+            planDbResume(id) → POST /api/plan-db/resume/:plan_id
+            planDbExecutionTree(id) → GET /api/plan-db/execution-tree/:plan_id
+            planDbTaskUpdate(input) → POST /api/plan-db/task/update
+            planDbTaskEvidence(input) → POST /api/plan-db/task/evidence
+            planDbValidate(planId) → POST /api/plan-db/validate
+
+          DELEGATION:
+            delegationGet(id) → GET /api/longrunning/delegation/:id
+            delegationChildren(id) → GET /api/longrunning/delegation/:id/children
+            delegationBudget(id) → GET /api/longrunning/budget/:id
+            delegationSpawn(input) → POST /api/agents/spawn
+
+          MESH (replace existing meshNodes with correct endpoints):
+            meshStatus() → GET /api/mesh
+            meshPeers() → GET /api/mesh/peers
+            meshSyncExport(since) → POST /api/sync/export
+            meshSyncImport(data) → POST /api/sync/import
+            meshSyncStatus() → GET /api/sync/status
+            meshHeartbeat(input) → POST /api/heartbeat
+
+          SECURITY (conditional — verify daemon endpoints exist first):
+            securityConfig() → GET /api/security/config (may not exist — wrap in try/catch)
+            securityUpdateTrust(input) → POST /api/security/trust (may not exist)
+            securityUpdateSecrets(input) → POST /api/security/secrets (may not exist)
+            NOTE: If /api/security/* doesn't exist on the daemon, SKIP these functions
+            and add a comment "// Security config: daemon endpoints TBD"
+
+          BILLING (already partially in api.ts — verify and keep existing):
+            billingAlert is already defined as billingAlert() in api.ts — do NOT duplicate.
+            Verify billingUsage, billingInvoices, billingRates, billingAlert all present.
+
+          AI CHAT (add proxy endpoint):
+            chatSend(input) → POST /api/chat { message, org_id? }
+            NOTE: /api/chat is a Next.js API route (src/app/api/chat/route.ts),
+            not a daemon endpoint. Verify it exists; if not, add the API route too.
+
+          KNOWLEDGE (add to existing):
+            knowledgeDelete(id) → DELETE /api/knowledge/:id
+            knowledgeStats() → GET /api/knowledge/stats
+
+          PROMPTS (add update via delete+create pattern):
+            promptUpdate(id, input) — delete old + create new (daemon has no PUT)
+
+          Follow existing patterns in api.ts: use get/post/put/del helpers,
+          qs() for query params, encodeURIComponent for path params.
+          Add all required TypeScript interfaces to types.ts.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 3
+        test_criteria: "TypeScript compiles, all new API functions present in api.ts"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -c 'nightAgent' src/lib/api.ts | awk '{if ($1 < 5) exit 1}'"
+          - "grep -c 'planDb' src/lib/api.ts | awk '{if ($1 < 5) exit 1}'"
+          - "grep -c 'deploy' src/lib/api.ts | awk '{if ($1 < 3) exit 1}'"
+
+  # ──────────────────────────────────────────────────────────────
+  # W2: Simple CRUD — Agents, Knowledge, Prompts
+  # ──────────────────────────────────────────────────────────────
+  - id: W2
+    name: "CRUD batch 1 — agents, knowledge, prompts"
+    depends_on: [W1]
+    tasks:
+      - id: T2-01
+        do: |
+          F-05: Add EDIT capability to agents page (convergio-app/src/app/(dashboard)/agents/page.tsx).
+
+          The api.ts already has agentUpdate(name, input) → PUT /api/agents/catalog/:name.
+          Add:
+          1. Edit button on each agent card/row (Pencil icon from lucide-react)
+          2. Edit modal using MnModal + MnFormField components
+          3. Pre-populate form with current agent data (agentGet)
+          4. On submit: call agentUpdate, show MnToast success, refetch list
+          5. Use useLocale("agents") for all strings
+
+          Use Maranello DS only. No custom UI. Follow page composition pattern from CLAUDE.md.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 2
+        test_criteria: "TypeScript compiles, agentUpdate called in agents page"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -q 'agentUpdate' src/app/\\(dashboard\\)/agents/page.tsx"
+          - "grep -q 'MnModal' src/app/\\(dashboard\\)/agents/page.tsx"
+
+      - id: T2-02
+        do: |
+          F-06: Add EDIT and DELETE to knowledge page (convergio-app/src/app/(dashboard)/knowledge/page.tsx).
+
+          Use knowledgeDelete(id) and knowledgeWrite for "edit" (delete old + write new).
+          Add:
+          1. Delete button on each knowledge entry (Trash2 icon) with confirmation MnModal
+          2. Edit button (Pencil icon) → MnModal with MnFormField for content, source_type, tags
+          3. On edit submit: knowledgeDelete(oldId) then knowledgeWrite(newData)
+          4. MnToast for success/error feedback
+          5. Use useLocale("knowledge") for all strings
+
+          Maranello DS only. No custom UI.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 2
+        test_criteria: "TypeScript compiles, knowledgeDelete wired in knowledge page"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -q 'knowledgeDelete' src/app/\\(dashboard\\)/knowledge/page.tsx"
+
+      - id: T2-03
+        do: |
+          F-07: Add EDIT to prompts page (convergio-app/src/app/(dashboard)/prompts/page.tsx).
+
+          No PUT endpoint exists on daemon, so use delete+create pattern:
+          promptUpdate(id, input) in api.ts does promptDelete then promptCreate.
+          Add:
+          1. Edit button on each prompt (Pencil icon)
+          2. Edit modal with MnModal + MnFormField for name, template, variables, description
+          3. Template field should use a <textarea> wrapped in MnFormField (large text input)
+          4. On submit: promptDelete(oldId), promptCreate(newData), MnToast, refetch
+          5. Use useLocale("prompts") for all strings
+
+          Maranello DS only.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 2
+        test_criteria: "TypeScript compiles, prompt edit via delete+create works"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -q 'promptDelete' src/app/\\(dashboard\\)/prompts/page.tsx"
+          - "grep -q 'promptCreate' src/app/\\(dashboard\\)/prompts/page.tsx"
+
+  # ──────────────────────────────────────────────────────────────
+  # W3: Full CRUD — Night Agents, Backup, Security
+  # ──────────────────────────────────────────────────────────────
+  - id: W3
+    name: "CRUD batch 2 — night agents, backup, security"
+    depends_on: [W1]
+    tasks:
+      - id: T3-01
+        do: |
+          F-08: Rewrite night-agents page with full CRUD + trigger + run history.
+          File: convergio-app/src/app/(dashboard)/night-agents/page.tsx (currently read-only).
+
+          Must implement:
+          1. LIST: MnDataTable with all night agent definitions from nightAgentList()
+          2. CREATE: "New Agent" button → MnModal with MnFormField for name, schedule (cron),
+             command, org_id, enabled toggle (MnToggleSwitch)
+          3. EDIT: Edit button per row → same modal pre-populated, calls nightAgentUpdate
+          4. DELETE: Delete button with confirmation modal, calls nightAgentDelete
+          5. TRIGGER: Play button per row → calls nightAgentTrigger, MnToast "triggered"
+          6. RUNS: Expandable row or detail panel (MnDetailPanel) showing nightAgentRuns(id)
+             with status badges (MnBadge), timestamps, output preview
+          7. CANCEL RUN: Stop button on active runs → nightAgentCancelRun
+
+          Use MnTabs to separate "Definitions" and "Active Runs" views.
+          Use useLocale("night-agents") for all strings.
+          Maranello DS only. Max 250 lines — extract helpers to night-agents.helpers.ts.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 3
+        test_criteria: "TypeScript compiles, night agents page has full CRUD + trigger buttons"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -q 'nightAgentCreate' src/app/\\(dashboard\\)/night-agents/page.tsx"
+          - "grep -q 'nightAgentTrigger' src/app/\\(dashboard\\)/night-agents/page.tsx"
+          - "grep -q 'nightAgentDelete' src/app/\\(dashboard\\)/night-agents/page.tsx"
+
+      - id: T3-02
+        do: |
+          F-09: Add restore, verify, delete, and retention edit to backup page.
+          File: convergio-app/src/app/(dashboard)/backup/page.tsx (currently only create+list).
+
+          Must implement:
+          1. VERIFY: Shield button per snapshot → backupVerify(id), show result in MnToast
+          2. RESTORE: RotateCcw button per snapshot → confirmation MnModal ("Are you sure?
+             This will restore to snapshot X"), calls backupRestore(id)
+          3. DELETE: Trash2 button per snapshot → confirmation, calls backupDelete(id)
+          4. RETENTION: Second tab (MnTabs) showing retention rules from backupRetentionRules()
+             with edit form (MnFormField for max_age_days, max_count, pattern)
+             Save calls backupSetRetention(input)
+          5. PURGE: Button to trigger manual purge → backupPurge(), MnToast result
+
+          Use useLocale("backup"). Maranello DS only. Max 250 lines.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 2
+        test_criteria: "TypeScript compiles, backup page has restore/verify/delete operations"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -q 'backupRestore' src/app/\\(dashboard\\)/backup/page.tsx"
+          - "grep -q 'backupVerify' src/app/\\(dashboard\\)/backup/page.tsx"
+          - "grep -q 'backupDelete' src/app/\\(dashboard\\)/backup/page.tsx"
+
+      - id: T3-03
+        do: |
+          F-10: Add CRUD for security config page.
+          File: convergio-app/src/app/(dashboard)/security/page.tsx (currently read-only).
+
+          Must implement:
+          1. TRUST LEVELS: MnDataTable showing trust configuration
+             Add/edit/remove trust entries with MnModal + MnFormField
+          2. SECRETS: MnDataTable with secret references (masked values)
+             Add new secret, delete existing (no edit for security)
+          3. SANDBOX: Toggle switches (MnToggleSwitch) for sandbox policies
+          4. Each section in MnTabs: "Trust", "Secrets", "Sandbox"
+          5. Save changes via securityConfig API calls
+
+          NOTE: Check which daemon endpoints exist for security config.
+          If /api/security/* doesn't exist, use /api/capabilities and display
+          current config read-only with a note "configuration via CLI only".
+          This is acceptable — don't fake CRUD if daemon doesn't support it.
+
+          Use useLocale("security"). Maranello DS only.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 2
+        test_criteria: "TypeScript compiles, security page has tabbed config view"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -q 'MnTabs' src/app/\\(dashboard\\)/security/page.tsx"
+
+  # ──────────────────────────────────────────────────────────────
+  # W4: Enhancements — Scheduler, Deploy, Billing, Reports
+  # ──────────────────────────────────────────────────────────────
+  - id: W4
+    name: "Enhancements — scheduler, deploy, billing, reports"
+    depends_on: [W1]
+    tasks:
+      - id: T4-01
+        do: |
+          F-11 + F-14: Add scheduler policy edit AND deploy rollback.
+
+          SCHEDULER (src/app/(dashboard)/scheduler/page.tsx):
+          1. Show current policy from schedulerPolicy() in editable MnFormField fields
+          2. "Save Policy" button → schedulerUpdatePolicy(input), MnToast
+          3. Keep existing decision history display
+
+          DEPLOY (src/app/(dashboard)/deploy/page.tsx):
+          1. Add "Rollback" button next to each history entry → deployRollback(version)
+          2. Confirmation MnModal before rollback
+          3. Add deployStatus() call to show current version at top
+          4. Add deployDiagnostics() button for troubleshooting
+
+          Both pages: useLocale, Maranello DS, max 250 lines each.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 2
+        test_criteria: "TypeScript compiles, scheduler has policy edit, deploy has rollback"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -q 'schedulerUpdatePolicy' src/app/\\(dashboard\\)/scheduler/page.tsx"
+          - "grep -q 'deployRollback\\|deployStatus' src/app/\\(dashboard\\)/deploy/page.tsx"
+
+      - id: T4-02
+        do: |
+          F-15 + F-16: Add billing alerts config AND report download.
+
+          BILLING (src/app/(dashboard)/billing/page.tsx):
+          1. New "Alerts" tab (MnTabs) showing configured budget alerts
+          2. "Add Alert" button → MnModal with MnFormField for threshold_usd,
+             org_id, notification_channel (select)
+          3. Save → billingAlert(input), MnToast
+
+          REPORTS (src/app/(dashboard)/reports/page.tsx):
+          1. Add "Download" button (Download icon) on each report row
+          2. Download calls reportDownload(id) which returns a blob
+          3. Create a browser download via URL.createObjectURL + anchor click
+          4. Add reportGet(id) for viewing full report in MnDetailPanel
+
+          Both pages: useLocale, Maranello DS.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 2
+        test_criteria: "TypeScript compiles, billing has alerts form, reports has download"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -q 'billingAlert' src/app/\\(dashboard\\)/billing/page.tsx"
+          - "grep -q 'reportDownload' src/app/\\(dashboard\\)/reports/page.tsx"
+
+  # ──────────────────────────────────────────────────────────────
+  # W4b: i18n completion for all new/modified pages
+  # ──────────────────────────────────────────────────────────────
+  - id: W4b
+    name: "i18n completion — 4 languages"
+    depends_on: [W2, W3, W4]
+    tasks:
+      - id: T4b-01
+        do: |
+          Verify and complete i18n translations for ALL pages modified in W2-W4.
+
+          Check each page's useLocale("namespace") calls and ensure the
+          corresponding i18n namespace file in src/lib/i18n/ has complete
+          translations for all 4 languages: EN, IT, ES, ZH.
+
+          Pages to check:
+          - agents (edit modal strings)
+          - knowledge (edit/delete modal strings)
+          - prompts (edit modal strings)
+          - night-agents (full CRUD strings: create, edit, delete, trigger, runs, cancel)
+          - backup (restore, verify, delete, retention, purge strings)
+          - security (trust, secrets, sandbox config strings)
+          - scheduler (policy edit strings)
+          - deploy (rollback, diagnostics strings)
+          - billing (alerts config strings)
+          - reports (download, generate strings)
+
+          For each namespace:
+          1. Read the page.tsx to find all useLocale keys used
+          2. Check if i18n file exists with all keys for all 4 languages
+          3. Add missing keys with proper translations
+          4. Run pnpm build to verify no missing keys at compile time
+
+          Do NOT use machine translation placeholders — use accurate translations.
+          Roberto speaks Italian natively, so IT must be correct.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 2
+        test_criteria: "All i18n namespaces have complete translations for EN/IT/ES/ZH"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "cd convergio-app && pnpm build"
+
+  # ──────────────────────────────────────────────────────────────
+  # WC1: Session Checkpoint
+  # ──────────────────────────────────────────────────────────────
+  - id: WC1
+    name: "Session checkpoint 1"
+    depends_on: [W4b]
+    tasks:
+      - id: TC1-01
+        do: |
+          Session checkpoint: commit all work, push, update plan notes.
+          Verify pnpm build + typecheck + tsc --noEmit pass on accumulated changes.
+          Update plan status in daemon via planDbTaskUpdate.
+          If shell budget is below threshold, suggest spawning new session.
+        type: planning
+        output_type: review
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 1
+        test_criteria: "pnpm build + tsc succeeds on all accumulated changes"
+        verify:
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && npx tsc --noEmit"
+
+  # ──────────────────────────────────────────────────────────────
+  # W5: Core UX — Plans Lifecycle, Delegation, Task Detail
+  # ──────────────────────────────────────────────────────────────
+  - id: W5
+    name: "Plans lifecycle + delegation + task detail"
+    depends_on: [WC1]
+    tasks:
+      - id: T5-01
+        do: |
+          F-03 + F-12: Plans full lifecycle controls and task detail view.
+          File: convergio-app/src/app/(dashboard)/plans/page.tsx
+
+          LIFECYCLE CONTROLS:
+          1. Action buttons per plan row: Play (start), Pause (cancel), RotateCcw (resume)
+          2. planDbStart(id) — only for plans in "ready" status
+          3. planDbCancel(id) — only for plans in "active"/"in_progress" status
+          4. planDbResume(id) — only for plans in "paused"/"cancelled" status
+          5. Disable buttons based on plan status (grey out invalid actions)
+          6. Confirmation MnModal for destructive actions (cancel)
+
+          TASK DETAIL (F-12):
+          7. Click plan row → expand to show execution tree from planDbExecutionTree(id)
+          8. Each task shows: status badge, evidence list, PR link (from notes), test output
+          9. Use MnProcessTimeline for wave/task visualization
+          10. Evidence items: MnBadge for type (test_result, test_pass), output_summary in tooltip
+
+          PLAN CREATION ENHANCEMENT:
+          11. Plan create form should use planDbCreate (not planCreate which uses wrong endpoint)
+
+          Architecture: Opus-level task because plan lifecycle state machine is complex.
+          Use useLocale("plans"). Maranello DS. Extract helpers if >250 lines.
+        type: feature
+        output_type: pr
+        model: claude-opus-4-6
+        assignee: claude
+        validator_agent: thor
+        effort_level: 3
+        test_criteria: "TypeScript compiles, plans page has start/cancel/resume + execution tree"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -q 'planDbStart' src/app/\\(dashboard\\)/plans/page.tsx"
+          - "grep -q 'planDbCancel' src/app/\\(dashboard\\)/plans/page.tsx"
+          - "grep -q 'planDbExecutionTree' src/app/\\(dashboard\\)/plans/page.tsx"
+
+      - id: T5-02
+        do: |
+          F-04: Delegation management page.
+          File: convergio-app/src/app/(dashboard)/delegation/page.tsx (NEW PAGE)
+
+          Also add route to the sidebar navigation in app-shell.tsx.
+
+          Must implement:
+          1. LIST: MnDataTable showing active delegations from delegationGet
+          2. SPAWN: "New Delegation" button → MnModal with:
+             - agent_name (MnAsyncSelect from agent catalog)
+             - org_id (MnAsyncSelect from org list)
+             - instructions (textarea in MnFormField)
+             - tier (select: copilot/opus)
+             - budget_usd (number input)
+          3. Submit → delegationSpawn(input), MnToast
+          4. STATUS: Each row shows delegation status, children count
+          5. DETAIL: Click row → MnDetailPanel with:
+             - delegationChildren(id) tree view
+             - delegationBudget(id) cost tracker (MnGauge for budget usage)
+             - Child task status badges
+          6. CANCEL: Stop button on active delegations
+
+          Add navigation item in sidebar under "Agents" section.
+          Use useLocale("delegation"). Create i18n namespace file at
+          src/lib/i18n/delegation.ts with keys for all 4 languages (EN/IT/ES/ZH):
+          title, spawn, cancel, status, budget, agent, instructions, tier.
+          Maranello DS. Max 250 lines.
+        type: feature
+        output_type: pr
+        model: claude-opus-4-6
+        assignee: claude
+        validator_agent: thor
+        effort_level: 3
+        test_criteria: "TypeScript compiles, delegation page exists with spawn form and nav link"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "cd convergio-app && pnpm build"
+          - "test -f convergio-app/src/app/\\(dashboard\\)/delegation/page.tsx"
+          - "grep -q 'delegationSpawn' convergio-app/src/app/\\(dashboard\\)/delegation/page.tsx"
+          - "grep -q 'href.*delegation' convergio-app/src/components/shell/app-shell.tsx"
+          - "test -f convergio-app/src/lib/i18n/delegation.ts"
+
+  # ──────────────────────────────────────────────────────────────
+  # W6: Shell Features — AI Chat, Notifications, Mesh
+  # ──────────────────────────────────────────────────────────────
+  - id: W6
+    name: "Shell — AI chat, notifications, mesh ops"
+    depends_on: [WC1]
+    tasks:
+      - id: T6-01
+        do: |
+          F-01 + F-18: Wire AI Chat in AppShell with Cmd+J toggle AND notification bell.
+
+          AI CHAT (F-01):
+          1. Import MnChat component in app-shell.tsx
+          2. Add sliding panel (right side) with MnChat wired to /api/chat endpoint
+          3. Cmd+J (Mac) / Ctrl+J (Windows) keyboard shortcut to toggle panel
+          4. Chat sends POST /api/chat with { message, org_id? }
+          5. Response streams back — use MnStreamingText for rendering
+          6. Panel is collapsible, remembers state in localStorage
+
+          NOTIFICATION BELL (F-18):
+          1. Add Bell icon (lucide-react) in Header component
+          2. Badge with unread count from notifyQueue() (count pending items)
+          3. Click → MnNotificationCenter dropdown showing recent notifications
+          4. Mark as read on view
+          5. Poll every 30 seconds for new notifications (or use SSE if available)
+
+          Both are shell-level changes (app-shell.tsx and header).
+          Use useLocale("shell"). Maranello DS.
+        type: feature
+        output_type: pr
+        model: claude-opus-4-6
+        assignee: claude
+        validator_agent: thor
+        effort_level: 3
+        test_criteria: "TypeScript compiles, AI chat panel toggles with Cmd+J, notification bell in header"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -q 'MnChat\\|ai-chat' convergio-app/src/components/shell/app-shell.tsx"
+          - "grep -q 'Bell\\|notif' convergio-app/src/components/shell/app-shell.tsx"
+
+      - id: T6-02
+        do: |
+          F-17: Add mesh peer management operations.
+          File: convergio-app/src/app/(dashboard)/mesh/page.tsx
+
+          Add to existing mesh page:
+          1. ADD PEER: "Add Peer" button → MnModal with MnFormField for
+             peer URL, name, shared secret. Calls meshSyncImport or relevant API.
+          2. REMOVE PEER: Trash2 button per peer with confirmation
+          3. SYNC: RefreshCw button per peer → meshSyncExport/Import trigger
+          4. STATUS: Show meshSyncStatus() per peer — last sync time, items synced
+          5. HEALTH: MnBadge per peer showing online/offline from meshStatus()
+
+          Use useLocale("mesh"). Maranello DS.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 2
+        test_criteria: "TypeScript compiles, mesh page has peer management operations"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -q 'meshSync\\|meshStatus' src/app/\\(dashboard\\)/mesh/page.tsx"
+
+  # ──────────────────────────────────────────────────────────────
+  # W7: Architecture — Mobile Responsive, Agent WebSocket
+  # ──────────────────────────────────────────────────────────────
+  - id: W7
+    name: "Mobile responsive + agent WebSocket"
+    depends_on: [W5, W6]
+    tasks:
+      - id: T7-01
+        do: |
+          F-19: Mobile responsive enhancement for iPhone (375px minimum).
+
+          Changes needed:
+          1. APP SHELL: Add bottom tab bar for mobile (visible below md breakpoint)
+             - 5 tabs: Home, Agents, Plans, Chat, More
+             - Hide sidebar completely on mobile (use bottom tabs instead)
+             - Tab bar fixed at bottom with safe-area-inset padding
+
+          2. HEADER: Simplify on mobile — hamburger menu for secondary actions
+             - Notification bell stays visible
+             - Language switcher moves to "More" menu
+
+          3. DATA TABLES: All MnDataTable instances should use responsive mode
+             - Cards layout on mobile instead of table rows
+             - Horizontal scroll as fallback
+
+          4. MODALS: Full-screen on mobile (bottom sheet pattern)
+             - MnModal should already handle this via Maranello DS
+
+          5. AI CHAT: Full-screen on mobile instead of side panel
+
+          Test at 375px width in browser dev tools.
+          Use Tailwind responsive classes (sm:, md:, lg:).
+          Maranello DS. Changes primarily in app-shell.tsx and layout.tsx.
+        type: feature
+        output_type: pr
+        model: claude-opus-4-6
+        assignee: claude
+        validator_agent: thor
+        effort_level: 3
+        test_criteria: "TypeScript compiles, pnpm build passes, bottom tab bar visible at 375px"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "cd convergio-app && pnpm build"
+          - "grep -q 'bottom\\|tab-bar\\|mobile' convergio-app/src/components/shell/app-shell.tsx"
+
+      - id: T7-02
+        do: |
+          F-02: Agent Workspace bidirectional communication.
+          File: convergio-app/src/app/(dashboard)/agents/workspace/page.tsx
+
+          The agent workspace needs bidirectional communication. Options:
+          1. PREFERRED: Use SSE for server→client + POST for client→server
+             (simpler, daemon already has SSE via /api/events/stream)
+          2. ALTERNATIVE: WebSocket if /api/ws/agent-chat exists
+
+          Implementation:
+          1. Command input at bottom of workspace (MnFormField + send button)
+          2. Send command → POST /api/orgs/:orgId/ask { message, agent_id }
+          3. Response appears in MnChat-style message list
+          4. Live events via SSE /api/events/stream filtered by agent_id
+          5. Show agent heartbeats, task progress, errors in real-time feed
+          6. Split view: left = chat/commands, right = live event feed (MnActivityFeed)
+
+          Use existing useSse() hook for event streaming.
+          Use useLocale("agents"). Maranello DS.
+        type: feature
+        output_type: pr
+        model: claude-opus-4-6
+        assignee: claude
+        validator_agent: thor
+        effort_level: 3
+        test_criteria: "TypeScript compiles, agent workspace has bidirectional command interface"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "grep -q 'orgAsk\\|agent.*ask\\|command' convergio-app/src/app/\\(dashboard\\)/agents/workspace/page.tsx"
+
+  # ──────────────────────────────────────────────────────────────
+  # WC2: Session Checkpoint
+  # ──────────────────────────────────────────────────────────────
+  - id: WC2
+    name: "Session checkpoint 2"
+    depends_on: [W7]
+    tasks:
+      - id: TC2-01
+        do: |
+          Session checkpoint: commit all work, push, update plan notes.
+          Verify pnpm build + typecheck pass on ALL accumulated changes.
+          Run a quick manual smoke test: start daemon, load each page, verify no crashes.
+          Update plan status in daemon via planDbTaskUpdate.
+          If shell budget is below threshold, suggest spawning new session.
+        type: planning
+        output_type: review
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 1
+        test_criteria: "pnpm build + tsc succeeds, all pages load without errors"
+        verify:
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && npx tsc --noEmit"
+
+  # ──────────────────────────────────────────────────────────────
+  # W8: E2E Tests — CRUD Operations
+  # ──────────────────────────────────────────────────────────────
+  - id: W8
+    name: "E2E tests — CRUD operations"
+    depends_on: [WC2]
+    tasks:
+      - id: T8-01
+        do: |
+          F-21: Write Playwright E2E tests for CRUD operations on all pages.
+          Directory: convergio-app/e2e/
+
+          Tests MUST verify actual CRUD operations, NOT just page loads.
+          Each test: navigate → fill form → submit → verify result appears → cleanup.
+
+          Test files to create:
+          1. e2e/crud-agents.spec.ts — create agent, edit agent, delete agent
+          2. e2e/crud-knowledge.spec.ts — write entry, edit entry, delete entry
+          3. e2e/crud-prompts.spec.ts — create prompt, edit prompt, delete prompt
+          4. e2e/crud-night-agents.spec.ts — create, edit, trigger, delete
+          5. e2e/crud-plans.spec.ts — create plan, start, cancel, view tree
+          6. e2e/crud-orgs.spec.ts — create org, edit, delete
+          7. e2e/crud-backup.spec.ts — create snapshot, verify, delete
+          8. e2e/crud-delegation.spec.ts — spawn delegation, view status
+
+          Each test file should:
+          - Use test.describe for grouping
+          - Use test.beforeAll to ensure daemon is reachable
+          - Use unique names (with timestamp) to avoid conflicts
+          - Clean up created resources in test.afterAll
+          - Assert visible feedback (toasts, table updates)
+
+          Use Playwright best practices: locator-based selectors, await expect.
+          Tests must run against a live daemon instance.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 3
+        test_criteria: "TypeScript compiles, at least 5 CRUD E2E spec files exist"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "ls convergio-app/e2e/crud-*.spec.ts | wc -l | awk '{if ($1 < 5) exit 1}'"
+
+      - id: T8-02
+        do: |
+          F-21 (part 2): E2E tests for shell features and mobile.
+
+          Test files:
+          1. e2e/shell-chat.spec.ts — open AI chat (Cmd+J), send message, see response
+          2. e2e/shell-notifications.spec.ts — notification bell shows count
+          3. e2e/shell-command-palette.spec.ts — open palette, search, navigate
+          4. e2e/mobile-responsive.spec.ts — test at 375px viewport:
+             - Bottom tab bar visible
+             - Sidebar hidden
+             - Navigation works via tabs
+             - Modal forms are full-screen
+
+          Use Playwright viewport settings for mobile tests.
+          Use isMobile project config in playwright.config.ts if available.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 2
+        test_criteria: "TypeScript compiles, shell and mobile E2E spec files exist"
+        verify:
+          - "cd convergio-app && npx tsc --noEmit"
+          - "ls convergio-app/e2e/shell-*.spec.ts convergio-app/e2e/mobile-*.spec.ts | wc -l | awk '{if ($1 < 3) exit 1}'"
+
+  # ──────────────────────────────────────────────────────────────
+  # WF: Final Closure
+  # ──────────────────────────────────────────────────────────────
+  - id: WF
+    name: "Final closure"
+    depends_on: [W8]
+    tasks:
+      - id: TF-doctor
+        do: |
+          Update doctor SMOKE_ROUTES to cover all new API endpoints used by the UI.
+
+          Per rule doctor-e2e-rule.md:
+          1. Add new GET endpoints to SMOKE_ROUTES in check_e2e_smoke.rs:
+             - /api/night-agents
+             - /api/deploy/status
+             - /api/deploy/history
+             - /api/scheduler/policy
+             - /api/scheduler/history
+             - /api/reports
+             - /api/notify/queue
+             - /api/mesh
+             - /api/mesh/peers
+             - /api/backup/retention/rules
+             - /api/knowledge/stats
+             - /api/plan-db/list
+             - /api/sync/status
+
+          2. Add new POST endpoints to SMOKE_ROUTES_EXT in check_e2e_smoke_ext.rs:
+             - /api/night-agents (POST create)
+             - /api/backup/snapshots/verify
+             - /api/scheduler/decide
+             - /api/reports/generate
+             - /api/notify (POST send)
+
+          3. Run `cvg doctor check e2e` to verify coverage
+
+          Files: daemon/crates/convergio-doctor/src/check_e2e_smoke.rs
+                 daemon/crates/convergio-doctor/src/check_e2e_smoke_ext.rs
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 2
+        test_criteria: "All new UI endpoints covered in doctor smoke routes"
+        verify:
+          - "cd daemon && cargo check --workspace"
+          - "grep -q 'night-agents' crates/convergio-doctor/src/check_e2e_smoke.rs"
+          - "grep -q 'deploy/status' crates/convergio-doctor/src/check_e2e_smoke.rs"
+
+      - id: TF-tests
+        do: |
+          Run full test suite: pnpm build, typecheck, lint, Playwright E2E (all specs).
+          Fix any failures. Ensure zero TypeScript errors, zero lint errors.
+          Run all CRUD E2E tests against live daemon and verify green.
+          Run cargo test --workspace for daemon (doctor smoke routes).
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 2
+        test_criteria: "pnpm build + typecheck + all E2E tests pass"
+        verify:
+          - "cd convergio-app && pnpm build"
+          - "cd convergio-app && npx tsc --noEmit"
+
+      - id: TF-doc
+        do: |
+          Update CHANGELOG or release notes with all 19 features completed.
+          List each F-xx with one-line description of what was added.
+          No new documentation files — update existing if any.
+        type: feature
+        output_type: document
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: doc-validator
+        effort_level: 1
+        test_criteria: "CHANGELOG updated with F-xx feature list"
+        verify:
+          - "grep -q 'F-01\\|F-05\\|F-08' convergio-app/CHANGELOG.md || grep -q 'UI Completion' convergio-app/CHANGELOG.md"
+
+      - id: TF-pr
+        do: |
+          Create final PR with all accumulated changes.
+          PR title: "feat(ui): Mission Control v2 — full CRUD + lifecycle"
+          Body lists all 19 F-xx features with status.
+          Ensure CI passes before marking ready.
+        type: feature
+        output_type: pr
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 1
+        test_criteria: "PR created with all changes, CI passing"
+        verify:
+          - "gh pr list --state open --head ui-completion-v2 | grep -q 'feat'"
+
+      - id: TF-deploy-verify
+        do: |
+          Verify deployment: daemon is running, all new pages load,
+          CRUD operations work on at least 3 pages (agents, plans, night-agents).
+          Verify correct version in /api/health.
+        type: feature
+        output_type: review
+        model: claude-sonnet-4-6
+        assignee: copilot
+        validator_agent: thor
+        effort_level: 1
+        test_criteria: "daemon health ok, pages load at localhost:3000"
+        verify:
+          - "curl -s http://localhost:8420/api/health | grep -q 'ok'"
+          - "curl -s http://localhost:3000 | grep -q 'html'"
+
+# ──────────────────────────────────────────────────────────────
+# Stress Test (ADR-039)
+# ──────────────────────────────────────────────────────────────
+stress_test:
+  most_likely_to_fail: >
+    T3-03 (Security config) — daemon may not have dedicated security config
+    endpoints. The task includes a fallback (read-only with CLI note) but
+    this needs verification against the running daemon first.
+  single_point_of_failure: >
+    T1-01 (API client expansion) — all subsequent waves depend on these
+    API functions. If types are wrong or endpoints don't match daemon,
+    everything downstream breaks.
+  if_could_remove_one: >
+    T3-03 (Security config) — lowest user value, most uncertain API surface.
+    Security config via CLI is acceptable for now.
+  wave_dependency_cascade: >
+    W1 → W2/W3/W4 — if W1 is delayed, three waves are blocked.
+    Mitigation: W1 is a single task, should complete fast.
+    Also W5/W6 depend on WC1 checkpoint which depends on W2/W3/W4.
+  integration_gap: >
+    Delegation page (T5-02) adds a new route but doesn't update i18n
+    files for all 4 languages. Task mentions "create i18n namespace if needed"
+    but should explicitly list the translation keys needed.
+    Also: sidebar navigation order may need design review.

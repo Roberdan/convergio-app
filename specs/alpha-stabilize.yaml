@@ -1,0 +1,261 @@
+plan:
+  name: "Alpha — Stabilize CLI-API + Security"
+  project: convergio
+  description: |
+    Foundation plan. Fixes all CLI-API misalignments, builds contract enforcement gate,
+    hardens auth/security, completes remaining enforcement gates from old plan 11.
+    MUST complete before any other plan starts.
+  priority: critical
+
+waves:
+  - id: W1
+    name: "Critical CLI Bug Fixes"
+    description: "Fix 3 silent failures that break core CLI functionality"
+    parallel: true
+    tasks:
+      - id: T1-01
+        do: "Fix cli_bus.rs: rename JSON field 'message' to 'content' in SendRequest body for POST /api/ipc/send"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "grep -q '\"content\"' daemon/crates/convergio-cli/src/cli_bus.rs"
+          - "cd daemon && cargo check -p convergio-cli"
+
+      - id: T1-02
+        do: "Fix cli_launch.rs: rename JSON field 'agent_id' to 'name' in register request, change unregister from POST to DELETE /api/ipc/agents/:name"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "grep -q '\"name\"' daemon/crates/convergio-cli/src/cli_launch.rs"
+          - "cd daemon && cargo check -p convergio-cli"
+
+      - id: T1-03
+        do: "Fix cli_ask.rs: change GET /api/ipc/agents/list to GET /api/ipc/agents, fix response key parsing"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "cd daemon && cargo check -p convergio-cli"
+
+  - id: W2
+    name: "Contract Enforcement Gate"
+    description: "Build automated CLI-API contract validation — prevents future misalignment"
+    parallel: false
+    tasks:
+      - id: T2-01
+        do: |
+          Create daemon/crates/convergio-cli/tests/api_contract_test.rs:
+          Parse all cli_*.rs for HTTP calls, extract method+path, build full Router,
+          assert every CLI endpoint exists in server. This test MUST fail on misalignment.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "test -f daemon/crates/convergio-cli/tests/api_contract_test.rs"
+          - "cd daemon && cargo test -p convergio-cli --test api_contract_test"
+
+      - id: T2-02
+        do: "Add contract test to CI pipeline and pre-commit hook. Update AGENTS.md with contract-first rule."
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "grep -q 'contract' AGENTS.md"
+
+  - id: W3
+    name: "Fix Wrong-Path CLI Commands"
+    description: "CLI commands calling existing endpoints with wrong paths"
+    parallel: true
+    tasks:
+      - id: T3-01
+        do: |
+          Fix path mismatches: cli_capability.rs (/api/capabilities/list → /api/capabilities),
+          cli_channel.rs (/api/channels → /api/ipc/channels),
+          cli_ops.rs (heartbeat/notifications/dashboard paths),
+          cli_who.rs (agents/tree and heartbeat paths),
+          cli_org_show.rs (decisions path)
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo check -p convergio-cli"
+          - "cd daemon && cargo test -p convergio-cli"
+
+      - id: T3-02
+        do: |
+          Fix plan/task/review paths: cli_plan_handlers.rs (validate, drift-check),
+          cli_review.rs (review/register → review), cli_wave_handlers.rs,
+          cli_wave.rs (context → metadata), cli_kernel.rs (speak → voice/speak)
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo check -p convergio-cli"
+
+      - id: T3-03
+        do: |
+          Fix agent paths: cli_agent_format.rs (agents → agents/catalog,
+          runtime/spawn → spawn, create → POST catalog),
+          cli_delegation.rs (by-plan → query list?plan_id=)
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo check -p convergio-cli"
+
+  - id: W4
+    name: "Dead CLI Cleanup"
+    description: "Remove CLI commands with no backend, print 'not implemented' instead of failing silently"
+    parallel: true
+    tasks:
+      - id: T4-01
+        do: |
+          Remove or gate dead CLI modules: cli_memory.rs (6 cmds), cli_workspace.rs (4),
+          cli_run.rs (4), cli_repo.rs (4), cli_domain.rs (2), cli_chat.rs (1), cli_reap.rs (1).
+          Commands print 'not implemented' instead of silently failing.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo check -p convergio-cli"
+
+      - id: T4-02
+        do: |
+          Remove dead sub-commands from working modules: cli_ops.rs (reap/recovery/collect),
+          cli_lock.rs (all 3), cli_bus.rs (broadcast), cli_bus_ask.rs (ask),
+          cli_agent_format.rs (sync/enable/disable/triage), cli_agent_history.rs (history),
+          cli_task_approve.rs (deliverables), cli_kb.rs (kb-search/write),
+          cli_create_org.rs (create-from-mission/repo)
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo check -p convergio-cli"
+
+  - id: W5
+    name: "Security Hardening"
+    description: "Specific security fixes from old plan 10 — not vague, each item explicit"
+    parallel: true
+    tasks:
+      - id: T5-01
+        do: |
+          Auth middleware: validate Bearer tokens beyond dev-local bypass.
+          Add SSRF protection: block private IPs (10.x, 172.16-31.x, 192.168.x) in outbound HTTP.
+          Add rate limiter: token bucket per IP, 100 req/min default.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test -p convergio-security"
+
+      - id: T5-02
+        do: |
+          AEAD encryption for secrets: use ChaCha20Poly1305 for at-rest secret storage.
+          HMAC verification on mesh inbound routes (sync import, heartbeat).
+          SSH BatchMode=yes on all file-transport and provisioning SSH commands.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test -p convergio-security"
+          - "cd daemon && cargo test -p convergio-file-transport"
+          - "cd daemon && cargo test -p convergio-provisioning"
+
+      - id: T5-03
+        do: "Schema consistency audit: verify all 72+ tables have proper indexes, FK constraints, and no orphaned migrations across 17 crates"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+  - id: W6
+    name: "Unified Task Execution Endpoint + Gates"
+    description: "Atomic endpoint for task completion — any tool/model makes ONE call, daemon handles all gates"
+    parallel: false
+    tasks:
+      - id: T6-01
+        do: |
+          Build POST /api/plan-db/task/complete-flow endpoint that accepts:
+          {task_db_id, agent_id, notes, pr_url, test_command, test_output, test_exit_code}
+          Internally it: (1) sets notes, (2) records test_result evidence,
+          (3) records test_pass evidence, (4) runs all gates, (5) updates to submitted.
+          Returns clear error if any gate fails. This is THE endpoint any tool/model uses.
+          Update AGENTS-PLAYBOOK.md to document this as the primary endpoint.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test -p convergio-orchestrator"
+          - "cd daemon && cargo test --workspace"
+
+      - id: T6-02
+        do: |
+          E2E test for gate system: test the complete flow
+          (evidence → test_pass → PR notes → submit → Thor validate).
+          Test each gate individually: missing evidence fails, wrong evidence_type fails,
+          missing PR in notes fails, wave sequence blocks out-of-order.
+          This test suite protects the CORE of Convergio.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test -p convergio-orchestrator --test '*gate*' || cargo test -p convergio-orchestrator"
+
+      - id: T6-03
+        do: "Verify and complete remaining enforcement gate wiring from old plan 11. Run full E2E."
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+  - id: WF
+    name: "Closure"
+    description: "Final validation, docs, PR"
+    parallel: false
+    tasks:
+      - id: TF-01
+        do: "Run full cargo test, verify contract test catches all known misalignments, run cvg preflight"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "cd daemon && cargo test 2>&1 | tail -1 | grep -q 'test result: ok'"
+
+      - id: TF-02
+        do: "Update CHANGELOG.md, write ADR-025 (CLI-API contract enforcement), update AGENTS.md prevention rules"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "test -f docs/adr/ADR-025-cli-api-contract.md"
+
+      - id: TF-03
+        do: "Rebuild daemon, restart, verify cvg status works, verify cvg bus send delivers, verify health/deep"
+        type: operations
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "curl -sf http://localhost:8420/api/health | grep -q ok"

@@ -1,0 +1,182 @@
+plan:
+  name: "Gamma — Night Agents + Org + Jarvis Intelligence"
+  project: convergio
+  description: |
+    Feature plan. Project onboarding, night agents CLI/frontend/MCP,
+    minimal MergeGuardian, mesh node config, Jarvis/Kernel intelligence upgrade.
+    Depends on Alpha W2 (contract gate) for CLI work. Parallel to Beta.
+  priority: high
+  depends_on: alpha-stabilize.W2
+
+waves:
+  - id: W1
+    name: "Project Onboarding"
+    description: "Interactive: ask user which repos, register via API"
+    tasks:
+      - id: T1-01
+        do: |
+          Ask user which projects to track (default: convergio, convergio-frontend, convergio-design).
+          For each: POST /api/night-agents/projects, POST scan, create night_agent_defs
+          (daily-report, pr-monitor, dep-updater). Verify via GET endpoints.
+        type: operations
+        output_type: analysis
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "curl -sf localhost:8420/api/night-agents/projects | python3 -c 'import sys,json; assert len(json.load(sys.stdin))>0'"
+
+  - id: W2
+    name: "CLI Night-Agents Commands"
+    description: "cvg night-agents list|trigger|runs|projects|project-add"
+    tasks:
+      - id: T2-01
+        do: |
+          Create cli_night_agents.rs with NightAgentsCommands enum:
+          List, Trigger, Runs, Projects, ProjectAdd. Wire into cli_commands.rs
+          and dispatch.rs. All output supports --human flag.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo check -p convergio-cli"
+          - "cd daemon && cargo test -p convergio-cli"
+
+  - id: W3
+    name: "Frontend Dashboard"
+    description: "Night agents page in convergio-frontend"
+    parallel: true
+    tasks:
+      - id: T3-01
+        do: "Add TypeScript types (NightAgentDef, NightRun, TrackedProject) and API functions to convergio-frontend"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "cd /Users/Roberdan/GitHub/convergio-frontend && pnpm typecheck"
+
+      - id: T3-02
+        do: |
+          Create /night-agents dashboard page with Maranello DS: KPI row,
+          agent defs table, active runs table, tracked projects table.
+          Auto-refresh 5s. Add to sidebar nav.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 3
+        verify:
+          - "cd /Users/Roberdan/GitHub/convergio-frontend && pnpm typecheck && pnpm lint"
+
+  - id: W4
+    name: "MCP + Minimal MergeGuardian"
+    description: "MCP tools for night agents + basic merge queue"
+    parallel: true
+    tasks:
+      - id: T4-01
+        do: "Add 4 MCP tools to convergio-mcp: list_night_agents, trigger_night_agent, list_tracked_projects, scan_project"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo check -p convergio-mcp"
+
+      - id: T4-02
+        do: |
+          Minimal MergeGuardian: POST /api/merge/request that queues merge requests,
+          checks for file overlap with open PRs, blocks conflicting merges.
+          Prevents parallel-agent merge conflicts (learning #23).
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+  - id: W5
+    name: "E2E + Mesh Config"
+    description: "Integration tests, mesh role assignment"
+    parallel: true
+    tasks:
+      - id: T5-01
+        do: "E2E tests for night-agents API: CRUD, trigger, runs, projects, scan, health check"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test -p convergio-night-agents"
+
+      - id: T5-02
+        do: |
+          Mesh node role config: ask user topology, apply role assignments
+          via config.toml update or API. Verify heartbeats show correct roles.
+        type: operations
+        output_type: analysis
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "curl -sf localhost:8420/api/mesh/peers | python3 -c 'import sys,json; print(json.load(sys.stdin))'"
+
+  - id: W6
+    name: "Jarvis/Kernel Intelligence Upgrade"
+    description: "Make Jarvis smarter: better classification, cloud escalation, multi-turn, richer responses"
+    parallel: false
+    tasks:
+      - id: T6-01
+        do: |
+          Upgrade classify_intent in watchdog.rs:
+          - Expand from 7 to 12+ categories (add: deploy, night-agents, mesh, security, config)
+          - Add confidence scoring: keyword match = high, MLX = medium
+          - When confidence < threshold, escalate to cloud (Claude Sonnet via inference routing)
+          - Add intent memory: last 5 intents per chat for multi-turn context
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test -p convergio-kernel"
+
+      - id: T6-02
+        do: |
+          Upgrade grounded_inference in watchdog_handlers.rs:
+          - Increase max_tokens from 200 to 500 for complex questions
+          - Add smart context selection: only include relevant API data based on intent
+          - Add cloud escalation: if question mentions architecture/security/planning, use Claude
+          - Improve system prompt: Jarvis personality, Italian preferred, structured responses
+          - Add conversation history (last 3 messages) for multi-turn context
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test -p convergio-kernel"
+
+      - id: T6-03
+        do: |
+          Add Jarvis proactive capabilities:
+          - Morning summary: auto-send daily status to Telegram at 08:00
+          - Alert forwarding: critical kernel events pushed to Telegram immediately
+          - Plan completion notifications with key learnings
+          - Route: POST /api/kernel/jarvis/config for runtime config (enable/disable features)
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test -p convergio-kernel"
+          - "cd daemon && cargo check --workspace"
+
+  - id: WF
+    name: "Closure"
+    parallel: false
+    tasks:
+      - id: TF-01
+        do: "Full test suite, CHANGELOG, ADR-027 (night agents + Jarvis architecture), deploy verify"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "cd daemon && cargo test 2>&1 | tail -1 | grep -q 'test result: ok'"

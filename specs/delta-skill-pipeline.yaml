@@ -1,0 +1,192 @@
+plan:
+  name: "Delta — Skill Pipeline Migration + Config Polish"
+  project: convergio
+  description: |
+    Final plan. Migrates the full skill pipeline from old ConvergioPlatform
+    (/solve, /prompt, /interview, /planner, /execute, /research, /check, /prepare, /release).
+    Extracts Claude rules, sets up Copilot MCP, adds observability.
+    Depends on Alpha + Beta + Gamma.
+  priority: medium
+  depends_on: [alpha-stabilize, beta-test-doctor, gamma-night-agents-org]
+
+waves:
+  - id: W1
+    name: "Skill Migration — Core Pipeline"
+    description: "Migrate /solve, /prompt, /planner, /execute from old repo"
+    parallel: false
+    tasks:
+      - id: T1-01
+        do: |
+          Migrate /solve skill: copy from WareHouse/ConvergioPlatform/claude-config/skills/solve/
+          to convergio/claude-config/skills/solve/. Adapt paths: plan-db.sh → cvg CLI,
+          .copilot-tracking → daemon DB, update model references to current names.
+          Register as Claude Code custom command in .claude/commands/solve.md.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 2
+        verify:
+          - "test -f claude-config/skills/solve/SKILL.md"
+          - "test -f .claude/commands/solve.md"
+
+      - id: T1-02
+        do: |
+          Migrate /prompt skill: copy from WareHouse/ConvergioPlatform/claude-config/commands/prompt.md.
+          Adapt to new architecture: output to daemon API instead of .copilot-tracking/.
+          Register as .claude/commands/prompt.md.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "test -f .claude/commands/prompt.md"
+
+      - id: T1-03
+        do: |
+          Migrate /planner skill (v2.7.0): copy from old repo, adapt mandatory post-spec
+          workflow to use cvg CLI (cvg review, cvg plan create/import/readiness).
+          Include planner-modules (parallelization, model-strategy, knowledge-codification).
+          Register as .claude/commands/planner.md.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "test -f .claude/commands/planner.md"
+          - "test -f claude-config/skills/planner/SKILL.md"
+
+      - id: T1-04
+        do: |
+          Migrate /execute skill (v2.3.0): copy, adapt task routing/tracking/validation
+          to new cvg CLI commands. Include reference docs for initialize, routing, validation.
+          Register as .claude/commands/execute.md.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "test -f .claude/commands/execute.md"
+
+  - id: W2
+    name: "Skill Migration — Support Skills"
+    description: "Migrate /interview, /research, /check, /prepare, /release"
+    parallel: true
+    tasks:
+      - id: T2-01
+        do: "Migrate /interview and /research skills. Adapt paths and references. Register as Claude Code commands."
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "test -f .claude/commands/interview.md"
+          - "test -f .claude/commands/research.md"
+
+      - id: T2-02
+        do: "Migrate /check, /prepare, /release skills. Adapt to new project structure. Register as commands."
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "test -f .claude/commands/check.md"
+          - "test -f .claude/commands/release.md"
+
+  - id: W3
+    name: "Claude Rules Extraction"
+    description: "Extract rules from AGENTS.md into .claude/rules/ for automatic loading"
+    parallel: true
+    tasks:
+      - id: T3-01
+        do: |
+          Extract from AGENTS.md into separate .claude/rules/ files:
+          rust-conventions.md, workspace-isolation.md, merge-protocol.md,
+          cli-api-contract.md, task-readiness.md, key-learnings.md
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "ls .claude/rules/*.md | wc -l | grep -q '[6-9]'"
+
+      - id: T3-02
+        do: "Set up Copilot MCP: create .vscode/mcp.json pointing to daemon API, update copilot-instructions.md"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "test -f .vscode/mcp.json"
+
+  - id: W4
+    name: "Document Versioning + Observability"
+    description: "YAML frontmatter on all docs, #[instrument] spans, cleanup"
+    parallel: true
+    tasks:
+      - id: T4-01
+        do: |
+          Add YAML frontmatter to ALL markdown docs (AGENTS.md, AGENTS-PLAYBOOK.md,
+          CONSTITUTION.md, WORKSPACE-SPLIT.md, all ADRs, all skill files).
+          Format: ---\nversion: 1.0\nlast_updated: YYYY-MM-DD\nauthor: <name>\n---
+          Create a doctor check that verifies all .md files have valid frontmatter.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "grep -l '^---' AGENTS.md AGENTS-PLAYBOOK.md"
+
+      - id: T4-02
+        do: |
+          Serve skill prompts via API: GET /api/skills/{name}/prompt returns the
+          full SKILL.md content for any registered skill. This lets ANY client
+          (Claude, Copilot, Codex, MCP) fetch the correct execution instructions
+          without needing file access. Update seed_skills.rs to store prompt content.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test -p convergio-prompts"
+
+      - id: T4-03
+        do: "Add #[instrument] tracing spans to top 20 most-called functions. Split files > 250 lines. Dead code cleanup."
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+  - id: W5
+    name: "Skill E2E Validation"
+    description: "Verify all migrated skills work end-to-end"
+    parallel: false
+    tasks:
+      - id: T5-01
+        do: |
+          Test the full pipeline: invoke /solve on a test problem, verify it routes to /planner,
+          verify planner creates valid spec YAML, verify /execute can pick up a plan.
+          Document results in ADR-028 (skill pipeline architecture).
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "test -f docs/adr/ADR-028-skill-pipeline.md"
+
+  - id: WF
+    name: "Closure"
+    parallel: false
+    tasks:
+      - id: TF-01
+        do: |
+          Reconcile: deduplicate rules across .claude/CLAUDE.md, AGENTS.md, .claude/rules/.
+          Update WORKSPACE-SPLIT.md with plan restructuring notes.
+          Version bump, CHANGELOG, deploy verify.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "cd daemon && cargo test 2>&1 | tail -1 | grep -q 'test result: ok'"

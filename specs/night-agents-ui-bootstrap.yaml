@@ -1,0 +1,434 @@
+meta:
+  title: "Night Agents UI Bootstrap + Project Onboarding"
+  description: >
+    Full bootstrap after PR #166 merge: ask user which projects to track,
+    register them, create night agent defs, add CLI commands, build
+    /night-agents dashboard, run enforcement E2E tests on new code.
+    Prerequisite: daemon restarted with #166 + #165 (enforcement gates).
+  project: convergio
+  priority: high
+  estimated_waves: 8
+
+requirements:
+  - id: F-01
+    title: Project onboarding — ask user which repos to track
+    description: >
+      Prompt user for list of repos to onboard into Convergio.
+      Default candidates: convergio, convergio-frontend, convergio-design.
+      User may add more. For each, register tracked_project + night_agent_defs.
+  - id: F-02
+    title: Create org + night agents for each tracked project
+    description: >
+      For each onboarded repo, run design_org_from_repo via provisioner
+      or manually register night_agent_defs (daily-report, pr-monitor,
+      dep-updater) and tracked_projects via API.
+  - id: F-03
+    title: CLI commands for night agents
+    description: >
+      Add cvg night-agents list|trigger|runs|projects|project-add to CLI.
+      Follow cli_agent.rs pattern. Include human-readable output.
+  - id: F-04
+    title: Dashboard page /night-agents in convergio-frontend
+    description: >
+      Maranello DS page: defs table, run history, tracked projects,
+      manual trigger, scan buttons. Uses useApiQuery + MnDataTable.
+  - id: F-05
+    title: Frontend API types and functions
+    description: >
+      TypeScript types for NightAgentDef, NightRun, TrackedProject.
+      API functions in api.ts for all 14 night-agents endpoints.
+  - id: F-06
+    title: E2E tests for night-agents API
+    description: >
+      Integration tests matching the enforcement gate pattern from PR #165.
+      Test CRUD lifecycle, knowledge sync trigger, run dispatch.
+  - id: F-07
+    title: Navigation and convergio.yaml config
+    description: >
+      Add night-agents to sidebar nav via convergio.yaml or shell config.
+  - id: F-08
+    title: MCP server update for night agents
+    description: >
+      Add night-agents tools to convergio-mcp server: list_night_agents,
+      trigger_night_agent, list_tracked_projects, scan_project.
+      So any LLM client can manage night agents via MCP.
+  - id: F-09
+    title: Brain 3D and agentic visualizations
+    description: >
+      Update MnBrain3D, MnNeuralNodes, MnHubSpoke components to show
+      night agent nodes, NightAgent mesh role, run status. The 3D brain
+      should visualize night agents as distinct node type with activity pulses.
+  - id: F-10
+    title: UI audit — all pages reflect new system state
+    description: >
+      Verify agents page shows night-agent-capable nodes, mesh page shows
+      NightAgent role peers, observatory shows night run events,
+      settings shows night agent config. All API calls working.
+  - id: F-11
+    title: Full CLI audit for night agents + new features
+    description: >
+      Verify cvg commands list includes night-agents. Verify cvg api
+      output includes all night-agents endpoints. Run cvg preflight
+      to confirm no broken commands.
+  - id: F-12
+    title: Mesh node role configuration
+    description: >
+      Ask user how they want to organize mesh nodes: which nodes get
+      which roles (orchestrator, kernel, worker, nightagent, voice).
+      Apply role assignments via config or API. Verify heartbeats
+      report correct roles and extensions load per role.
+
+waves:
+  - id: W0
+    name: "Project Onboarding"
+    description: >
+      ASK USER which projects to track. Then register via daemon API.
+      This wave requires daemon running with #166 applied.
+    tasks:
+      - id: W0-T1
+        do: >
+          Ask user: "Quali progetti vuoi agganciare a Convergio?
+          Default: convergio, convergio-frontend, convergio-design.
+          Puoi aggiungerne altri (path locale + remote URL)."
+          Then for each confirmed project:
+          1. POST /api/night-agents/projects {name, repo_path, remote_url}
+          2. POST /api/night-agents/projects/:id/scan (initial scan)
+          3. Create night_agent_defs via POST /api/night-agents:
+             - {name}-daily-report, schedule "0 2 * * *"
+             - {name}-pr-monitor, schedule "*/30 0-6 * * *"
+             - {name}-dep-updater, schedule "0 5 * * 1" (if has deps)
+          Verify: GET /api/night-agents/projects returns all registered.
+          Verify: GET /api/night-agents returns defs for each project.
+        type: operations
+        output_type: analysis
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor
+        effort: 2
+        requirements: [F-01, F-02]
+        verify:
+          - "curl -sf localhost:8420/api/night-agents/projects | jq 'length > 0'"
+          - "curl -sf localhost:8420/api/night-agents | jq 'length > 0'"
+          - "curl -sf localhost:8420/api/health/deep | jq '.components[] | select(.name==\"convergio-night-agents\") | .status==\"ok\"'"
+
+  - id: W1
+    name: "CLI Commands"
+    description: "Add cvg night-agents subcommands in convergio repo"
+    tasks:
+      - id: W1-T1
+        do: >
+          Create daemon/crates/convergio-cli/src/cli_night_agents.rs with:
+          NightAgentsCommands enum (Subcommand derive):
+          - List { human, api_url } → GET /api/night-agents
+          - Trigger { id, human, api_url } → POST /api/night-agents/:id/trigger
+          - Runs { id, limit, human, api_url } → GET /api/night-agents/:id/runs
+          - Projects { human, api_url } → GET /api/night-agents/projects
+          - ProjectAdd { name, path, remote, human, api_url } → POST /api/night-agents/projects
+          dispatch() function routes each to cli_http::fetch_and_print or post_and_print.
+          Wire into cli_commands.rs Commands enum (add NightAgents variant).
+          Wire into dispatch.rs (add match arm).
+          Add use statement in lib.rs or main module.
+          All output must support --human flag for formatted output.
+          Verify: cargo check, cargo clippy, cargo test all pass.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor
+        effort: 2
+        requirements: [F-03]
+        verify:
+          - "cd daemon && cargo check -p convergio-cli"
+          - "cd daemon && cargo clippy -p convergio-cli -- -D warnings"
+          - "cd daemon && cargo test -p convergio-cli"
+
+  - id: W2
+    name: "Frontend Dashboard"
+    description: "Build night-agents page in convergio-frontend with Maranello DS"
+    tasks:
+      - id: W2-T1
+        do: >
+          In convergio-frontend/src/lib/types.ts add interfaces:
+          NightAgentDef {id: number, name: string, org_id?: string,
+            description?: string, schedule: string, model: string,
+            enabled: boolean, max_runtime_secs: number, created_at: string,
+            updated_at: string, last_status?: string, last_run_at?: string}
+          NightRun {id: number, agent_def_id: number, status: string,
+            node_name?: string, pid?: number, started_at?: string,
+            completed_at?: string, outcome?: string, error_message?: string,
+            tokens_used: number, cost_usd: number}
+          TrackedProject {id: number, name: string, repo_path: string,
+            remote_url?: string, last_scan_at?: string, last_scan_hash?: string,
+            enabled: boolean, created_at: string}
+          In convergio-frontend/src/lib/api.ts add functions:
+          nightAgentList() → GET /api/night-agents
+          nightAgentGet(id) → GET /api/night-agents/:id
+          nightAgentTrigger(id) → POST /api/night-agents/:id/trigger
+          nightAgentRuns(id, params?) → GET /api/night-agents/:id/runs
+          nightAgentActiveRuns() → GET /api/night-agents/runs/active
+          nightAgentProjects() → GET /api/night-agents/projects
+          nightAgentProjectScan(id) → POST /api/night-agents/projects/:id/scan
+          Follow existing api.ts get/post patterns exactly.
+          Verify: pnpm typecheck passes.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor
+        effort: 1
+        requirements: [F-05]
+        verify:
+          - "cd /Users/Roberdan/GitHub/convergio-frontend && pnpm typecheck"
+
+      - id: W2-T2
+        do: >
+          Create /Users/Roberdan/GitHub/convergio-frontend/src/app/(dashboard)/night-agents/page.tsx
+          Use Maranello Design System. Reference @NaSra for DS patterns.
+          Page structure (all in 'use client' component):
+          1. Header: h1 "Night Agents" + MnBadge count enabled defs
+          2. KPI row (grid 4 cols): enabled agents, active runs, tracked projects, failed 24h
+             Use useApiQuery for each metric.
+          3. MnSectionCard "Agent Definitions" collapsible defaultOpen:
+             MnDataTable columns: name, schedule, model, enabled (MnBadge), last_status (MnBadge color-coded), last_run_at, actions
+             Action column: trigger button (calls nightAgentTrigger)
+          4. MnSectionCard "Active Runs" collapsible defaultOpen:
+             MnDataTable: agent_name (from join), status (MnBadge), node_name, started_at
+             Auto-refresh via pollInterval: 5000
+          5. MnSectionCard "Tracked Projects" collapsible defaultOpen:
+             MnDataTable: name, repo_path, last_scan_at, last_scan_hash (truncated), actions
+             Action: scan button (calls nightAgentProjectScan)
+          Use MnStateScaffold for loading/error states.
+          MnBadge colors: running→blue, completed→green, failed→red, pending→yellow.
+          Must work on all 4 themes. Max 250 lines — split into sub-components if needed.
+          Verify: pnpm typecheck, pnpm lint.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: nasra-app-builder
+        validator_agent: design-validator
+        effort: 3
+        requirements: [F-04]
+        depends_on: [W2-T1]
+        verify:
+          - "cd /Users/Roberdan/GitHub/convergio-frontend && pnpm typecheck"
+          - "cd /Users/Roberdan/GitHub/convergio-frontend && pnpm lint"
+
+      - id: W2-T3
+        do: >
+          Add night-agents to sidebar navigation.
+          In convergio.yaml add entry under operations section:
+          - icon: Moon, label: "Night Agents", path: "/night-agents"
+          Or if nav is hardcoded in src/components/shell/, add there.
+          Check how other pages (agents, mesh, observatory) are registered.
+          Follow exact same pattern.
+          Verify: pnpm typecheck, nav renders link.
+        type: code
+        output_type: pr
+        model: claude-haiku-4-5
+        executor_agent: task-executor
+        validator_agent: thor
+        effort: 1
+        requirements: [F-07]
+        depends_on: [W2-T2]
+        verify:
+          - "cd /Users/Roberdan/GitHub/convergio-frontend && pnpm typecheck"
+
+  - id: W3
+    name: "E2E Tests + Docs"
+    description: "Integration tests and documentation"
+    tasks:
+      - id: W3-T1
+        do: >
+          Add E2E tests for night-agents API in daemon/tests/ following
+          the enforcement gate pattern from PR #165/#167.
+          Test cases:
+          - POST /api/night-agents → create def → verify 201
+          - GET /api/night-agents → list includes created def
+          - POST /api/night-agents/:id/trigger → verify run created
+          - GET /api/night-agents/:id/runs → verify run in list
+          - GET /api/night-agents/runs/active → verify active run
+          - POST /api/night-agents/projects → create project → verify
+          - POST /api/night-agents/projects/:id/scan → trigger scan
+          - DELETE /api/night-agents/:id → verify disabled
+          - Health check includes night-agents component
+          Follow test pattern from daemon/tests/e2e_*.rs.
+          Verify: cargo test passes.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor
+        effort: 2
+        requirements: [F-06]
+        verify:
+          - "cd daemon && cargo test --test '*night*' 2>/dev/null || cargo test -p convergio-night-agents"
+
+      - id: W3-T2
+        do: >
+          Update CHANGELOG.md with night-agents entries (feature, API, CLI, UI).
+          Write docs/adr/adr-025-night-agents.md: context, decision, consequences.
+          Verify: files exist, ADR follows template.
+        type: code
+        output_type: pr
+        model: claude-haiku-4-5
+        executor_agent: task-executor
+        validator_agent: doc-validator
+        effort: 1
+        depends_on: [W3-T1]
+        verify:
+          - "test -f docs/adr/adr-025-night-agents.md"
+
+  - id: W4
+    name: "MCP + CLI Audit"
+    description: "Update MCP server with night-agents tools, audit full CLI"
+    tasks:
+      - id: W4-T1
+        do: >
+          In daemon/crates/convergio-mcp/src/, add night-agents tools:
+          - list_night_agents: calls GET /api/night-agents
+          - trigger_night_agent(id): calls POST /api/night-agents/:id/trigger
+          - list_tracked_projects: calls GET /api/night-agents/projects
+          - scan_project(id): calls POST /api/night-agents/projects/:id/scan
+          Follow existing MCP tool pattern (ring-based security: ring 1 trusted).
+          Update tool count in manifest. Wire into tool dispatcher.
+          Verify: cargo check, cargo test on convergio-mcp.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor
+        effort: 2
+        requirements: [F-08]
+        verify:
+          - "cd daemon && cargo check -p convergio-mcp"
+          - "cd daemon && cargo test -p convergio-mcp"
+
+      - id: W4-T2
+        do: >
+          Full CLI audit: run cvg cheatsheet and cvg api, verify night-agents
+          commands appear. Run cvg preflight to check no broken commands.
+          Verify cvg night-agents list works against running daemon.
+          Verify cvg night-agents projects shows tracked repos.
+          If any command broken, fix. Update cheatsheet if needed.
+        type: operations
+        output_type: analysis
+        model: claude-haiku-4-5
+        executor_agent: task-executor
+        validator_agent: thor
+        effort: 1
+        requirements: [F-11]
+        depends_on: [W4-T1]
+        verify:
+          - "cvg preflight --api-url http://localhost:8420 2>&1 | grep -v ERROR || true"
+
+  - id: W5
+    name: "Mesh Node Configuration"
+    description: "Ask user mesh topology, apply role assignments"
+    tasks:
+      - id: W5-T1
+        do: >
+          Ask user: "Come vuoi organizzare i nodi del mesh?
+          Nodi attuali: (list from cvg mesh status).
+          Ruoli disponibili: all, orchestrator, kernel, worker, nightagent, voice.
+          Esempio: M5Max=orchestrator, M1Pro=kernel+nightagent, Linux=worker."
+          Then for each node:
+          1. Update config.toml on that node (node.role = "nightagent")
+          2. Or use POST /api/node/assign-role if available
+          3. Verify heartbeats show correct roles: GET /api/mesh/peers
+          4. Verify extensions load correctly per role
+        type: operations
+        output_type: analysis
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor
+        effort: 2
+        requirements: [F-12]
+        verify:
+          - "curl -sf localhost:8420/api/mesh/peers | jq '.[].role'"
+
+  - id: W6
+    name: "UI Visualization Update"
+    description: "Update Brain 3D, agentic components, full UI audit"
+    tasks:
+      - id: W6-T1
+        do: >
+          In convergio-frontend, update MnBrain3D / MnNeuralNodes to show:
+          - Night agent nodes as distinct visual type (moon icon, different color)
+          - NightAgent mesh peers with their role badge
+          - Active night runs as pulsing connections
+          Check src/components/maranello/agentic/ for component API.
+          Add nightAgents data source alongside existing agents data.
+          Verify: pnpm typecheck, pnpm lint.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: nasra-app-builder
+        validator_agent: design-validator
+        effort: 3
+        requirements: [F-09]
+        verify:
+          - "cd /Users/Roberdan/GitHub/convergio-frontend && pnpm typecheck"
+          - "cd /Users/Roberdan/GitHub/convergio-frontend && pnpm lint"
+
+      - id: W6-T2
+        do: >
+          Full UI audit across all dashboard pages:
+          1. /agents page: verify night-agent-capable nodes visible,
+             NightAgent role shown in agent cards
+          2. /mesh page: verify NightAgent role peers shown with correct badge,
+             role column in peer table
+          3. /observatory: verify night run events appear in timeline
+          4. /settings: verify night agent config section if applicable
+          5. / (home): verify KPI cards include night agent metrics
+          6. All API calls verified working against running daemon
+          Fix any page that doesn't reflect the new system state.
+          Verify: all pages render without errors, all API calls succeed.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: sara-ux-ui-designer
+        validator_agent: design-validator
+        effort: 3
+        requirements: [F-10]
+        depends_on: [W6-T1]
+        verify:
+          - "cd /Users/Roberdan/GitHub/convergio-frontend && pnpm typecheck"
+          - "cd /Users/Roberdan/GitHub/convergio-frontend && pnpm lint"
+
+  - id: WF
+    name: "Closure"
+    description: "PRs, CI verification, deploy check"
+    tasks:
+      - id: TF-pr
+        do: >
+          Create PR for convergio repo (CLI + E2E tests + docs).
+          Create PR for convergio-frontend repo (types + page + nav).
+          Ensure CI green on both. Leave for Roberto to merge.
+        type: code
+        output_type: pr
+        model: claude-haiku-4-5
+        executor_agent: task-executor
+        validator_agent: thor
+        effort: 1
+        verify:
+          - "gh pr list --repo Roberdan/convergio --state open --json title | jq 'length > 0'"
+          - "gh pr list --repo Roberdan/convergio-frontend --state open --json title | jq 'length > 0'"
+
+      - id: TF-deploy-verify
+        do: >
+          After daemon restart with merged PRs:
+          - curl localhost:8420/api/night-agents → returns definitions
+          - curl localhost:8420/api/night-agents/projects → returns tracked projects
+          - curl localhost:8420/api/health/deep → night-agents Ok
+          - cvg night-agents list → shows defs
+          - cvg night-agents projects → shows projects
+          - Frontend /night-agents → page renders with data from daemon
+        type: operations
+        output_type: analysis
+        model: claude-haiku-4-5
+        executor_agent: task-executor
+        validator_agent: thor
+        effort: 1
+        depends_on: [TF-pr]
+        verify:
+          - "curl -sf localhost:8420/api/health/deep | jq '.components[] | select(.name==\"convergio-night-agents\") | .status==\"ok\"'"

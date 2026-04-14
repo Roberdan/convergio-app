@@ -24,12 +24,12 @@ jobs:
         with:
           manifest-file: .release-please-manifest.json
           config-file: release-please-config.json
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
 
       - name: Auto-merge release PR
         if: steps.release.outputs.pr
         env:
-          GH_TOKEN: ${{ secrets.PAT }}
+          GH_TOKEN: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
         run: |
           PR_NUMBER=$(echo '${{ steps.release.outputs.pr }}' | jq -r '.number')
           if [ "$PR_NUMBER" != "null" ] && [ -n "$PR_NUMBER" ]; then

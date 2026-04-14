@@ -1,0 +1,233 @@
+plan:
+  name: "Beta — Test Coverage + Doctor v2"
+  project: convergio
+  description: |
+    Quality plan. Expands E2E coverage, builds doctor v2 checks, adds security
+    and performance tests. Depends on Alpha completing (contract gate must exist).
+  priority: high
+  depends_on: alpha-stabilize
+
+waves:
+  - id: W1
+    name: "Critical E2E Tests"
+    description: "MCP, contract triangle, process lifecycle"
+    parallel: true
+    tasks:
+      - id: T1-01
+        do: "E2E test for MCP server: verify all MCP tools callable, return valid responses"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test -p convergio-mcp"
+
+      - id: T1-02
+        do: "Contract triangle test: CLI calls API, API matches MCP tools, MCP matches CLI — all three aligned"
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test --test '*contract*'"
+
+      - id: T1-03
+        do: "Process flow lifecycle E2E: plan create → task update → wave complete → plan complete → events fired → cleanup"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --test '*lifecycle*'"
+
+  - id: W2
+    name: "Crate-Level E2E Coverage"
+    description: "E2E tests for 9 under-tested crates"
+    parallel: true
+    tasks:
+      - id: T2-01
+        do: "E2E tests for convergio-doctor: all 7 checks run, produce valid results, auto-issue creation"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test -p convergio-doctor"
+
+      - id: T2-02
+        do: "E2E tests for convergio-night-agents: CRUD lifecycle, trigger, runs, projects, scan"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test -p convergio-night-agents"
+
+      - id: T2-03
+        do: "E2E tests for convergio-deploy: self-upgrade mock, rollback E2E, push-all, diagnostics"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test -p convergio-deploy"
+
+      - id: T2-04
+        do: "E2E tests for convergio-autoresearch, convergio-build, convergio-file-transport"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+      - id: T2-05
+        do: "E2E tests for convergio-inference, convergio-prompts, convergio-voice"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+  - id: W3
+    name: "Doctor v2 Checks"
+    description: "Expand doctor with 8 new checks"
+    parallel: true
+    tasks:
+      - id: T3-01
+        do: "Doctor checks: prompts table populated, docs up-to-date, all routes reachable, agents catalog consistent"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test -p convergio-doctor"
+
+      - id: T3-02
+        do: "Doctor checks: dependency graph valid, migrations consistent, scheduled tasks firing, config valid"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test -p convergio-doctor"
+
+  - id: W4
+    name: "Security Tests"
+    description: "Model hijacking, auth enforcement, data isolation"
+    parallel: true
+    tasks:
+      - id: T4-01
+        do: "Security test: model hijacking prevention (malicious prompts don't bypass routing)"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --test '*security*'"
+
+      - id: T4-02
+        do: "Security test: auth enforcement on all routes, data isolation between orgs/projects"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --test '*security*'"
+
+  - id: W5
+    name: "Baselines + CI Prevention Gates"
+    description: "Measure BEFORE fixing, CI ratchets to prevent regression"
+    parallel: true
+    tasks:
+      - id: T5-01
+        do: |
+          Create scripts/baselines/security-baseline.sh and error-baseline.sh.
+          Measure: unwrap count, error-200 count, #[allow(dead_code)] count, unsafe blocks.
+          Store results in DB via POST /api/observatory/baseline.
+          These baselines prove that future security/quality work actually improves things.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "test -f scripts/baselines/security-baseline.sh"
+
+      - id: T5-02
+        do: |
+          CI prevention gates: add to .github/workflows/ci.yml:
+          - cargo-audit check (vulnerability scan)
+          - unwrap count ratchet (fail if count increases)
+          - file size gate (no file > 250 lines)
+          - unsafe_code = "deny" in workspace Cargo.toml
+          Add dependabot.yml for dependency updates.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "test -f .github/dependabot.yml"
+          - "grep -q 'unsafe_code' daemon/Cargo.toml || true"
+
+      - id: T5-03
+        do: "Throughput benchmarks with criterion: plan CRUD, task updates, SSE. Memory leak check. Graceful degradation test."
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+  - id: W6
+    name: "Error Handling + Reliability"
+    description: "TaskSupervisor, error standardization, unwrap audit, fail-closed boot"
+    parallel: false
+    tasks:
+      - id: T6-01
+        do: |
+          TaskSupervisor: create a supervisor for all 27+ tokio::spawn calls.
+          Track each spawned task with name, restart policy (restart/ignore/shutdown),
+          backoff (exponential), health check. Log failures to observatory.
+          Wire into main.rs to replace bare tokio::spawn calls.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+      - id: T6-02
+        do: |
+          Error handling standardization: fix the 200-with-error-body antipattern.
+          All handlers should return proper HTTP status codes (400/404/422/500)
+          via Result<Json<T>, ApiError> instead of Json(json!({"error": ...})) with 200.
+          Create shared ApiError type in convergio-types.
+        type: code
+        output_type: pr
+        model: claude-opus-4-6
+        effort: 3
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+      - id: T6-03
+        do: "Unwrap audit: fix unwrap() in production paths. Fail-closed boot: critical extension failure prevents daemon start."
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 2
+        verify:
+          - "cd daemon && cargo test --workspace"
+
+  - id: WF
+    name: "Closure"
+    parallel: false
+    tasks:
+      - id: TF-01
+        do: "Full test suite, update CHANGELOG, ADR-026 (test strategy + gate testing), deploy verify"
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        effort: 1
+        verify:
+          - "cd daemon && cargo test 2>&1 | tail -1 | grep -q 'test result: ok'"

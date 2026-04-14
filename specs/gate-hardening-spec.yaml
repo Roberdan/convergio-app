@@ -1,0 +1,275 @@
+---
+plan_name: "Gate Hardening — Ironclad Plan Lifecycle"
+project_id: convergio
+version: "1.0"
+description: |
+  Make the solve → planner → Thor → plan update flow airtight.
+  Currently agents can skip steps, update tasks on non-started plans,
+  and nobody auto-triggers Thor after wave completion. This plan fixes
+  the 5 structural gaps in the orchestrator gate chain.
+
+requirements:
+  - id: F-01
+    title: Auto-Thor on wave completion
+    description: |
+      When the last task in a wave reaches status "submitted",
+      auto-trigger Thor validation for that wave. No manual call needed.
+  - id: F-02
+    title: Plan status enforcement on task transitions
+    description: |
+      Task update handler must reject any status transition if the parent
+      plan is not "in_progress". Block tasks moving to in_progress/submitted
+      on todo/cancelled/done plans.
+  - id: F-03
+    title: GitHub PR verification in PrCommitGate
+    description: |
+      PrCommitGate must hit GitHub API to verify the PR URL in task notes
+      actually exists, is open (or merged), and targets the correct repo.
+      Graceful fallback if GitHub unreachable (warn, don't block).
+  - id: F-04
+    title: Evidence recording pre-checks
+    description: |
+      Evidence recording endpoint must verify: task exists, task is in
+      in_progress status (not pending/done/cancelled), and reject duplicates
+      of same evidence_type for same task.
+  - id: F-05
+    title: Auto-worktree creation on wave start
+    description: |
+      When a wave transitions to in_progress, auto-create a git worktree
+      with the wave branch name (wave/{plan_id}-{wave_id}). Skip if worktree
+      already exists. Write .worktree-owner file.
+
+acceptance_invariants:
+  - "cargo test --workspace passes with RUSTFLAGS=-Dwarnings"
+  - "cargo clippy --workspace -- -D warnings passes"
+  - "Task update on todo plan returns HTTP 409 with gate error"
+  - "Last task submitted in wave auto-triggers Thor (no manual validate call)"
+  - "Evidence on pending task returns HTTP 400"
+  - "PrCommitGate logs GitHub API check result"
+
+waves:
+  - id: W1
+    name: "Core gate fixes (auto-Thor + plan enforcement)"
+    tasks:
+      - id: T1-01
+        do: |
+          Add auto-Thor trigger in task_routes.rs handle_task_update.
+          After a task is successfully set to "submitted":
+          1. Query: SELECT count(*) FROM tasks WHERE wave_id = ? AND status NOT IN ('submitted','done','cancelled','skipped')
+          2. If count == 0 (all tasks in wave are terminal): auto-call plan_validate::handle_validate_internal(plan_id)
+          3. Log: "Auto-Thor triggered for wave {wave_id} in plan {plan_id}"
+          
+          File: daemon/crates/convergio-orchestrator/src/task_routes.rs
+          Reference: plan_validate.rs:48-214 for validate logic
+          Reference: handlers_wave.rs:26-101 for on_wave_validated
+          
+          Test: create a plan with 2 tasks in W1, submit both, verify wave auto-validates
+          without manual POST /api/plan-db/validate.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo test --workspace"
+          - "cargo clippy --workspace -- -D warnings"
+          - "grep -q 'auto.*thor\\|auto.*validate\\|Auto-Thor' daemon/crates/convergio-orchestrator/src/task_routes.rs"
+
+      - id: T1-02
+        do: |
+          Add PlanStatusGate in gates.rs.
+          New gate function: plan_status_gate(pool, task_id) -> Result<(), GateError>
+          1. Get plan_id from task's wave
+          2. Check plan status is "in_progress"
+          3. If not: return Err(GateError::PlanNotActive { plan_id, status })
+          
+          Wire it in check_task_transition for both "in_progress" and "submitted" transitions.
+          
+          File: daemon/crates/convergio-orchestrator/src/gates.rs
+          File: daemon/crates/convergio-orchestrator/src/task_routes.rs (wire the gate)
+          
+          Test: try to update a task on a "todo" plan, verify HTTP 409 response with
+          gate error message.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo test --workspace"
+          - "cargo clippy --workspace -- -D warnings"
+          - "grep -q 'plan_status_gate\\|PlanNotActive\\|PlanStatusGate' daemon/crates/convergio-orchestrator/src/gates.rs"
+
+  - id: W2
+    name: "Evidence + PR verification"
+    tasks:
+      - id: T2-01
+        do: |
+          Add pre-checks to evidence recording in evidence_routes.rs handle_record_evidence.
+          Before inserting into task_evidence:
+          1. Verify task exists: SELECT id, status FROM tasks WHERE id = ?
+             - If not found: return HTTP 404 {"error": "task not found"}
+          2. Verify task is in_progress: if status not in ('in_progress'):
+             - Return HTTP 400 {"error": "task must be in_progress to record evidence", "status": current_status}
+          3. Check duplicate: SELECT count(*) FROM task_evidence WHERE task_db_id = ? AND evidence_type = ?
+             - If count > 0: return HTTP 409 {"error": "duplicate evidence", "evidence_type": type}
+             - Exception: allow multiple "test_result" entries (agents may retry tests)
+          
+          File: daemon/crates/convergio-orchestrator/src/evidence_routes.rs
+          
+          Test: record evidence on pending task → 400. Record duplicate test_pass → 409.
+          Record on valid in_progress task → 200.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo test --workspace"
+          - "grep -q 'task not found\\|must be in_progress\\|duplicate evidence' daemon/crates/convergio-orchestrator/src/evidence_routes.rs"
+
+      - id: T2-02
+        do: |
+          Upgrade PrCommitGate in gates.rs to verify PR via GitHub API.
+          1. Extract PR URL from task notes (already done via regex)
+          2. Parse owner/repo/number from URL
+          3. Call GitHub API: GET /repos/{owner}/{repo}/pulls/{number}
+             - Use GITHUB_TOKEN env var for auth (same as gh cli uses)
+             - Timeout: 5 seconds
+          4. Verify response: PR exists AND state is "open" or "merged"
+          5. If GitHub unreachable or no token: log warning, PASS the gate (graceful degradation)
+          6. If PR doesn't exist or is "closed" without merge: FAIL the gate
+          
+          Add a github_client.rs module in convergio-orchestrator with:
+          - verify_pr(owner, repo, number) -> Result<PrStatus, GithubError>
+          - PrStatus { state: String, head_branch: String, base_branch: String }
+          
+          File: daemon/crates/convergio-orchestrator/src/gates.rs
+          File: daemon/crates/convergio-orchestrator/src/github_client.rs (new)
+          File: daemon/crates/convergio-orchestrator/src/lib.rs (add mod)
+          
+          Test: mock test with fake PR URL on non-existent repo → gate warns but passes
+          (graceful degradation). Unit test for URL parsing.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo test --workspace"
+          - "test -f daemon/crates/convergio-orchestrator/src/github_client.rs"
+          - "grep -q 'verify_pr\\|PrStatus\\|github' daemon/crates/convergio-orchestrator/src/gates.rs"
+
+  - id: W3
+    name: "Auto-worktree on wave start"
+    tasks:
+      - id: T3-01
+        do: |
+          Add auto-worktree creation when a wave transitions to in_progress.
+          
+          In handlers_delegation.rs on_wave_ready (or handlers_wave.rs where wave starts):
+          1. Compute branch name: wave/{plan_id}-{wave_id}
+          2. Compute worktree path: {repo_root}/.worktrees/wave-{plan_id}-{wave_id}
+          3. Check if worktree already exists (skip if so)
+          4. Run: git worktree add -b {branch} {path} HEAD
+          5. Write .worktree-owner file with agent_id = "wave-{plan_id}"
+          6. Log: "Auto-created worktree for wave {wave_id}"
+          7. On failure: log error but don't block wave start
+          
+          Use the existing worktree creation logic from spawner.rs:38-110 as reference.
+          Extract shared worktree creation into a utility function in convergio-workspace
+          that both spawner and wave handler can call.
+          
+          File: daemon/crates/convergio-workspace/src/create.rs (new — shared utility)
+          File: daemon/crates/convergio-workspace/src/lib.rs (add mod)
+          File: daemon/crates/convergio-orchestrator/src/handlers_delegation.rs (wire)
+          
+          Test: start a wave, verify worktree directory and .worktree-owner exist.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo test --workspace"
+          - "test -f daemon/crates/convergio-workspace/src/create.rs"
+          - "grep -q 'create_worktree\\|auto.*worktree\\|Auto.*worktree' daemon/crates/convergio-orchestrator/src/handlers_delegation.rs"
+
+  - id: WF
+    name: "Closure — tests, docs, PR, deploy"
+    tasks:
+      - id: TF-tests
+        do: |
+          Final test pass:
+          1. cargo fmt --all -- --check
+          2. RUSTFLAGS="-Dwarnings" cargo clippy --workspace -- -D warnings
+          3. cargo test --workspace
+          4. Integration test: create plan → add tasks → submit all → verify auto-Thor fires
+          5. Integration test: try task update on todo plan → verify 409
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo fmt --all -- --check"
+          - "RUSTFLAGS='-Dwarnings' cargo clippy --workspace -- -D warnings"
+          - "RUSTFLAGS='-Dwarnings' cargo test --workspace"
+
+      - id: TF-doc
+        do: |
+          Update documentation:
+          1. AGENTS.md: update gate chain description to include PlanStatusGate and auto-Thor
+          2. AGENTS-PLAYBOOK.md: update task execution flow with auto-Thor behavior
+          3. CHANGELOG.md: add entry for gate hardening
+          4. router.rs mcp_help_handler: update tips to mention auto-Thor
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        depends_on: [TF-tests]
+        verify:
+          - "grep -q 'auto.*Thor\\|auto.*validate\\|Auto-Thor\\|PlanStatusGate' AGENTS.md"
+          - "grep -q 'auto.*Thor\\|Auto-Thor' AGENTS-PLAYBOOK.md"
+
+      - id: TF-pr
+        do: |
+          Create PR with conventional commit message:
+          feat(orchestrator): gate hardening — auto-Thor, plan enforcement, PR verification
+          
+          Push branch and create PR following template with Problem/Why/What/Validation/Impact.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        depends_on: [TF-tests, TF-doc]
+        verify:
+          - "gh pr list --head feat/gate-hardening --json number | grep -q number"
+
+      - id: TF-deploy-verify
+        do: |
+          After PR merge:
+          1. Pull main, rebuild daemon
+          2. Restart daemon via launchctl
+          3. Verify: create test plan, add 1 task, submit it → auto-Thor fires
+          4. Verify: try task update on cancelled plan → 409
+          5. Clean up worktree
+        type: verification
+        output_type: document
+        model: claude-sonnet-4-6
+        executor_agent: copilot
+        validator_agent: doc-validator
+        effort: 1
+        depends_on: [TF-pr]
+        verify:
+          - "curl -s http://localhost:8420/api/health | grep -q ok"

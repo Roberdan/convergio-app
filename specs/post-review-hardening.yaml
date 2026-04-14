@@ -1,0 +1,902 @@
+plan:
+  name: "Convergio Post-Review Hardening"
+  project: convergio
+  description: |
+    Piano completo post-review da 3 modelli indipendenti (Opus 4.6, GPT 5.4, Goldeneye).
+    46 finding validati, 75 azioni. Ordine: ADR/baseline → fix broken → security → reliability → test → prevention → observability → cleanup.
+    Ogni cambio architetturale ha un ADR PRIMA. Ogni fix ha un baseline PRIMA e un test DOPO.
+  priority: critical
+
+waves:
+
+  # ═══════════════════════════════════════════════════════════
+  # W0: FONDAMENTA — ADR + Baselines (misura PRIMA di fixare)
+  # ═══════════════════════════════════════════════════════════
+  - id: W0
+    name: "ADR + Baselines"
+    description: "Documenta decisioni architetturali e misura stato attuale PRIMA di qualsiasi fix"
+    parallel: true
+    tasks:
+      - id: T0-01
+        do: |
+          Scrivere ADR-022: Nuovo modello di autenticazione.
+          Context: 4 bypass path trovati (Host header, dev-mode default, JWT secret vuoto, SSE exempt).
+          Decision: rimuovere Host-header bypass, JWT mandatory con secret persistente, dev-mode opt-in, bind 127.0.0.1 senza token.
+          Consequences: breaking change per chi usa localhost bypass. Enforcement: CI test che tenta bypass.
+          Formato: docs/adr/ADR-022-auth-model-hardening.md, max 30 righe, con sezione Enforcement.
+        type: planning
+        output_type: document
+        model: claude-opus-4.6
+        executor_agent: claude
+        validator_agent: doc-validator
+        effort: 1
+        verify:
+          - "test -f docs/adr/ADR-022-auth-model-hardening.md"
+          - "grep -q 'Status: Accepted' docs/adr/ADR-022-auth-model-hardening.md"
+          - "grep -q 'Enforcement' docs/adr/ADR-022-auth-model-hardening.md"
+
+      - id: T0-02
+        do: |
+          Scrivere ADR-023: Fail Closed by Default.
+          Context: migration failure non blocca boot, config error torna ai default, inference finge successo.
+          Decision: extension dichiarano mandatory/optional. Mandatory: migration fail = abort. Config error = fail fast in prod.
+          Definire lista extension mandatory vs optional. Formato: docs/adr/ADR-023-fail-closed-default.md.
+        type: planning
+        output_type: document
+        model: claude-opus-4.6
+        executor_agent: claude
+        validator_agent: doc-validator
+        effort: 1
+        verify:
+          - "test -f docs/adr/ADR-023-fail-closed-default.md"
+          - "grep -q 'mandatory' docs/adr/ADR-023-fail-closed-default.md"
+
+      - id: T0-03
+        do: |
+          Scrivere ADR-024: Consolidamento crate operativi.
+          Context: deploy+build+provisioning+file-transport = 4 crate per un workflow. delegation+longrunning overlap con agent-runtime.
+          Decision: merge deploy/build/provisioning → convergio-ops. Fold longrunning checkpoint/heartbeat in agent-runtime. Keep delegation per remote transport.
+          Trade-off: compilazione incrementale persa vs manutenibilità.
+          Status: DEFERRED — decisione documentata, implementazione fuori scope di questo piano (troppo rischiosa da combinare con hardening). Implementare in un piano dedicato.
+          Formato: docs/adr/ADR-024-crate-consolidation.md.
+        type: planning
+        output_type: document
+        model: claude-opus-4.6
+        executor_agent: claude
+        validator_agent: doc-validator
+        effort: 1
+        verify:
+          - "test -f docs/adr/ADR-024-crate-consolidation.md"
+          - "grep -q 'Status: Deferred' docs/adr/ADR-024-crate-consolidation.md"
+
+      - id: T0-04
+        do: |
+          Scrivere ADR-025: SQLite Boundaries (supersedes ADR-003).
+          Context: ADR-003 accettava SQLite senza boundary. Ora: 72+ tabelle, 27 extension, background tasks, cron.
+          Decision: conferma SQLite per single-node. Documenta limiti: max 8 conn, WAL checkpoint solo shutdown.
+          Trigger per migrazione: >100 write/sec sustained, >10 concurrent agents, multi-node deployment.
+          Read-only pool separato come enhancement futuro.
+          Formato: docs/adr/ADR-025-sqlite-boundaries.md.
+        type: planning
+        output_type: document
+        model: claude-opus-4.6
+        executor_agent: claude
+        validator_agent: doc-validator
+        effort: 1
+        verify:
+          - "test -f docs/adr/ADR-025-sqlite-boundaries.md"
+          - "grep -q 'Supersedes.*ADR-003' docs/adr/ADR-025-sqlite-boundaries.md"
+
+      - id: T0-05
+        do: |
+          Creare security baseline measurement script (NON test module).
+          File: daemon/scripts/security-baseline.sh
+          Script bash che MISURA lo stato attuale (non parte della test suite):
+          1. Tentare curl con Host: localhost:8420 header → registra se ritorna 200 o 401
+          2. Verificare se JWT con secret vuoto viene accettato
+          3. Verificare se SSE stream /api/events/stream è accessibile senza auth
+          4. Contare endpoint che ritornano 200 con body {"error": ...}
+          Output in JSON su stdout: security_baseline_results.json format.
+          Questo script viene rieseguito in WC1 per confronto DOPO le fix.
+          NON è un test module — NON tocca cargo test.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "test -f daemon/scripts/security-baseline.sh"
+          - "test -x daemon/scripts/security-baseline.sh"
+          - "grep -q 'Host.*localhost' daemon/scripts/security-baseline.sh"
+          - "cargo check --workspace"
+
+      - id: T0-06
+        do: |
+          Creare error handling baseline metric.
+          Script daemon/scripts/error-baseline.sh che conta:
+          - unwrap() in non-test .rs files (baseline: ~1140)
+          - unwrap_or_default() in non-test .rs files (baseline: ~152)
+          - Pattern "Json(json!({\"error\":" con status 200 (da contare)
+          - File > 250 righe in daemon/crates (baseline: ~13)
+          Output in formato JSON con chiavi: unwrap_count, unwrap_default_count, error_200_count, oversized_file_count.
+          Questo script diventerà CI gate in W5.
+        type: code
+        output_type: pr
+        model: gpt-5-mini
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        verify:
+          - "test -f daemon/scripts/error-baseline.sh"
+          - "bash daemon/scripts/error-baseline.sh | python3 -m json.tool"
+
+      - id: T0-07
+        do: |
+          Scrivere ADR-026: API Versioning Strategy.
+          Context: 208+ endpoint senza versioning. Breaking changes inevitabili.
+          Decision: nessun versioning esplicito per v1.x — solo backward-compatible additions.
+          Breaking changes: aggiungere /api/v2/ prefix, mantenere v1 per 2 release.
+          Formato: docs/adr/ADR-026-api-versioning.md, max 20 righe.
+        type: planning
+        output_type: document
+        model: claude-opus-4.6
+        executor_agent: claude
+        validator_agent: doc-validator
+        effort: 1
+        verify:
+          - "test -f docs/adr/ADR-026-api-versioning.md"
+          - "grep -q 'Status: Accepted' docs/adr/ADR-026-api-versioning.md"
+
+      - id: T0-08
+        do: |
+          Performance baseline con criterion sui hot path.
+          Aggiungere criterion benchmark in daemon/benches/baseline.rs.
+          Benchmark: Plan CRUD, Health deep, Pool acquire/release under 8 concurrent, Migration run time.
+          Aggiungere criterion = "0.5" a [dev-dependencies]. Solo per run manuali, non CI.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "test -f daemon/benches/baseline.rs"
+
+  # ═══════════════════════════════════════════════════════════
+  # W1: COSE ROTTE — non compilano / non funzionano
+  # ═══════════════════════════════════════════════════════════
+  - id: W1
+    name: "Fix Broken"
+    description: "Codice che non compila o funzionalità che non funzionano"
+    parallel: true
+    tasks:
+      - id: T1-01
+        do: |
+          Fix compilazione Tauri app (convergio-app/src-tauri/).
+          6 errori: convergio_types e dirs mancano da Cargo.toml, tauri::Emitter non importato.
+          1. Aggiungere a Cargo.toml: convergio-types = { path = "../../daemon/crates/convergio-types" }, dirs = "6"
+          2. In daemon.rs: aggiungere use tauri::Emitter; dopo le import
+          3. In tray.rs: aggiungere use tauri::Emitter; dopo le import
+          4. In daemon.rs:87: aggiungere type annotation |p: &std::path::PathBuf|
+          5. Verificare: cargo check nel dir convergio-app/src-tauri
+          6. Fix license in Cargo.toml: "MIT" → file = "../../LICENSE"
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        verify:
+          - "cd convergio-app/src-tauri && cargo check"
+          - "grep -q 'convergio-types' convergio-app/src-tauri/Cargo.toml"
+          - "grep -q 'Emitter' convergio-app/src-tauri/src/daemon.rs"
+
+      - id: T1-02
+        do: |
+          Creare /api/shutdown endpoint nel daemon oppure rimuovere la chiamata dal Tauri app.
+          Opzione raccomandata: creare route POST /api/shutdown in convergio-server che:
+          1. Richiede auth (non dev-mode bypass)
+          2. Invia SIGTERM al processo corrente via tokio::signal
+          3. Logga l'evento di shutdown
+          Aggiungere la route in server/router.rs o in un modulo lifecycle.
+          Alternativa: se troppo complesso, rimuovere il POST /api/shutdown da daemon.rs:57-60
+          e far usare solo il fallback platform_restart::stop_daemon().
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "grep -rq 'shutdown' daemon/crates/convergio-server/src/ || grep -vq '/api/shutdown' convergio-app/src-tauri/src/daemon.rs"
+
+      - id: T1-03
+        do: |
+          Eseguire fix CLI-API alignment da specs/fix-cli-api-alignment.yaml.
+          Il file spec contiene 12+ task con fix specifiche:
+          - cli_bus.rs: campo 'message' → 'content'
+          - cli_launch.rs: campo 'agent_id' → 'name', POST unregister → DELETE
+          - cli_ask.rs: path /api/ipc/agents/list → /api/ipc/agents
+          Applicare TUTTE le fix elencate nel file YAML.
+          Verificare con: cargo test -p convergio-cli --test api_contract_test
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check -p convergio-cli"
+          - "cargo test -p convergio-cli"
+
+  # ═══════════════════════════════════════════════════════════
+  # W2: SECURITY HARDENING — i 12 fix più critici
+  # ═══════════════════════════════════════════════════════════
+  - id: W2
+    name: "Security Hardening"
+    description: "Fix auth bypass, SSRF, injection, path traversal — come da ADR-022"
+    parallel: false
+    tasks:
+      - id: T2-01
+        do: |
+          Fix auth middleware come da ADR-022.
+          File: daemon/crates/convergio-server/src/middleware_auth.rs e runner.rs.
+          1. In runner.rs: cambiare router.into_make_service() → router.into_make_service_with_connect_info::<std::net::SocketAddr>()
+          2. In middleware_auth.rs: RIMUOVERE il fallback su Host header (linee 52-56). Usare SOLO ConnectInfo<SocketAddr>.
+          3. Rendere dev-mode opt-in: richiedere env var CONVERGIO_DEV_MODE=true esplicita. Se assente E no auth token → refuse to start (o bind solo 127.0.0.1).
+          4. In main.rs: cambiare la logica dev_mode (linee 211-215) per richiedere CONVERGIO_DEV_MODE=true.
+          5. Aggiornare i test E2E per riflettere il nuovo comportamento.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4.6
+        executor_agent: claude
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "! grep -q 'Host.*localhost' daemon/crates/convergio-server/src/middleware_auth.rs"
+          - "grep -q 'into_make_service_with_connect_info' daemon/crates/convergio-server/src/runner.rs"
+          - "grep -q 'CONVERGIO_DEV_MODE' daemon/src/main.rs"
+
+      - id: T2-02
+        do: |
+          Fix JWT secret initialization.
+          File: daemon/crates/convergio-security/src/jwt.rs e daemon/src/main.rs.
+          1. In main.rs: chiamare convergio_security::jwt::init_jwt_secret() PRIMA di build_router.
+          2. In jwt.rs: rimuovere il fallback a b"" in get_secret(). Se OnceLock è vuoto, panic con messaggio chiaro.
+          3. In jwt.rs: se env CONVERGIO_JWT_SECRET è assente E non è dev-mode → generare secret random E scriverlo su file persistente (~/.convergio/jwt_secret). Al prossimo avvio leggerlo da file.
+          4. Aggiungere test che verifica: init → get_secret() != b"".
+        type: code
+        output_type: pr
+        model: claude-sonnet-4.6
+        executor_agent: claude
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "grep -q 'init_jwt_secret' daemon/src/main.rs"
+          - "! grep -q 'b\"\"' daemon/crates/convergio-security/src/jwt.rs"
+
+      - id: T2-03
+        do: |
+          Fix HTTP bridge SSRF + path traversal artifacts + SSE auth.
+          Tre fix di sicurezza raggruppate perché piccole:
+          1. HTTP bridge (crates/convergio-http-bridge/src/proxy.rs): NON forwardare header Authorization, Cookie, X-Api-Key a URL esterni. Whitelist di header safe da forwardare. Validare base_url: solo http/https, no localhost/127.0.0.1/private ranges.
+          2. Artifact upload (crates/convergio-orchestrator/src/artifact_routes.rs): sanitizzare filename — strip componenti path, reject se contiene ".." o è assoluto. Usare UUID come nome file interno.
+          3. SSE auth (crates/convergio-server/src/middleware_auth.rs): rimuovere /api/events/ dalla lista exempt. Aggiungere auth a SSE.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4.6
+        executor_agent: claude
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "! grep -q 'Authorization' daemon/crates/convergio-http-bridge/src/proxy.rs || grep -q 'skip.*Authorization' daemon/crates/convergio-http-bridge/src/proxy.rs"
+          - "! grep -q '/api/events' daemon/crates/convergio-server/src/middleware_auth.rs || grep -q 'auth.*events' daemon/crates/convergio-server/src/middleware_auth.rs"
+
+      - id: T2-04
+        do: |
+          Fix SQL injection mesh + HMAC verify inbound + backup/spawn hardening.
+          Quattro fix raggruppate:
+          1. SQL injection (crates/convergio-mesh/src/sync_apply.rs): in apply_changes(), validare table names con la stessa regex usata in export_changes_since(). Reject se non alphanumeric+underscore.
+          2. HMAC verify (crates/convergio-mesh/src/routes.rs): aggiungere chiamata verify_hmac() su TUTTE le route mesh inbound che modificano dati (sync import, peer register).
+          3. Backup import (crates/convergio-backup/src/routes.rs): whitelist di directory ammesse per import path. Reject path assoluti fuori da data dir.
+          4. Agent spawn (crates/convergio-agent-runtime/src/spawner.rs): rimuovere --dangerously-skip-permissions. Validare agent_name: solo alphanum+dash, max 64 char. Rimuovere repo_override dall'API pubblica.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4.6
+        executor_agent: claude
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "grep -q 'verify_hmac' daemon/crates/convergio-mesh/src/routes.rs"
+          - "! grep -q 'dangerously-skip-permissions' daemon/crates/convergio-agent-runtime/src/spawner.rs"
+
+      - id: T2-05
+        do: |
+          Fix process scanner + secret isolation + rate limiter.
+          Tre fix finali di sicurezza:
+          1. Process scanner (crates/convergio-ipc/src/process_scanner.rs): filtrare output ps aux — rimuovere argomenti dopo il nome del binario, O non salvare command line nel DB, solo process name e PID.
+          2. Secret isolation (crates/convergio-multitenancy/src/secret_isolation.rs): usare encryption reale con AEAD (AES-256-GCM o ChaCha20Poly1305). Derivare key da CONVERGIO_JWT_SECRET + org_id. Migrare store_secret/get_secret.
+          3. Rate limiter (crates/convergio-server/src/router.rs): estrarre client IP da ConnectInfo (ora che T2-01 l'ha wired). Sostituire "unknown".to_string() con IP reale.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4.6
+        executor_agent: claude
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "! grep -q '\"unknown\"' daemon/crates/convergio-server/src/router.rs"
+          - "grep -q 'Aes256Gcm\\|ChaCha20Poly1305\\|aead' daemon/crates/convergio-multitenancy/src/secret_isolation.rs"
+          - "cargo test -p convergio-multitenancy"
+          - "! grep -rq 'cmdline\\|command_line.*args' daemon/crates/convergio-ipc/src/process_scanner.rs || grep -q 'filter\\|strip\\|sanitize' daemon/crates/convergio-ipc/src/process_scanner.rs"
+
+  # ═══════════════════════════════════════════════════════════
+  # WC1: CHECKPOINT — commit, verify security baseline
+  # ═══════════════════════════════════════════════════════════
+  - id: WC1
+    name: "Checkpoint 1 — Security Complete"
+    description: "Commit, push, verify security baseline passes, budget check"
+    parallel: false
+    tasks:
+      - id: TC1-01
+        do: |
+          Checkpoint dopo W0-W2.
+          1. cargo check --workspace && cargo test --workspace && cargo fmt --all
+          2. Rieseguire security baseline test (daemon/tests/e2e/security_baseline.rs) — ora i test di bypass DEVONO FALLIRE (= security fix funzionano).
+          3. Rieseguire error-baseline.sh — confrontare con baseline iniziale.
+          4. Commit + push tutti i branch aperti.
+          5. Aggiornare plan.md con stato attuale.
+          6. Se shell budget è sotto soglia, suggerire nuova sessione.
+        type: code
+        output_type: pr
+        model: gpt-5-mini
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+
+  # ═══════════════════════════════════════════════════════════
+  # W3: RELIABILITY — error handling, supervisor, fail-closed
+  # ═══════════════════════════════════════════════════════════
+  - id: W3
+    name: "Reliability Core"
+    description: "Error handling standardization, background task supervisor, fail-closed boot"
+    parallel: true
+    tasks:
+      - id: T3-01a
+        do: |
+          Standardizzare error handling (tranche 1): ipc, mesh, orchestrator, backup.
+          Per ogni crate:
+          1. Cambiare return type handler da impl IntoResponse a Result<Json<...>, ApiError>
+          2. Convertire match pool.get() → pool.get().map_err(|e| ApiError::internal(e))?
+          3. Rimuovere pattern: Json(json!({"error": e.to_string()})) con status 200
+          Usare ApiError già definito in convergio-server/src/state.rs.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "! grep -rn 'Json(json!.*error' daemon/crates/convergio-ipc/src/routes.rs daemon/crates/convergio-mesh/src/routes.rs daemon/crates/convergio-orchestrator/src/plan_routes.rs daemon/crates/convergio-backup/src/routes.rs | grep -v test | grep -v '//'"
+
+      - id: T3-01b
+        do: |
+          Standardizzare error handling (tranche 2): build, cockpit, billing, observatory, deploy, delegation.
+          Stessa procedura di T3-01a: Result<_, ApiError>, rimuovere 200+{error} JSON.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "! grep -rn 'Json(json!.*error' daemon/crates/convergio-build/src/routes.rs daemon/crates/convergio-cockpit/src/routes.rs daemon/crates/convergio-billing/src/routes.rs daemon/crates/convergio-observatory/src/routes.rs daemon/crates/convergio-deploy/src/routes.rs daemon/crates/convergio-delegation/src/ | grep -v test | grep -v '//'"
+          - "bash daemon/scripts/error-baseline.sh | python3 -c \"import sys,json; d=json.load(sys.stdin); assert d.get('error_200_count',0) == 0, f'Still {d.get(chr(101)+chr(114)+chr(114)+chr(111)+chr(114)+chr(95)+chr(50)+chr(48)+chr(48)+chr(95)+chr(99)+chr(111)+chr(117)+chr(110)+chr(116))} patterns'\""
+
+      - id: T3-02
+        do: |
+          Creare TaskSupervisor per i 27 tokio::spawn.
+          File: daemon/crates/convergio-server/src/task_supervisor.rs (nuovo)
+          1. Struct TaskSupervisor con HashMap<String, JoinHandle<()>>
+          2. Metodo spawn_supervised(name, future) che: salva JoinHandle, se task panica → restart con backoff (max 3 retry)
+          3. Metodo health() → Vec<TaskHealth> con: name, status (running/dead/restarting), restart_count, last_error
+          4. Registrare il supervisor nel HealthRegistry come health check
+          5. Refactoring: sostituire i principali tokio::spawn in: cron_executor, sync_loop, spawn_monitor, reaper, process_scanner, observatory/sink con supervisor.spawn_supervised()
+          NON serve fare tutti e 27 in questo task — fare i 6 più critici, documentare il pattern per i restanti.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "test -f daemon/crates/convergio-server/src/task_supervisor.rs"
+          - "grep -q 'spawn_supervised' daemon/crates/convergio-server/src/task_supervisor.rs"
+
+      - id: T3-03
+        do: |
+          Fail-closed boot + blocking HTTP fix + panics removal.
+          Come da ADR-023:
+          1. main.rs migration loop: se migration fallisce per extension nella lista mandatory (db, ipc, orchestrator, security, server) → panic/abort.
+             Per extension optional: log warning, NON registrare le routes.
+          2. main.rs on_start loop: stessa logica — mandatory fail = abort, optional fail = skip routes.
+          3. Config: crates/convergio-server/src/config.rs — se file config esiste ma parsing fallisce → abort con errore chiaro (non fall back a defaults silenziosamente). Se file non esiste → ok, usa defaults ma logga warning.
+          4. Fix reqwest::blocking: in org/provisioner.rs, kernel/monitor.rs, mcp/http.rs — wrap chiamate blocking in tokio::task::spawn_blocking().
+          5. Rimuovere panic! da scheduler/routes.rs:190 e evidence_routes.rs:93 — sostituire con ? operator.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "! grep -q 'unwrap_or_else.*panic' daemon/crates/convergio-scheduler/src/routes.rs"
+          - "grep -q 'spawn_blocking' daemon/crates/convergio-org/src/provisioner.rs"
+
+      - id: T3-04
+        do: |
+          Misc reliability: self-build mutex, restore offline, inference honest, Tauri quit.
+          1. Self-build (crates/convergio-build/src/routes.rs): aggiungere static AtomicBool come lock. Se build in corso → return 409 Conflict.
+          2. Backup restore (crates/convergio-backup/src/routes.rs): return 503 "restore requires offline mode" se pool ha connection attive.
+          3. Inference (crates/convergio-inference/src/router.rs): rimuovere echo_response() fallback. Se backend è down → return ApiError::service_unavailable("inference backend unreachable").
+          4. Tauri (convergio-app/src-tauri/src/tray.rs): "quit" → graceful: stop daemon monitor, drop resources, poi app.exit(0) invece di process::exit(0).
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "cd convergio-app/src-tauri && cargo check"
+          - "! grep -q 'echo_response' daemon/crates/convergio-inference/src/router.rs"
+          - "! grep -q 'process::exit' convergio-app/src-tauri/src/tray.rs"
+
+      - id: T3-05
+        do: |
+          Audit sistematico unwrap()/unwrap_or_default() in prod code.
+          1,140 unwrap() e 152 unwrap_or_default() mascherano errori reali.
+          Priorità: handler HTTP (routes.rs), DB queries, pool access, health checks.
+          Convertire a .map_err()? o match con logging. NON toccare .lock().unwrap() o const context.
+          Obiettivo: ridurre unwrap count di almeno 50% nei file routes.rs e handler.
+          Rieseguire error-baseline.sh — count deve diminuire.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "bash daemon/scripts/error-baseline.sh | python3 -m json.tool"
+
+  # ═══════════════════════════════════════════════════════════
+  # W4: TEST HARDENING (parallelo con W3)
+  # ═══════════════════════════════════════════════════════════
+  - id: W4
+    name: "Test Hardening"
+    description: "Auth test, E2E critical routes, contract ratchet, deploy tests, CI additions"
+    parallel: true
+    tasks:
+      - id: T4-01
+        do: |
+          Integration test per auth middleware.
+          File: daemon/tests/e2e/auth.rs (nuovo)
+          Testare tutti i percorsi:
+          1. Request senza token → 401
+          2. Request con token valido → 200
+          3. Request con JWT expired → 401
+          4. Request con JWT firmato con secret sbagliato → 401
+          5. Request da localhost CON ConnectInfo → bypass (se dev-mode attivo)
+          6. Request con Host: localhost header ma IP remoto → 401 (bypass DEVE fallire post-W2)
+          7. SSE /api/events/stream senza auth → 401 (post-W2)
+          8. Dev-mode OFF: request senza token → 401
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "test -f daemon/tests/e2e/auth.rs"
+          - "grep -q 'host_header' daemon/tests/e2e/auth.rs"
+
+      - id: T4-02
+        do: |
+          E2E test per top-20 critical routes (prima tranche).
+          File: daemon/tests/e2e/critical_routes.rs (nuovo)
+          Per ogni route: test success + bad input + unauthorized.
+          Routes da coprire: /api/agents/spawn, /api/build/self, /api/backup/restore,
+          /api/backup/import, /api/mesh/sync/import, /api/plan-db/plan (CRUD),
+          /api/plan-db/task (CRUD), /api/deploy/upgrade, /api/deploy/diagnostics,
+          /api/orchestrator/artifact/upload.
+          Minimo 30 test case.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo check --workspace"
+          - "test -f daemon/tests/e2e/critical_routes.rs"
+
+      - id: T4-03
+        do: |
+          Contract test ratchet + deploy tests + SSH mock + CI additions.
+          1. Contract test (daemon/crates/convergio-cli/tests/api_contract_test.rs): KNOWN_MISSING_BASELINE deve solo scendere. Aggiungere assert che il count non supera il valore attuale. Se qualcuno aggiunge route senza test → CI fail.
+          2. Deploy tests (daemon/crates/convergio-deploy/src/): aggiungere mod tests con almeno: test update_check parsing, test diagnostics output format, test upgrade path validation.
+          3. SSH/rsync mock: in file-transport e provisioning, aggiungere BatchMode=yes ai comandi ssh/rsync. Nei test, mockare il transport layer con trait.
+          4. CI: aggiungere step cargo-audit in .github/workflows/ci.yml. Aggiungere .github/dependabot.yml per Rust deps. Aggiungere cargo check per convergio-app nella CI.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo check --workspace"
+          - "test -f .github/dependabot.yml"
+          - "grep -q 'cargo-audit\\|audit' .github/workflows/ci.yml"
+          - "grep -q 'BatchMode' daemon/crates/convergio-file-transport/src/rsync.rs"
+
+  # ═══════════════════════════════════════════════════════════
+  # WC2: CHECKPOINT
+  # ═══════════════════════════════════════════════════════════
+  - id: WC2
+    name: "Checkpoint 2 — Reliability + Tests Complete"
+    description: "Commit, rieseguire baseline, verificare miglioramenti"
+    parallel: false
+    tasks:
+      - id: TC2-01
+        do: |
+          Checkpoint dopo W3-W4.
+          1. cargo check && cargo test && cargo fmt
+          2. Rieseguire error-baseline.sh — i numeri DEVONO essere migliorati vs baseline
+          3. Rieseguire security baseline — tutti i test di bypass devono FALLIRE
+          4. Commit + push
+          5. Aggiornare plan.md
+        type: code
+        output_type: pr
+        model: gpt-5-mini
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+
+      - id: TC2-02
+        do: |
+          Reliability smoke test: supervisor restart + pool saturation.
+          1. Spawna task supervised, verifica in health
+          2. Panic nel task → verifica supervisor rilancia (restart_count > 0)
+          3. Saturare pool → verifica errore visibile in metrics
+          4. Confronta error-baseline.sh con W0 baseline — numeri devono migliorare
+        type: code
+        output_type: pr
+        model: gpt-5-mini
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+
+  # ═══════════════════════════════════════════════════════════
+  # W5: PREVENZIONE REGRESSIONI — CI gates
+  # ═══════════════════════════════════════════════════════════
+  - id: W5
+    name: "Prevention Gates"
+    description: "CI gates per impedire regressione: file size, unwrap count, error patterns, unsafe"
+    parallel: true
+    tasks:
+      - id: T5-01
+        do: |
+          CI prevention gates — tutti in un PR.
+          1. .github/workflows/ci.yml: aggiungere step "Lint rules" che esegue daemon/scripts/error-baseline.sh e confronta con soglie.
+             - File > 250 righe: max 0 (rifiuta PR se qualsiasi file in daemon/crates supera 250)
+             - unwrap() count: non deve aumentare vs main (calcola diff)
+             - Pattern 200+{error}: count deve essere 0 (post W3)
+          2. daemon/Cargo.toml workspace: aggiungere [workspace.lints.rust] unsafe_code = "deny"
+          3. Aggiungere #[allow(unsafe_code)] ai 5 file che ne hanno bisogno (monitor_helpers.rs, locks.rs, agents.rs, process_scanner.rs, reaper.rs) con safety comment per ogni blocco.
+          4. ADR-026: API versioning strategy. Decidere: nessun versioning per v1.x (solo backward-compatible additions), aggiungere /api/v2/ prefix quando serve breaking change. Max 20 righe.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "grep -q 'unsafe_code' daemon/Cargo.toml"
+          - "test -f docs/adr/ADR-026-api-versioning.md"
+
+      - id: T5-02
+        do: |
+          Dead code cleanup.
+          1. Rimuovere o collegare resolve_bind_addr() in runner.rs — se la logica è utile, chiamarla in main.rs; altrimenti eliminare.
+          2. resilience.rs (types): RetryConfig e CircuitBreakerConfig mai usati. Valutare:
+             - Se mesh/inference/http-bridge dovrebbero usarli → wiring task (consigliato)
+             - Altrimenti → rimuovere
+             Decisione pragmatica: per ora wire RetryConfig in http-bridge per webhook delivery retry. CircuitBreakerConfig in inference per model fallback. Implementazione minima.
+          3. Rimuovere 7 #[allow(dead_code)] in prod: analizzare ogni caso, rimuovere codice morto o renderlo usato.
+          4. Audit middleware: sostituire audit_layer inline (router.rs) con middleware_audit.rs (che ha JWT subject extraction). Rimuovere il duplicato.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "! grep -q 'resolve_bind_addr' daemon/crates/convergio-server/src/runner.rs || grep -q 'resolve_bind_addr()' daemon/src/main.rs"
+
+  # ═══════════════════════════════════════════════════════════
+  # W6: REFACTOR + OBSERVABILITY (parallelo)
+  # ═══════════════════════════════════════════════════════════
+  - id: W6
+    name: "Refactor + Observability"
+    description: "Split file, crate consolidation, tracing, metrics, alerting"
+    parallel: true
+    tasks:
+      - id: T6-01
+        do: |
+          Split 13 file > 250 righe.
+          Per ogni file, estrarre moduli logici:
+          1. orchestrator/handlers_learning.rs (375) → learning_store.rs + learning_routes.rs
+          2. deploy/diagnostics.rs (372) → diagnostic_checks.rs + diagnostic_report.rs
+          3. cli/cli_setup_service.rs (343) → service_install.rs + service_uninstall.rs
+          4. ipc/messaging.rs (317) → message_store.rs + message_routes.rs (o simile split logico)
+          5. org/factory.rs (297) → factory_templates.rs + factory_generator.rs
+          6. build/builder.rs (292) → build_runner.rs + build_history.rs
+          7. orchestrator/validator.rs (273) → validator_checks.rs + validator_loop.rs
+          8. Restanti: ipc/models.rs, cli/cli_setup.rs, orchestrator/plan_hierarchy.rs, ipc/routes.rs, cli/cli_org.rs
+          9. main.rs (267) → estrarre register_extensions() in un file separato ext_registry.rs
+          Ogni file risultante DEVE essere < 250 righe.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "! find daemon/crates -name '*.rs' | xargs wc -l | awk '$1 > 250 && !/total/ && !/test/' | grep -q ."
+
+      - id: T6-02
+        do: |
+          Aggiungere #[instrument] ai handler HTTP critici + pool metrics.
+          1. Aggiungere tracing = { version = "0.1", features = ["attributes"] } dove serve.
+          2. Annotare con #[tracing::instrument(skip(pool))] i handler in:
+             - plan_routes.rs (CRUD plans)
+             - task_routes.rs (CRUD tasks)
+             - spawn_routes.rs (agent spawn)
+             - routes.rs in backup, build, deploy
+          3. Pool metrics: in convergio-db/src/pool.rs, aggiungere fn pool_metrics(pool: &ConnPool) -> PoolMetrics
+             che restituisce: max_size, active, idle. Esporre in /api/metrics via MetricSource.
+          4. Background task metrics: nel TaskSupervisor (T3-02), esporre metriche via HealthRegistry:
+             ogni task supervised riporta: name, status, restart_count, uptime_seconds.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "grep -q 'instrument' daemon/crates/convergio-orchestrator/src/plan_routes.rs"
+          - "grep -q 'pool_metrics' daemon/crates/convergio-db/src/pool.rs"
+
+      - id: T6-03
+        do: |
+          Alerting + Prometheus wiring + operational runbook.
+          1. Observatory alerting: in crates/convergio-observatory/src/, quando un anomaly è detected,
+             emettere DomainEvent::AnomalyDetected. In kernel/ext.rs (o un nuovo modulo), listener che:
+             - Se Telegram bot configurato → invia messaggio
+             - Altrimenti → log a livello error
+          2. Prometheus: aggiungere route GET /api/metrics/prometheus in convergio-server router
+             che chiama observatory/export.rs::prometheus_exposition(). Già esiste la funzione, serve solo la route.
+          3. Runbook: creare docs/guides/runbook.md con sezioni:
+             - Incident response (daemon non risponde, agent stuck, mesh desync)
+             - Rollback deploy (usare /api/deploy/rollback)
+             - DB recovery (backup restore procedure — OFFLINE)
+             - Performance degradation (check pool metrics, WAL size)
+             Max 100 righe, pratico, con comandi curl copia-incolla.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "test -f docs/guides/runbook.md"
+          - "grep -q '/api/metrics/prometheus' daemon/crates/convergio-server/src/router.rs"
+
+      - id: T6-04
+        do: |
+          Creare #[derive(Extension)] proc-macro per eliminare boilerplate.
+          Nuovo crate: daemon/crates/convergio-extension-derive.
+          Genera: manifest(), health(), metrics(), struct boilerplate.
+          Proof-of-concept su 3-4 extension semplici (backup, billing, evidence, scheduler).
+          Risparmio stimato: ~200 righe per extension, ~3000 totale.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 3
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "test -d daemon/crates/convergio-extension-derive"
+
+  # ═══════════════════════════════════════════════════════════
+  # W7: DOCS + CLEANUP
+  # ═══════════════════════════════════════════════════════════
+  - id: W7
+    name: "Documentation + Cleanup"
+    description: "Allineare tutti i doc, fix label, update README, misc cleanup"
+    parallel: true
+    tasks:
+      - id: T7-01
+        do: |
+          Documentation sync completo.
+          1. README.md: aggiornare crate count (26 → 34), aggiornare repository layout (aggiungere crate mancanti), rimuovere phantom crate (openclaw, evolution). Collegare wiki/ dal README.
+          2. AGENTS.md: aggiornare "26 Rust crates" → "34 Rust crates".
+          3. WORKSPACE-SPLIT.md: allineare numeri (crate, extension, endpoint, test).
+          4. Backup export docstring (crates/convergio-backup/src/export.rs): cambiare doc comment da "tasks, prompts, agents, billing records, and audit trail" a lista reale delle 3 tabelle esportate.
+          5. Thor/validator: rinominare funzioni/commenti da "review" a "status gate" dove appropriato in validator.rs.
+          6. Multitenancy: aggiornare doc comment in resource_limits.rs — descrivere come "usage monitoring and alerting" non "isolation enforcement".
+          7. Diagnostics: parametrizzare repo owner in diagnostics.rs — estrarre "Roberdan/convergio" in costante configurabile.
+        type: code
+        output_type: pr
+        model: gpt-5-mini
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "grep -q '34' README.md"
+          - "! grep -q '26 Rust crates' README.md"
+          - "! grep -q 'openclaw' README.md"
+
+      - id: T7-02
+        do: |
+          Security model documentation + env var fix.
+          1. Documentare security model: creare docs/guides/security-model.md con:
+             - Auth flow (Bearer token → JWT → RBAC)
+             - Dev-mode behavior (opt-in, 127.0.0.1 only)
+             - Mesh trust (HMAC signing + verify)
+             - Extension auth (quali route sono exempt e perché — nessuna post-W2)
+             Max 80 righe.
+          2. Fix std::env::set_var in main.rs:95 — usare un HashMap locale per env overrides
+             invece di modificare process environment (deprecated in Rust 2024 edition).
+             Alternativa accettabile: aggiungere blocco unsafe con safety comment che spiega
+             perché è ok (single-threaded a quel punto del boot).
+          3. CHANGELOG.md: aggiungere sezione per questo piano con tutte le fix.
+        type: code
+        output_type: pr
+        model: gpt-5.3-codex
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 2
+        verify:
+          - "cargo check --workspace"
+          - "test -f docs/guides/security-model.md"
+          - "grep -q 'Hardening' CHANGELOG.md || grep -q 'hardening' CHANGELOG.md"
+
+  # ═══════════════════════════════════════════════════════════
+  # WF: FINAL CLOSURE
+  # ═══════════════════════════════════════════════════════════
+  - id: WF
+    name: "Final Closure"
+    description: "Test finale, documentazione piano, PR, deploy verify"
+    parallel: false
+    tasks:
+      - id: TF-tests
+        do: |
+          Test finale completo:
+          1. cargo check --workspace (deve passare)
+          2. cargo test --workspace (deve passare, 0 failure)
+          3. cargo clippy --workspace -- -D warnings (deve passare)
+          4. cargo fmt --all -- --check (deve passare)
+          5. cd convergio-app/src-tauri && cargo check (deve passare)
+          6. Rieseguire error-baseline.sh — confrontare con baseline iniziale. TUTTI i numeri devono essere migliorati.
+          7. Rieseguire security baseline — TUTTI i test di bypass devono FALLIRE.
+          8. Verificare: nessun file > 250 righe in daemon/crates
+          9. Verificare: nessun nuovo unwrap() aggiunto
+        type: code
+        output_type: pr
+        model: gpt-5-mini
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        verify:
+          - "cargo check --workspace"
+          - "cargo test --workspace"
+          - "cargo clippy --workspace -- -D warnings"
+          - "cargo fmt --all -- --check"
+
+      - id: TF-doc
+        do: |
+          Documentazione finale del piano:
+          1. Aggiornare CHANGELOG.md con tutte le wave completate
+          2. Creare docs/adr/plan-hardening-notes.md con learnings da ogni wave
+          3. Aggiornare ADR index (docs/adr/README.md) con ADR 022-026
+          4. Aggiornare WORKSPACE-SPLIT.md con nota su questa sessione
+        type: code
+        output_type: pr
+        model: gpt-5-mini
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        verify:
+          - "grep -q 'ADR-022' docs/adr/README.md"
+          - "grep -q 'ADR-026' docs/adr/README.md"
+          - "test -f docs/adr/plan-hardening-notes.md"
+
+      - id: TF-pr
+        do: |
+          Creare PR finale con tutti i cambiamenti.
+          1. git add -A && git commit con messaggio convenzionale
+          2. gh pr create con titolo "fix: post-review hardening (security, reliability, observability)"
+          3. Verificare CI green
+          4. Richiedere review
+        type: code
+        output_type: pr
+        model: gpt-5-mini
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        verify:
+          - "gh pr list --state open | grep -q 'hardening'"
+
+      - id: TF-deploy-verify
+        do: |
+          Deploy verify:
+          1. Dopo merge, pull main
+          2. cargo build --release nel daemon/
+          3. Avviare daemon: ./target/release/convergio
+          4. Verificare health: curl http://localhost:8420/api/health → status ok
+          5. Verificare deep health: curl http://localhost:8420/api/health/deep → tutte le componenti ok
+          6. Verificare metrics: curl http://localhost:8420/api/metrics → pool metrics presenti
+          7. Verificare Prometheus: curl http://localhost:8420/api/metrics/prometheus → formato valido
+          8. Verificare auth: curl senza token a un endpoint protetto → 401
+          9. Registrare versione e risultati come evidenza
+        type: code
+        output_type: pr
+        model: gpt-5-mini
+        executor_agent: copilot
+        validator_agent: thor
+        effort: 1
+        verify:
+          - "curl -s http://localhost:8420/api/health | grep -q 'ok'"

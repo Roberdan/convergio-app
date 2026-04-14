@@ -1,0 +1,313 @@
+plan:
+  name: "Iota — CTT Report Service"
+  project: convergio-io
+  description: |
+    Convergio Think Tank (CTT) report generation service.
+    New crate convergio-reports: API + CLI + MCP to generate professional
+    research reports (Markdown / PDF). CTT branding, AI disclaimer,
+    Morgan Stanley methodology, 6 report types.
+    Part of convergio.io default org.
+  priority: high
+
+waves:
+  - id: W1
+    name: "Core Crate + API"
+    description: |
+      Create convergio-reports crate with Extension, types, DB migration,
+      and working API routes. POST creates report record, GET lists/shows.
+      All wired to main.rs and compiling.
+    tasks:
+      - id: T1-01
+        do: |
+          Create daemon/crates/convergio-reports/ crate:
+          - Cargo.toml with deps: axum, serde, serde_json, convergio-types, convergio-db, tracing, chrono, uuid
+          - src/lib.rs: pub mod ext, types, routes, engine, template
+          - src/types.rs: ReportRequest (topic, report_type, format, audience, depth, org_id, extra_context),
+            ReportType enum (LeadershipProfile, CompanyDeepDive, IndustryAnalysis, TechAnalysis, MarketReport, General),
+            ReportFormat enum (Markdown, Pdf), ReportStatus enum (Pending, Researching, Generating, Compiling, Completed, Failed),
+            Report struct (id, org_id, topic, report_type, format, status, audience, depth, content_md, pdf_path,
+            sources_json, metadata_json, error, created_at, completed_at). All with Serialize/Deserialize.
+          - src/ext.rs: ReportsExtension implementing Extension trait.
+            manifest() returns id "convergio-reports". migrations() creates reports table.
+            routes() returns router with all API routes mounted under /api/reports.
+          - src/routes.rs: 4 routes all working end-to-end with DB:
+            POST /api/reports/generate — validate input, insert row with status Pending, return {report_id, status}.
+            GET /api/reports — list reports with optional filters (org_id, report_type, status).
+            GET /api/reports/:id — return single report with all fields.
+            GET /api/reports/:id/download — placeholder that returns 501 until PDF engine in W2.
+          - src/engine.rs: ReportEngine struct with pub async fn generate(pool, report_id) signature.
+            Initial impl updates status to Generating, generates a minimal placeholder markdown
+            (CTT header + "Report generation engine not yet connected"), updates content_md and status to Completed.
+            This is NOT a stub — it's a working minimal pipeline that will be extended in W2.
+          - src/template.rs: CTT branding constants (HEADER_TEMPLATE, FOOTER_TEMPLATE, DISCLAIMER_TEXT),
+            fn format_report_header(topic, report_type, date) -> String,
+            fn format_disclaimer() -> String. Use the exact CTT branding from research-report-generator.md.
+          Register crate in daemon/Cargo.toml workspace members + dependencies.
+          Register ReportsExtension in daemon/src/main.rs register_extensions().
+          Verify: cargo check --workspace, cargo test -p convergio-reports.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor-quality-assurance-guardian
+        effort: 3
+        verify:
+          - "cd daemon && cargo check --workspace"
+          - "cd daemon && cargo test -p convergio-reports"
+          - "cd daemon && cargo fmt --all -- --check"
+          - "grep convergio-reports daemon/Cargo.toml"
+          - "grep -i reports daemon/src/main.rs"
+
+  - id: W2
+    name: "Generation Engine + PDF"
+    description: |
+      Wire the actual report generation pipeline: web research via inference API,
+      LLM content generation with CTT template, Markdown formatting, and optional
+      LaTeX→PDF compilation.
+    tasks:
+      - id: T2-01
+        do: |
+          Implement the full report generation engine in src/engine.rs:
+          1. Research phase: build 3-5 web search queries from topic + report_type.
+             Call POST /api/inference/complete with search-oriented prompts.
+             Collect research data as structured text.
+          2. Synthesis phase: load CTT template from template.rs, combine with
+             research data to build a comprehensive system prompt following
+             Morgan Stanley methodology (header block, quick metrics, executive summary,
+             key takeaways, deep analysis sections, KPI dashboard, what worked / areas to monitor,
+             sources & methodology).
+          3. Generation phase: call POST /api/inference/complete with the assembled prompt.
+             Use tier_hint "t1" for Opus quality. Parse response into structured Markdown.
+          4. Formatting phase: apply CTT branding (header, footer, disclaimer, confidence indicators).
+             Store sources_json array. Update report record: content_md, status Completed,
+             completed_at, metadata_json (word_count, section_count, source_count).
+          5. Error handling: on any failure, update status to Failed with error message.
+          IMPORTANT: if engine.rs exceeds 300 lines, split into engine.rs (orchestration)
+          + engine_research.rs (research/synthesis phases). Max 300 lines per file.
+          The POST /api/reports/generate route must spawn the engine asynchronously
+          (tokio::spawn) so it returns immediately with report_id while generation runs
+          in background.
+          Update routes.rs: POST handler spawns engine task, GET /:id returns live status.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor-quality-assurance-guardian
+        effort: 3
+        verify:
+          - "cd daemon && cargo check --workspace"
+          - "cd daemon && cargo test -p convergio-reports"
+          - "cd daemon && cargo fmt --all -- --check"
+          - "grep -c 'inference/complete' daemon/crates/convergio-reports/src/engine.rs | awk '{if($1 < 1) exit 1}'"
+
+      - id: T2-02
+        do: |
+          Add PDF generation pipeline:
+          - src/latex.rs: LaTeX template matching the CTT PDF design from the existing reports.
+            fn markdown_to_latex(content_md, metadata) -> String that converts the Markdown report
+            to a professional LaTeX document with:
+            - MS-inspired colors (msblue #003366, msgray, msgreen, msred)
+            - fancyhdr header/footer with CTT branding
+            - booktabs tables, titlesec formatting
+            - A4, 11pt, 1in margins
+            - Disclaimer page at the end
+            - File naming: ctt-{topic_slug}-{date}.pdf
+            IMPORTANT: if latex.rs exceeds 300 lines, split template strings into
+            latex_template.rs constants module. Max 300 lines per file.
+          - src/pdf_compiler.rs: fn compile_pdf(latex_content, output_dir) -> Result<PathBuf>.
+            Runs pdflatex (2 passes for TOC) in a temp directory. Returns path to PDF.
+            If pdflatex not available, returns Err with clear message.
+          - Wire to engine.rs: if format is Pdf, after Markdown generation call markdown_to_latex
+            then compile_pdf. Store pdf_path in DB. Update status flow: Generating → Compiling → Completed.
+          - Wire GET /api/reports/:id/download to serve the PDF file (application/pdf content type).
+            Return 404 if not PDF format or not yet compiled, 501 if pdflatex not installed.
+          Add pub mod latex, pdf_compiler to lib.rs.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor-quality-assurance-guardian
+        effort: 3
+        verify:
+          - "cd daemon && cargo check --workspace"
+          - "cd daemon && cargo test -p convergio-reports"
+          - "cd daemon && cargo fmt --all -- --check"
+          - "test -f daemon/crates/convergio-reports/src/latex.rs"
+          - "test -f daemon/crates/convergio-reports/src/pdf_compiler.rs"
+
+  - id: W3
+    name: "CLI + MCP"
+    description: "CLI commands and MCP tools for report generation"
+    parallel: true
+    tasks:
+      - id: T3-01
+        do: |
+          Add CLI report commands in daemon/crates/convergio-cli/src/cli_report.rs:
+          - ReportCommands enum (derive Subcommand):
+            Generate { topic, type, format, audience, depth, extra_context, api_url }
+            List { type_filter, status_filter, api_url }
+            Show { id, api_url }
+            Download { id, output_path, api_url }
+          - Generate: POST /api/reports/generate, print report_id and status.
+            Then poll GET /api/reports/{id} every 5 seconds until completed/failed.
+            On completed: print report summary (title, word count, source count).
+            On failed: print error.
+          - List: GET /api/reports, format as table (id, topic, type, status, created_at).
+          - Show: GET /api/reports/{id}, print full Markdown content to stdout.
+          - Download: GET /api/reports/{id}/download, save binary to output_path.
+          Wire into cli_commands.rs (add Report variant) and dispatch.rs.
+          Support --human flag for formatted output.
+          Run contract test to verify CLI<>API field alignment.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor-quality-assurance-guardian
+        effort: 2
+        verify:
+          - "cd daemon && cargo check -p convergio-cli"
+          - "cd daemon && cargo test -p convergio-cli"
+          - "cd daemon && cargo fmt --all -- --check"
+          - "grep -i 'report' daemon/crates/convergio-cli/src/dispatch.rs"
+
+      - id: T3-02
+        do: |
+          Add MCP tools for reports in daemon/crates/convergio-mcp/:
+          - src/tools_reports.rs: register 2 tools:
+            cvg_generate_report (topic, report_type, format, audience, depth, extra_context)
+            cvg_list_reports (type_filter, status_filter, limit)
+          - src/handlers_reports.rs: handler functions that call the API endpoints
+            POST /api/reports/generate and GET /api/reports.
+          - Wire into src/tools.rs tool registry and src/handlers.rs dispatch.
+          - Add to ring filtering (Trusted ring for generate, Sandboxed for list).
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor-quality-assurance-guardian
+        effort: 2
+        verify:
+          - "cd daemon && cargo check -p convergio-mcp"
+          - "cd daemon && cargo test -p convergio-mcp"
+          - "cd daemon && cargo fmt --all -- --check"
+          - "grep -i 'report' daemon/crates/convergio-mcp/src/tools.rs"
+
+  - id: W4
+    name: "Org Integration + Agent Seed"
+    description: "Register CTT reports in default org and agent catalog"
+    tasks:
+      - id: T4-01
+        do: |
+          Integrate CTT reports into convergio.io default org:
+          - Update daemon/crates/convergio-agents/src/seed/seed_rest.rs:
+            Change research-report-generator tier from t3 to t1 (Opus only per Learning #26).
+          - Update daemon/crates/convergio-prompts/data/agents/research-report-generator.md:
+            Add section about API integration: the agent can now call POST /api/reports/generate
+            directly instead of manual LaTeX generation. Update output format to support both
+            Markdown and PDF. Add examples of API-driven report generation.
+          - Update daemon/crates/convergio-prompts/data/agents_meta.txt:
+            Ensure research-report-generator line reflects opus model and updated capabilities.
+          - Add SMOKE_ROUTE for /api/reports in doctor smoke test
+            (daemon/crates/convergio-doctor/src/check_e2e_smoke.rs) — GET /api/reports should return 200.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor-quality-assurance-guardian
+        effort: 2
+        verify:
+          - "cd daemon && cargo check --workspace"
+          - "cd daemon && cargo test --workspace"
+          - "cd daemon && cargo fmt --all -- --check"
+          - "grep 't1' daemon/crates/convergio-agents/src/seed/seed_rest.rs | grep -i report"
+
+  - id: WF
+    name: "Final Closure"
+    description: "Tests, docs, PR, deploy verification"
+    tasks:
+      - id: TF-tests
+        do: |
+          Comprehensive test suite for convergio-reports:
+          - Unit tests in src/types.rs: ReportType/Format/Status serialization roundtrip.
+          - Unit tests in src/template.rs: branding output contains CTT, disclaimer, date.
+          - Unit tests in src/latex.rs: LaTeX output contains expected preamble and structure.
+          - Integration tests in tests/e2e.rs:
+            POST /api/reports/generate with valid input → 200, returns report_id.
+            GET /api/reports → 200, returns array.
+            GET /api/reports/{id} → 200, returns report with correct fields.
+            GET /api/reports/nonexistent → 404.
+          - CLI contract test: verify ReportCommands fields match API JSON fields.
+          - Do NOT hardcode counts. Use assert!(!items.is_empty()) patterns.
+          - Integration tests should use the E2E test harness (real server).
+            For the inference self-call, mock or accept that inference may not be
+            available in CI — test the HTTP layer, not the LLM output.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor-quality-assurance-guardian
+        effort: 2
+        verify:
+          - "cd daemon && RUSTFLAGS='-Dwarnings' cargo test -p convergio-reports"
+          - "cd daemon && cargo test -p convergio-cli -- report"
+          - "cd daemon && cargo fmt --all -- --check"
+
+      - id: TF-doc
+        do: |
+          Documentation for CTT Report Service:
+          - docs/reports-api.md: full API reference (POST/GET endpoints, request/response schemas,
+            report types, format options, status flow, examples with curl).
+          - docs/reports-cli.md: CLI usage guide (cvg report generate/list/show/download with examples).
+          - docs/reports-types.md: guide to all 6 report types with use cases and sample outputs.
+          - Update README.md: add Reports section under features.
+          - Update CHANGELOG.md: add Iota entry.
+        type: document
+        output_type: document
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: doc-validator
+        effort: 2
+        verify:
+          - "test -f docs/reports-api.md"
+          - "test -f docs/reports-cli.md"
+          - "test -f docs/reports-types.md"
+          - "grep -i report README.md"
+          - "grep -i iota CHANGELOG.md"
+
+      - id: TF-pr
+        do: |
+          Create PR for the Iota wave branch:
+          - Run full CI locally: cargo fmt --all -- --check && RUSTFLAGS="-Dwarnings" cargo test --workspace
+          - Commit with: feat: add CTT report service (convergio-reports crate, API, CLI, MCP)
+          - Push branch and create PR with description covering all changes.
+          - Do NOT merge — leave open for user review.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor-quality-assurance-guardian
+        effort: 1
+        verify:
+          - "cd daemon && cargo fmt --all -- --check"
+          - "cd daemon && RUSTFLAGS='-Dwarnings' cargo test --workspace"
+
+      - id: TF-deploy-verify
+        do: |
+          Deploy verification:
+          - Build: cd daemon && cargo build
+          - Start daemon (if not running): curl -sf localhost:8420/api/health
+          - Smoke test reports API:
+            curl -sf localhost:8420/api/reports → 200
+            curl -sf -X POST localhost:8420/api/reports/generate -H 'Content-Type: application/json'
+              -d '{"topic":"test","report_type":"general","format":"markdown"}' → 200 with report_id
+          - Smoke test CLI: cvg report list → success
+          - Verify version matches CARGO_PKG_VERSION.
+        type: code
+        output_type: pr
+        model: claude-sonnet-4-6
+        executor_agent: task-executor
+        validator_agent: thor-quality-assurance-guardian
+        effort: 1
+        verify:
+          - "curl -sf localhost:8420/api/health"
+          - "curl -sf localhost:8420/api/reports"
