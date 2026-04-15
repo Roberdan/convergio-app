@@ -63,11 +63,10 @@ export const test = base.extend<{
   },
 
   apiMock: async ({ page }, use) => {
-    const DAEMON_BASE = "http://localhost:8420";
-
     const helper: ApiMock = {
       async mockRoute(path: string, body: unknown, status = 200) {
-        await page.route(`${DAEMON_BASE}${path}`, (route: Route) =>
+        // Mock both proxy route (same-origin) and direct daemon route
+        await page.route(`**${path}`, (route: Route) =>
           route.fulfill({
             status,
             contentType: "application/json",

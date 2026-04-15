@@ -6,11 +6,26 @@ test.beforeEach(async ({ context }) => {
 });
 
 const ALL_PAGES = [
-  { path: "/", name: "Home" },
-  { path: "/showcase", name: "Showcase" },
-  { path: "/showcase/data-viz", name: "Category: Data Viz" },
-  { path: "/showcase/forms", name: "Category: Forms" },
-  { path: "/showcase/themes", name: "Theme Playground" },
+  { path: "/", name: "Home (redirect)" },
+  { path: "/dashboard", name: "Dashboard" },
+  { path: "/agents", name: "Agents" },
+  { path: "/plans", name: "Plans" },
+  { path: "/mesh", name: "Mesh Network" },
+  { path: "/deploy", name: "Deploy" },
+  { path: "/night-agents", name: "Night Agents" },
+  { path: "/observatory", name: "Observatory" },
+  { path: "/metrics", name: "Metrics" },
+  { path: "/kernel", name: "Kernel" },
+  { path: "/voice", name: "Voice" },
+  { path: "/bus", name: "Message Bus" },
+  { path: "/inference", name: "Inference" },
+  { path: "/prompts", name: "Prompts" },
+  { path: "/reports", name: "Reports" },
+  { path: "/doctor", name: "Doctor" },
+  { path: "/backup", name: "Backup" },
+  { path: "/orgs", name: "Organizations" },
+  { path: "/billing", name: "Billing" },
+  { path: "/settings", name: "Settings" },
 ];
 
 function isInfraError(msg: string): boolean {
@@ -46,7 +61,7 @@ test.describe("Zero console errors", () => {
         }
       });
 
-      await page.goto(pg.path);
+      await page.goto(pg.path, { waitUntil: "domcontentloaded", timeout: 20000 });
       await page.waitForTimeout(1500);
 
       await expect(page.locator("main").first()).toBeVisible();

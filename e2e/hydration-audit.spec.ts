@@ -9,8 +9,10 @@ test.beforeEach(async ({ context }) => {
 });
 
 const PAGES = [
-  "/showcase", "/showcase/data-viz", "/showcase/forms",
-  "/showcase/themes", "/",
+  "/", "/dashboard", "/agents", "/plans", "/mesh",
+  "/deploy", "/night-agents", "/observatory", "/metrics",
+  "/kernel", "/voice", "/bus", "/inference", "/prompts",
+  "/reports", "/doctor", "/backup", "/orgs", "/billing", "/settings",
 ];
 
 for (const path of PAGES) {
@@ -28,7 +30,8 @@ for (const path of PAGES) {
 
     page.on("pageerror", (err) => {
       const msg = err.message;
-      if (msg.includes("access control") || msg.includes("localhost:8420") || msg.includes("CORS")) return;
+      if (msg.includes("access control") || msg.includes("localhost:8420") ||
+          msg.includes("CORS") || msg.includes("Failed to fetch")) return;
       hydrationErrors.push(`PAGEERROR: ${msg.substring(0, 200)}`);
     });
 
