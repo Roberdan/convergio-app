@@ -50,10 +50,6 @@ navigation:
           label: Plans
           href: /plans
           icon: ClipboardList
-        - id: scheduler
-          label: Scheduler
-          href: /scheduler
-          icon: Clock
         - id: deploy
           label: Deploy
           href: /deploy
@@ -92,10 +88,6 @@ navigation:
 
     - label: Governance
       items:
-        - id: security
-          label: Security
-          href: /security
-          icon: Shield
         - id: reports
           label: Reports
           href: /reports

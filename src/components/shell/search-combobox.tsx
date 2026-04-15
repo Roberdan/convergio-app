@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import {
-  BarChart3, Brain, Building2, Clock, Cpu, CreditCard,
-  FileText, HardDrive, LayoutDashboard, Monitor, Moon,
-  Network, Rocket, Search, Settings, Shield, Stethoscope,
-  Sun, Telescope,
+  BarChart3, Brain, Building2, Cpu, CreditCard,
+  FileText, HardDrive, LayoutDashboard, Mic, Monitor, Moon,
+  Network, Radio, Rocket, Search, Settings, Shield, Stethoscope,
+  Sun, Telescope, Zap,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useLocale } from "@/lib/i18n"
@@ -23,12 +23,13 @@ const CATEGORY_ITEMS = [
   { label: "Metrics", href: "/metrics", icon: BarChart3 },
   { label: "Agents", href: "/agents", icon: Brain },
   { label: "Mesh Network", href: "/mesh", icon: Network },
-  { label: "Scheduler", href: "/scheduler", icon: Clock },
+  { label: "Kernel (Jarvis)", href: "/kernel", icon: Cpu },
+  { label: "Voice", href: "/voice", icon: Mic },
+  { label: "Message Bus", href: "/bus", icon: Radio },
   { label: "Deploy", href: "/deploy", icon: Rocket },
-  { label: "Security", href: "/security", icon: Shield },
+  { label: "Inference", href: "/inference", icon: Zap },
   { label: "Doctor", href: "/doctor", icon: Stethoscope },
   { label: "Backup", href: "/backup", icon: HardDrive },
-  { label: "Inference", href: "/inference", icon: Cpu },
   { label: "Organizations", href: "/orgs", icon: Building2 },
   { label: "Billing", href: "/billing", icon: CreditCard },
   { label: "Reports", href: "/reports", icon: FileText },
