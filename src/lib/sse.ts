@@ -5,9 +5,10 @@
  * Use with the useEventSource hook for React components.
  */
 
+// SSE uses direct daemon connection (EventSource doesn't support proxying)
 const BASE =
   typeof window !== 'undefined'
-    ? (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8420')
+    ? (process.env.NEXT_PUBLIC_DAEMON_URL ?? 'http://localhost:8420')
     : (process.env.API_URL ?? 'http://localhost:8420');
 
 /** Build the SSE stream URL with optional filters. */
