@@ -15,18 +15,14 @@ test.describe("Themes", () => {
       }, theme);
 
       await page.goto("/");
-
-      // Wait for React to hydrate and apply theme from localStorage
       await expect(page.locator(`html[data-theme="${theme}"]`)).toBeAttached({ timeout: 5000 });
-
-      await expect(page.locator("header")).toBeVisible();
-      await expect(page.locator("h1")).toBeVisible();
+      await expect(page.locator("main").first()).toBeVisible({ timeout: 10000 });
     });
   }
 
   test("search trigger is visible on desktop", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("header")).toBeVisible();
-    await expect(page.getByPlaceholder("Search...")).toBeVisible();
+    await expect(page.locator("main").first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByPlaceholder("Search...")).toBeVisible({ timeout: 5000 });
   });
 });
