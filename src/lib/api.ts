@@ -309,20 +309,6 @@ export const backupSnapshots = () =>
 export const backupCreate = (label?: string) =>
   post<Snapshot>('/api/backup/snapshots/create', { label });
 
-/* ── Kernel ── */
+/* ── SSE Events ── */
 
-export const kernelStatus = () =>
-  get<unknown>('/api/kernel/status');
-
-/* ── Voice ── */
-
-export const voiceStatus = () =>
-  get<unknown>('/api/voice/status');
-
-export const voiceStart = () =>
-  post<unknown>('/api/voice/start', {});
-
-/* ── Bus ── */
-
-export const busStats = () =>
-  get<unknown>('/api/bus/stats');
+export const sseUrl = `${BASE}/api/events/stream`;

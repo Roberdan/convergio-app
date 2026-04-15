@@ -33,7 +33,7 @@ export function AgentMessagesList({ events }: { events: IpcEvent[] }) {
             <span className="text-xs text-muted-foreground">&rarr; {e.to}</span>
           )}
           <span className="flex-1 text-xs text-foreground">{e.content}</span>
-          <span className="shrink-0 text-[0.65rem] text-muted-foreground tabular-nums">
+          <span className="shrink-0 text-[0.65rem] text-muted-foreground tabular-nums" suppressHydrationWarning>
             {new Date(e.ts).toLocaleTimeString()}
           </span>
         </div>

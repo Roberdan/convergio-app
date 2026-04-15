@@ -66,3 +66,9 @@ export const planDbCreate = (name: string, project_id = 'default') =>
 export const meshPeers = () => get<MeshPeer[]>('/api/mesh/peers');
 
 export const meshStatus = () => get<MeshStatus>('/api/mesh');
+
+/* ── IPC Bus ── */
+
+export const ipcChannels = () => get<unknown[]>('/api/ipc/channels');
+
+export const ipcMessages = () => get<unknown[]>('/api/ipc/messages');
