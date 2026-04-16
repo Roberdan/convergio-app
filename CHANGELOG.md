@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.68.2](https://github.com/Roberdan/convergio-app/compare/convergio-app-v2.68.1...convergio-app-v2.68.2) (2026-04-16)
+
+
+### Bug Fixes
+
+* replace rewrite proxy with API route to fix daemon 401 ([49b23f8](https://github.com/Roberdan/convergio-app/commit/49b23f8da6e6df801e7a09d64c5aee2909b3f019))
+
 ## [2.68.1](https://github.com/Roberdan/convergio-app/compare/convergio-app-v2.68.0...convergio-app-v2.68.1) (2026-04-15)
 
 
