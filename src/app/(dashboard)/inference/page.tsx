@@ -90,9 +90,9 @@ export default function InferencePage() {
             {routing && (
               <div className="rounded-md border bg-muted/30 p-3">
                 <p className="text-sm font-medium">Decision: {routing.decision}</p>
-                {routing.model_metrics.length > 0 && (
+                {(routing.model_metrics ?? []).length > 0 && (
                   <div className="mt-2 space-y-1">
-                    {routing.model_metrics.map((m) => (
+                    {(routing.model_metrics ?? []).map((m) => (
                       <div key={m.model} className="flex items-center justify-between text-xs">
                         <span className="font-medium">{m.model}</span>
                         <div className="flex gap-3">

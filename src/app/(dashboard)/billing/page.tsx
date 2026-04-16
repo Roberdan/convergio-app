@@ -104,9 +104,9 @@ export default function BillingPage() {
 
       {usage && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          <KpiCard label="Daily Cost" value={`$${usage.daily_cost.toFixed(2)}`} />
-          <KpiCard label="Monthly Cost" value={`$${usage.monthly_cost.toFixed(2)}`} />
-          <KpiCard label="Categories" value={usage.categories.length} />
+          <KpiCard label="Daily Cost" value={`$${(usage.daily_cost ?? 0).toFixed(2)}`} />
+          <KpiCard label="Monthly Cost" value={`$${(usage.monthly_cost ?? 0).toFixed(2)}`} />
+          <KpiCard label="Categories" value={(usage.categories ?? []).length} />
         </div>
       )}
 

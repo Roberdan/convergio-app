@@ -102,9 +102,9 @@ export default function ObservatoryPage() {
       {/* KPI dashboard */}
       {dashboard && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <KpiCard label="Cost/Hour" value={`$${dashboard.cost_per_hour.toFixed(2)}`} />
-          <KpiCard label="Tasks/Day" value={dashboard.tasks_per_day} />
-          <KpiCard label="Avg Latency" value={`${dashboard.avg_latency_ms.toFixed(0)}ms`} />
+          <KpiCard label="Cost/Hour" value={`$${(dashboard.cost_per_hour ?? 0).toFixed(2)}`} />
+          <KpiCard label="Tasks/Day" value={dashboard.tasks_per_day ?? 0} />
+          <KpiCard label="Avg Latency" value={`${(dashboard.avg_latency_ms ?? 0).toFixed(0)}ms`} />
           <KpiCard label="Models" value={modelLabels.length} />
         </div>
       )}
