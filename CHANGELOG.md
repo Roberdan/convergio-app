@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.68.1](https://github.com/Roberdan/convergio-app/compare/convergio-app-v2.68.0...convergio-app-v2.68.1) (2026-04-15)
+
+
+### Bug Fixes
+
+* add Next.js proxy to daemon, fix CORS for browser API calls ([5932b6c](https://github.com/Roberdan/convergio-app/commit/5932b6cbe2cbad180c14f3a88285015c0a4087af))
+* align API endpoints to live daemon, fix hydration error ([d500a3c](https://github.com/Roberdan/convergio-app/commit/d500a3cbec93dfd647889d24666bc74aa0b1bd69))
+* remove security and scheduler pages (no daemon endpoints) ([e3b2d9f](https://github.com/Roberdan/convergio-app/commit/e3b2d9fb0e689f469f1c05bdbedfeecc643b301e))
+
 ## [2.68.0](https://github.com/Roberdan/convergio-app/compare/convergio-app-v2.67.0...convergio-app-v2.68.0) (2026-04-14)
 
 
