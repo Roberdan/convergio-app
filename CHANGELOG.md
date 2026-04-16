@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.68.3](https://github.com/Roberdan/convergio-app/compare/convergio-app-v2.68.2...convergio-app-v2.68.3) (2026-04-16)
+
+
+### Bug Fixes
+
+* guard null fields in observatory, billing, inference, agents ([0803ac7](https://github.com/Roberdan/convergio-app/commit/0803ac767e748ceb54ecb7fa466d24504d119d15))
+* guard undefined fields in agents detail panel ([8b4b4a2](https://github.com/Roberdan/convergio-app/commit/8b4b4a2cc57a3d203619fb8f4d29c2c56c7dc614))
+* resolve all runtime crashes — 129/129 E2E tests passing ([19080d9](https://github.com/Roberdan/convergio-app/commit/19080d9370eead581ad7e4fe2a88aea4a01c3eb3))
+* unwrap daemon API wrapper objects in all pages ([b68a459](https://github.com/Roberdan/convergio-app/commit/b68a45908fbac07c02fe1fe921e2731d89229423))
+
 ## [2.68.2](https://github.com/Roberdan/convergio-app/compare/convergio-app-v2.68.1...convergio-app-v2.68.2) (2026-04-16)
 
 
