@@ -57,9 +57,10 @@ import type {
   Notification,
 } from './types';
 
+/** Browser calls /daemon proxy route; server calls daemon directly. */
 const BASE =
   typeof window !== 'undefined'
-    ? (process.env.NEXT_PUBLIC_API_URL ?? '')
+    ? (process.env.NEXT_PUBLIC_API_URL ?? '/daemon')
     : (process.env.API_URL ?? 'http://localhost:8420');
 
 const AUTH_TOKEN =
