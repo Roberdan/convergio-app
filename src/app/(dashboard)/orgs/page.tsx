@@ -149,7 +149,7 @@ export default function OrgsPage() {
                 />
                 <div>
                   <p className="text-sm font-medium">
-                    ${selectedOrg.spent_usd.toFixed(2)} / ${selectedOrg.budget_usd.toFixed(2)}
+                    ${(selectedOrg.spent_usd ?? 0).toFixed(2)} / ${(selectedOrg.budget_usd ?? 0).toFixed(2)}
                   </p>
                   <p className="text-xs text-muted-foreground">{selectedOrg.agent_count} agents</p>
                 </div>

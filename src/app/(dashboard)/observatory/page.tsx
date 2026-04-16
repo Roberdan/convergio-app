@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useSse } from '@/hooks/use-sse';
 import * as api from '@/lib/api';
-import type { IpcEvent, TimelineEvent, Anomaly, ObservatoryDashboard } from '@/lib/types';
+import type { IpcEvent, TimelineEvent, Anomaly, ObservatoryDashboard, SearchResult } from '@/lib/types';
 import { MnSectionCard } from '@/components/maranello/layout';
 import { MnBadge } from '@/components/maranello/data-display';
 import { MnChart } from '@/components/maranello/data-viz';
@@ -30,7 +30,7 @@ export default function ObservatoryPage() {
 
   const { data: dashboard, loading, error, refetch } =
     useApiQuery<ObservatoryDashboard>(() => api.observatoryDashboard(), { pollInterval: 30_000 });
-  const { data: timeline } = useApiQuery<TimelineEvent[]>(
+  const { data: rawTimeline } = useApiQuery<TimelineEvent[]>(
     () => api.observatoryTimeline({
       org_id: orgFilter || undefined,
       event_type: typeFilter || undefined,
@@ -39,22 +39,25 @@ export default function ObservatoryPage() {
     }),
     { pollInterval: 15_000 },
   );
-  const { data: anomalies, refetch: refetchAnomalies } = useApiQuery<Anomaly[]>(
+  const timeline: TimelineEvent[] = Array.isArray(rawTimeline) ? rawTimeline : (rawTimeline as unknown as { events?: TimelineEvent[] })?.events ?? [];
+  const { data: rawAnomalies, refetch: refetchAnomalies } = useApiQuery<Anomaly[]>(
     () => api.observatoryAnomalies({ include_resolved: false, limit: 50 }),
     { pollInterval: 30_000 },
   );
-  const { data: searchResults } = useApiQuery(
+  const anomalies: Anomaly[] = Array.isArray(rawAnomalies) ? rawAnomalies : (rawAnomalies as unknown as { anomalies?: Anomaly[] })?.anomalies ?? [];
+  const { data: rawSearchResults } = useApiQuery(
     () => searchQuery.length >= 2 ? api.observatorySearch(searchQuery, 20) : Promise.resolve([]),
     { enabled: searchQuery.length >= 2 },
   );
+  const searchResults: SearchResult[] = Array.isArray(rawSearchResults) ? rawSearchResults as SearchResult[] : (rawSearchResults as unknown as { results?: SearchResult[] })?.results ?? [];
 
   const activityItems: ActivityItem[] = useMemo(() => {
     const polled = (timeline ?? []).map((e) => ({
       agent: e.source ?? 'system',
-      action: e.event_type,
+      action: e.event_type ?? 'unknown',
       target: e.org_id ?? '',
-      timestamp: e.timestamp,
-      priority: e.event_type.includes('Alert') ? 'critical' as const : 'normal' as const,
+      timestamp: e.timestamp ?? (e as unknown as Record<string, string>).created_at ?? new Date().toISOString(),
+      priority: (e.event_type ?? '').includes('Alert') ? 'critical' as const : 'normal' as const,
     }));
     const live = sseEvents.map((e) => ({
       agent: e.from,
@@ -102,10 +105,10 @@ export default function ObservatoryPage() {
       {/* KPI dashboard */}
       {dashboard && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <KpiCard label="Cost/Hour" value={`$${(dashboard.cost_per_hour ?? 0).toFixed(2)}`} />
-          <KpiCard label="Tasks/Day" value={dashboard.tasks_per_day ?? 0} />
-          <KpiCard label="Avg Latency" value={`${(dashboard.avg_latency_ms ?? 0).toFixed(0)}ms`} />
+          <KpiCard label="Cost/Hour" value={dashboard.cost_per_hour != null ? `$${Number(dashboard.cost_per_hour).toFixed(2)}` : '\u2014'} />
+          <KpiCard label="Throughput Days" value={(dashboard.task_throughput ?? []).length} />
           <KpiCard label="Models" value={modelLabels.length} />
+          <KpiCard label="Latency Entries" value={(dashboard.model_latency ?? []).length} />
         </div>
       )}
 

@@ -79,7 +79,7 @@ export default function MetricsPage() {
             <div key={m.name} className="rounded-lg border bg-card p-4">
               <p className="truncate text-xs text-muted-foreground">{m.name}</p>
               <p className="text-2xl font-bold tabular-nums">
-                {m.value % 1 === 0 ? m.value : m.value.toFixed(2)}
+                {m.value == null ? '\u2014' : m.value % 1 === 0 ? m.value : m.value.toFixed(2)}
                 {m.unit && (
                   <span className="ml-1 text-sm font-normal text-muted-foreground">{m.unit}</span>
                 )}

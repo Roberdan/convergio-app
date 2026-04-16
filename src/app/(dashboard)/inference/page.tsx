@@ -99,7 +99,7 @@ export default function InferencePage() {
                           <span>{m.latency_ms}ms</span>
                           <span>${m.cost_per_1k_tokens}/1k</span>
                           <MnBadge tone={m.quality_score >= 0.8 ? 'success' : m.quality_score >= 0.5 ? 'warning' : 'danger'}>
-                            Q: {(m.quality_score * 100).toFixed(0)}%
+                            Q: {((m.quality_score ?? 0) * 100).toFixed(0)}%
                           </MnBadge>
                         </div>
                       </div>

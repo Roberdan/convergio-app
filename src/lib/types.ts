@@ -120,10 +120,13 @@ export interface TimelineEvent {
 }
 export interface SearchResult { id: string; timestamp: string; kind: string; excerpt: string; score: number }
 export interface ObservatoryDashboard {
-  cost_per_hour: number;
-  tasks_per_day: number;
-  avg_latency_ms: number;
-  model_breakdown: Record<string, number>;
+  cost_per_hour: number | null;
+  tasks_per_day?: number;
+  avg_latency_ms?: number;
+  model_breakdown?: Record<string, number>;
+  task_throughput?: { date: string; org_id: string; tasks_completed: number; tasks_failed: number }[];
+  model_latency?: { model: string; avg_ms: number }[];
+  ok?: boolean;
 }
 export interface Anomaly {
   id: string;

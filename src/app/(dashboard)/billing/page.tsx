@@ -75,7 +75,7 @@ export default function BillingPage() {
                 className="flex w-full items-center justify-between rounded-md border p-3 text-left hover:bg-muted/50">
                 <span className="text-sm font-medium">{o.name}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">${o.spent_usd.toFixed(2)} / ${o.budget_usd.toFixed(2)}</span>
+                  <span className="text-xs text-muted-foreground">${(o.spent_usd ?? 0).toFixed(2)} / ${(o.budget_usd ?? 0).toFixed(2)}</span>
                   <MnBadge tone={o.status === 'active' ? 'success' : 'danger'}>{o.status}</MnBadge>
                 </div>
               </button>
