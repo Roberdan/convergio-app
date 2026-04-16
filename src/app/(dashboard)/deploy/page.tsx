@@ -27,7 +27,7 @@ export default function DeployPage() {
   const [acting, setActing] = useState<string | null>(null);
   const { data, loading, refetch } = useApiQuery(extApi.deployList, { pollInterval: 10_000 });
 
-  const deploys = data ?? [];
+  const deploys: Deployment[] = Array.isArray(data) ? data as Deployment[] : (data as unknown as { deployments?: Deployment[] })?.deployments ?? [];
 
   const metrics = useMemo<StripMetric[]>(() => [
     { label: 'Total', value: deploys.length },

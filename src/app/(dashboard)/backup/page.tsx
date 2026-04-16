@@ -27,7 +27,8 @@ export default function BackupPage() {
   const [creating, setCreating] = useState(false);
   const { data, loading, refetch } = useApiQuery(api.backupSnapshots, { pollInterval: 30_000 });
 
-  const snapshots = (data ?? []) as unknown as Snapshot[];
+  const raw = data as unknown as Record<string, unknown> | unknown[] | null;
+  const snapshots: Snapshot[] = Array.isArray(raw) ? raw as Snapshot[] : Array.isArray((raw as Record<string, unknown>)?.snapshots) ? (raw as Record<string, unknown>).snapshots as Snapshot[] : [];
 
   const totalSize = useMemo(() => snapshots.reduce((sum, s) => sum + (s.size_bytes ?? 0), 0), [snapshots]);
   const latestDate = useMemo(() => {

@@ -26,7 +26,7 @@ export default function ReportsPage() {
   const [generating, setGenerating] = useState(false);
   const { data, loading, refetch } = useApiQuery(extApi.reportList, { pollInterval: 10_000 });
 
-  const reports = data ?? [];
+  const reports: Report[] = Array.isArray(data) ? data as Report[] : (data as unknown as { reports?: Report[] })?.reports ?? [];
 
   const metrics = useMemo<StripMetric[]>(() => [
     { label: 'Total Reports', value: reports.length },

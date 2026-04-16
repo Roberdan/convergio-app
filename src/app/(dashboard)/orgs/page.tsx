@@ -27,7 +27,8 @@ export default function OrgsPage() {
   const [formData, setFormData] = useState<OrgInput>({ name: '', budget_usd: 0 });
   const [saving, setSaving] = useState(false);
 
-  const { data: orgs, loading, error, refetch } = useApiQuery<Org[]>(api.orgList);
+  const { data: rawOrgs, loading, error, refetch } = useApiQuery<Org[]>(api.orgList);
+  const orgs: Org[] = Array.isArray(rawOrgs) ? rawOrgs : (rawOrgs as unknown as { orgs?: Org[] })?.orgs ?? [];
   const { data: peers } = useApiQuery<PeerEntry[]>(
     () => selectedOrg ? api.tenancyPeers(selectedOrg.id) : Promise.resolve([]),
     { enabled: !!selectedOrg },

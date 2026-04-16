@@ -25,7 +25,8 @@ const AUDIT_COLS: DataTableColumn[] = [
 export default function SettingsPage() {
   const [tab, setTab] = useState<'config' | 'extensions' | 'depgraph' | 'security'>('config');
 
-  const { data: extensions, loading, error, refetch } = useApiQuery<ExtensionInfo[]>(api.extensionList);
+  const { data: rawExtensions, loading, error, refetch } = useApiQuery<ExtensionInfo[]>(api.extensionList);
+  const extensions: ExtensionInfo[] = Array.isArray(rawExtensions) ? rawExtensions : (rawExtensions as unknown as { extensions?: ExtensionInfo[] })?.extensions ?? [];
   const { data: depgraph } = useApiQuery<DepGraph>(api.depgraph);
   const { data: depValidation } = useApiQuery(api.depgraphValidate);
   const { data: audit } = useApiQuery<AuditEntry[]>(() => api.tenancyAudit({ limit: 50 }));

@@ -28,7 +28,8 @@ const RATE_COLS: DataTableColumn[] = [
 export default function BillingPage() {
   const [selectedOrg, setSelectedOrg] = useState('');
 
-  const { data: orgs } = useApiQuery<Org[]>(api.orgList);
+  const { data: rawOrgs } = useApiQuery<Org[]>(api.orgList);
+  const orgs: Org[] = Array.isArray(rawOrgs) ? rawOrgs : (rawOrgs as unknown as { orgs?: Org[] })?.orgs ?? [];
   const { data: usage, loading, error, refetch } = useApiQuery<UsageResponse>(
     () => selectedOrg ? api.billingUsage({ org_id: selectedOrg }) : Promise.reject(new Error('no org')),
     { enabled: !!selectedOrg, pollInterval: 10_000 },

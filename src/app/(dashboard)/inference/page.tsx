@@ -22,10 +22,11 @@ export default function InferencePage() {
   const [routingPrompt, setRoutingPrompt] = useState('');
   const [routingTier, setRoutingTier] = useState('');
 
-  const { data: costs, loading, error, refetch } = useApiQuery<CostSummary[]>(
+  const { data: rawCosts, loading, error, refetch } = useApiQuery<CostSummary[]>(
     () => api.inferenceCosts({}),
     { pollInterval: 10_000 },
   );
+  const costs: CostSummary[] = Array.isArray(rawCosts) ? rawCosts : (rawCosts as unknown as { summaries?: CostSummary[] })?.summaries ?? [];
 
   const { data: routing } = useApiQuery<RoutingResponse>(
     () => api.inferenceRouting({
