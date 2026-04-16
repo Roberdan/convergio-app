@@ -138,14 +138,14 @@ export default function AgentsPage() {
                 <MnBadge tone={agentStatus(selected.name) === 'online' ? 'success' : agentStatus(selected.name) === 'degraded' ? 'warning' : 'danger'}>
                   {agentStatus(selected.name)}
                 </MnBadge>
-                <span className="text-sm text-muted-foreground">{selected.model} / {selected.tier}</span>
+                <span className="text-sm text-muted-foreground">{selected.model ?? 'unknown'} / {selected.tier ?? 'default'}</span>
               </div>
               <p className="text-sm">{selected.description}</p>
-              <div className="text-sm"><strong>Budget:</strong> ${selected.budget_usd.toFixed(2)}</div>
+              <div className="text-sm"><strong>Budget:</strong> ${(selected.budget_usd ?? 0).toFixed(2)}</div>
               <div className="text-sm">
                 <strong>Capabilities:</strong>{' '}
-                {selected.capabilities.length > 0
-                  ? selected.capabilities.map((c) => (
+                {(selected.capabilities ?? []).length > 0
+                  ? (selected.capabilities ?? []).map((c) => (
                       <MnBadge key={c} tone="info" className="mr-1">{c}</MnBadge>
                     ))
                   : 'None'}
