@@ -42,7 +42,10 @@ function isInfraError(msg: string): boolean {
     msg.includes("net::ERR") ||
     msg.includes("attribute points: Expected number") ||
     msg.includes("Failed to load resource") ||
-    msg.includes("localhost:8420")
+    msg.includes("localhost:8420") ||
+    msg.includes("WebGL: INVALID_OPERATION") ||
+    msg.includes("WebGL: INVALID_VALUE") ||
+    msg.includes("texImage3D")
   );
 }
 

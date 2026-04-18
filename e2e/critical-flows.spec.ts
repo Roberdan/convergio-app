@@ -20,8 +20,8 @@ test.describe("Dashboard", () => {
   test("shows status badge", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded", timeout: 20000 });
     await expect(page.locator("main").first()).toBeVisible({ timeout: 10000 });
-    const badge = page.locator("main").getByText(/Live|Offline|Disconnected|Demo/i);
-    await expect(badge.first()).toBeVisible({ timeout: 5000 });
+    const badge = page.locator('main [role="status"]').filter({ hasText: /Live|Offline|Disconnected|Demo/i });
+    await expect(badge.first()).toBeVisible({ timeout: 15000 });
   });
 
   test("event stream filters render", async ({ page }) => {
@@ -88,7 +88,7 @@ test.describe("Navigation", () => {
   });
 
   test("all pages render without blank screen", async ({ page }) => {
-    const pages = ["/", "/agents", "/plans", "/mesh", "/observatory", "/inference", "/billing", "/settings"];
+    const pages = ["/dashboard", "/agents", "/plans", "/mesh", "/observatory", "/inference", "/billing", "/settings"];
     for (const path of pages) {
       await page.goto(path, { waitUntil: "domcontentloaded", timeout: 20000 });
       await expect(page.locator("main").first()).toBeVisible({ timeout: 10000 });

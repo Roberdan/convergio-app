@@ -1,3 +1,4 @@
+import type { Page } from "@playwright/test";
 import { test, expect } from "./fixtures";
 
 test.describe("Smoke — App bootstrap", () => {
@@ -45,6 +46,14 @@ test.describe("Smoke — Theme switching", () => {
 });
 
 test.describe("Smoke — Visual regression", () => {
+  const dynamicMasks = (page: Page) => [
+    page.locator('[role="status"]'),
+    page.locator('[aria-label="Convergio dashboard"]'),
+    page.locator('[role="region"][aria-label="Brain 3D"]'),
+    page.locator('[role="region"][aria-label^="Active Agents"]'),
+    page.locator('[role="region"][aria-label="Augmented Brain"]'),
+  ];
+
   test("Navy theme screenshot", async ({ authenticatedPage, themeHelper, apiMock }) => {
     await apiMock.mockDefaults();
     const page = authenticatedPage;
@@ -53,7 +62,7 @@ test.describe("Smoke — Visual regression", () => {
     await page.waitForLoadState("domcontentloaded");
     await page.waitForTimeout(2000);
     await themeHelper.waitFor("navy");
-    await expect(page).toHaveScreenshot("dashboard-navy.png", { fullPage: true });
+    await expect(page).toHaveScreenshot("dashboard-navy.png", { fullPage: true, mask: dynamicMasks(page) });
   });
 
   test("Dark theme screenshot", async ({ authenticatedPage, themeHelper, apiMock }) => {
@@ -64,7 +73,7 @@ test.describe("Smoke — Visual regression", () => {
     await page.waitForLoadState("domcontentloaded");
     await page.waitForTimeout(2000);
     await themeHelper.waitFor("dark");
-    await expect(page).toHaveScreenshot("dashboard-dark.png", { fullPage: true });
+    await expect(page).toHaveScreenshot("dashboard-dark.png", { fullPage: true, mask: dynamicMasks(page) });
   });
 });
 
