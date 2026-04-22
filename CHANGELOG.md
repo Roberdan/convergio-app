@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.68.4](https://github.com/Roberdan/convergio-app/compare/convergio-app-v2.68.3...convergio-app-v2.68.4) (2026-04-22)
+
+
+### Documentation
+
+* **plan2448-W8:** build + smoke report ([02f8830](https://github.com/Roberdan/convergio-app/commit/02f8830ad51ffc102fd0e060a82aae77b5b1c702))
+* **plan2448-W8:** build + smoke report ([b0364f6](https://github.com/Roberdan/convergio-app/commit/b0364f6bc0ce619fe9251fe5bfd8e728e2f7f798))
+
 ## [2.68.3](https://github.com/Roberdan/convergio-app/compare/convergio-app-v2.68.2...convergio-app-v2.68.3) (2026-04-16)
 
 
